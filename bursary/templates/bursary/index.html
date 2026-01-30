@@ -1,0 +1,29 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'bursary/style.css' %}">
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bursary Application</title>
+</head>
+<body>
+    <h2>Bursary Application Form</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {% if error %}
+       <p style="color:red">{{ error }}</p>
+        {% endif %}
+
+        <input name="full_name" placeholder="Full Name"><br>
+        <input name="admission_number" placeholder="Admission Number"><br>
+        <input name="school" placeholder="School"><br>
+        <input name="course" placeholder="Course"><br>
+        <input name="year_of_study" type="number" placeholder="Year of Study"><br>
+        <input name="phone" placeholder="Phone"><br>
+        <input name="amount_requested" type="number" placeholder="Amount Requested"><br>
+
+        <button type="submit">Apply</button>
+    </form>
+</body>
+</html>
