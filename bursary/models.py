@@ -48,13 +48,12 @@ class Application(models.Model):
 
 
 # =========================
-# Constituency Admin Model
+# Constituency Admin
 # =========================
 
 class ConstituencyAdmin(models.Model):
     """
     Links a Django staff user to a specific constituency.
-    Superusers do not need this.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     constituency = models.ForeignKey(Constituency, on_delete=models.CASCADE)
