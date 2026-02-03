@@ -16,7 +16,7 @@ def apply(request):
 def success(request):
     return render(request, 'bursary/success.html')
 
-# AJAX call for constituencies
+# AJAX call to load constituencies based on selected county
 def load_constituencies(request):
     county_id = request.GET.get('county')
     constituencies = Constituency.objects.filter(county_id=county_id).all()
