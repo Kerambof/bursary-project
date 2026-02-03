@@ -48,7 +48,7 @@ class Application(models.Model):
 
 
 # =========================
-# Constituency Admin
+# Constituency Admin Model
 # =========================
 
 class ConstituencyAdmin(models.Model):
