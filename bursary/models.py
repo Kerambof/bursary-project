@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class County(models.Model):
     name = models.CharField(max_length=100)
@@ -9,6 +10,7 @@ class County(models.Model):
 class Constituency(models.Model):
     county = models.ForeignKey(County, on_delete=models.CASCADE, related_name='constituencies')
     name = models.CharField(max_length=100)
+    admin = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True, help_text="Admin for this constituency")
 
     def __str__(self):
         return f"{self.name} ({self.county.name})"
@@ -32,7 +34,7 @@ class Application(models.Model):
     constituency = models.ForeignKey(Constituency, on_delete=models.SET_NULL, null=True)
     level_of_study = models.ForeignKey(LevelOfStudy, on_delete=models.SET_NULL, null=True)
 
-    document = models.FileField(upload_to='documents/')  # for supporting document
+    document = models.FileField(upload_to='documents/', default='default.pdf') 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
