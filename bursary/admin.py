@@ -1,55 +1,69 @@
 from django.contrib import admin
-from .models import Application, County, Constituency, LevelOfStudy, ConstituencyAdmin
+from django.contrib.auth.models import User
+from .models import (
+    Application,
+    County,
+    Constituency,
+    LevelOfStudy,
+    ConstituencyAdmin
+)
 
 # =========================
 # Application Admin
 # =========================
+@admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'admission_number', 'constituency', 'county', 'level_of_study', 'created_at')
+    list_display = (
+        'full_name',
+        'admission_number',
+        'county',
+        'constituency',
+        'level_of_study',
+        'created_at'
+    )
     list_filter = ('county', 'constituency', 'level_of_study')
-    search_fields = ('full_name', 'admission_number', 'school', 'course', 'phone')
+    search_fields = ('full_name', 'admission_number', 'school', 'phone')
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # Superuser sees all applications
+
+        # Superuser sees everything
         if request.user.is_superuser:
             return qs
-        # Constituency admin sees only applications in their constituency
+
+        # Constituency admin sees only their constituency
         try:
             constituency_admin = ConstituencyAdmin.objects.get(user=request.user)
             return qs.filter(constituency=constituency_admin.constituency)
         except ConstituencyAdmin.DoesNotExist:
-            return qs.none()  # Staff without constituency sees nothing
+            return qs.none()
+
 
 # =========================
-# ConstituencyAdmin Admin
+# Constituency Admin Linking
 # =========================
+@admin.register(ConstituencyAdmin)
 class ConstituencyAdminAdmin(admin.ModelAdmin):
     list_display = ('user', 'constituency')
-    search_fields = ('user__username', 'user__email', 'constituency__name')
+    autocomplete_fields = ('user',)
     list_filter = ('constituency',)
 
-    # Optional: only superuser can add/edit constituency admins
+    def save_model(self, request, obj, form, change):
+        """
+        Ensure linked user is staff
+        """
+        obj.user.is_staff = True
+        obj.user.save()
+        super().save_model(request, obj, form, change)
+
+    # Only superuser can manage constituency admins
     def has_module_permission(self, request):
         return request.user.is_superuser
 
-    def has_view_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_add_permission(self, request):
-        return request.user.is_superuser
-
-    def has_change_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
 
 # =========================
-# Register models
+# Other Models
 # =========================
-admin.site.register(Application, ApplicationAdmin)
 admin.site.register(County)
 admin.site.register(Constituency)
 admin.site.register(LevelOfStudy)
-admin.site.register(ConstituencyAdmin, ConstituencyAdminAdmin)
