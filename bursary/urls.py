@@ -21,6 +21,6 @@ urlpatterns = [
     path('login/', student_login, name='student_login'),  # login now has a separate URL
     path('logout/', student_logout, name='student_logout'),
     path('dashboard/', student_dashboard, name='student_dashboard'),
-    path('apply/', apply, name='applssy'),
+    path('apply/', apply, name='apply'),
     path('ajax/load-constituencies/', load_constituencies, name='ajax_load_constituencies'),
 ]
