@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+
 from .forms import ApplicationForm, StudentSignUpForm, StudentLoginForm
 from .models import Application, Constituency
 
@@ -52,7 +53,7 @@ def student_dashboard(request):
     """
     Dashboard shows all applications submitted by the logged-in student.
     """
-    applications = Application.objects.filter(admission_number=request.user.username)
+    applications = Application.objects.filter(student_user=request.user)
     return render(request, 'bursary/student_dashboard.html', {'applications': applications})
 
 # ------------------------
@@ -62,26 +63,18 @@ def student_dashboard(request):
 @login_required
 def apply(request):
     """
-    Students apply for bursary. Admission number is automatically assigned.
+    View for students to submit bursary application.
     """
-    if request.method == "POST":
+    if request.method == 'POST':
         form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)
-            # Link application to student
-            application.admission_number = request.user.username
-            application.full_name = f"{request.user.first_name} {request.user.last_name}"
+            application.student_user = request.user
             application.save()
-            return redirect('success')
+            return redirect('student_dashboard')
     else:
         form = ApplicationForm()
-    return render(request, 'bursary/index.html', {'form': form})
-
-def success(request):
-    """
-    Simple success page after submitting application.
-    """
-    return render(request, 'bursary/success.html')
+    return render(request, 'bursary/apply.html', {'form': form})
 
 # ------------------------
 # AJAX: Load Constituencies
