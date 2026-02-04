@@ -1,52 +1,62 @@
 {% extends 'bursary/base.html' %}
 
 {% block content %}
-<h2>Submit Bursary Application</h2>
+<h2>Bursary Application</h2>
 
-<!-- Display messages (success or error) -->
+<!-- Display messages -->
 {% if messages %}
-    <ul>
-        {% for message in messages %}
-            <li 
-                {% if message.tags %} class="{{ message.tags }}" {% endif %}
-            >
-                {{ message }}
-            </li>
-        {% endfor %}
-    </ul>
+  {% for message in messages %}
+    <div 
+      style="padding:10px; margin-bottom:10px; border-radius:5px; 
+             {% if message.tags == 'success' %}background-color:#d4edda; color:#155724;{% endif %}
+             {% if message.tags == 'error' %}background-color:#f8d7da; color:#721c24;{% endif %}
+             {% if message.tags == 'info' %}background-color:#cce5ff; color:#004085;{% endif %}">
+      {{ message }}
+    </div>
+  {% endfor %}
 {% endif %}
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-
-    <!-- Display non-field errors -->
-    {% if form.non_field_errors %}
-        <div class="form-errors">
-            <ul>
-            {% for error in form.non_field_errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-
-    <!-- Display each field with its errors -->
-    {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
-                <ul class="field-errors">
-                {% for error in field.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-    {% endfor %}
+    {{ form.as_p }}
 
     <button type="submit">Submit Application</button>
 </form>
 
-<p><a href="{% url 'student_dashboard' %}">Back to Dashboard</a></p>
+<!-- AJAX for dynamically loading constituencies -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    const constituencyField = $('#id_constituency');
+    const countyField = $('#id_county');
+
+    // Disable constituency field initially if empty
+    if (!countyField.val()) {
+        constituencyField.prop('disabled', true);
+    }
+
+    countyField.change(function() {
+        const countyId = $(this).val();
+        if (countyId) {
+            $.ajax({
+                url: "{% url 'load_constituencies' %}",
+                data: {
+                    'county': countyId
+                },
+                success: function(data) {
+                    constituencyField.empty(); // Clear previous options
+                    constituencyField.append('<option value="">Select constituency</option>');
+                    data.forEach(function(item) {
+                        constituencyField.append('<option value="' + item.id + '">' + item.name + '</option>');
+                    });
+                    constituencyField.prop('disabled', false);
+                }
+            });
+        } else {
+            constituencyField.empty();
+            constituencyField.prop('disabled', true);
+        }
+    });
+});
+</script>
 {% endblock %}

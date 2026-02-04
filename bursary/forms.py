@@ -53,16 +53,19 @@ class ApplicationForm(forms.ModelForm):
             'document',
         ]
 
-    # Dynamically load constituencies based on selected county (optional)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Initially, no constituencies are loaded
         self.fields['constituency'].queryset = Constituency.objects.none()
+        self.fields['constituency'].widget.attrs.update({'disabled': True})
 
         if 'county' in self.data:
             try:
                 county_id = int(self.data.get('county'))
                 self.fields['constituency'].queryset = Constituency.objects.filter(county_id=county_id)
+                self.fields['constituency'].widget.attrs.pop('disabled', None)
             except (ValueError, TypeError):
-                pass  # invalid input from the client; ignore
+                pass  # Invalid input; ignore
         elif self.instance.pk and self.instance.county:
             self.fields['constituency'].queryset = self.instance.county.constituencies.all()
+            self.fields['constituency'].widget.attrs.pop('disabled', None)
