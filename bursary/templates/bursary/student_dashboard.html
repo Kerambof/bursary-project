@@ -4,10 +4,24 @@
 <h2>Welcome, {{ request.user.first_name }}</h2>
 <p><a href="{% url 'student_logout' %}">Logout</a></p>
 
+<!-- Messages -->
+{% if messages %}
+  {% for message in messages %}
+    <div 
+      style="padding: 10px; margin-bottom: 10px; border-radius: 5px;
+             {% if message.tags == 'success' %}background-color: #d4edda; color: #155724;{% endif %}
+             {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24;{% endif %}
+             {% if message.tags == 'info' %}background-color: #d1ecf1; color: #0c5460;{% endif %}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
 <h3>Your Applications</h3>
+
 {% if applications %}
-<table border="1" cellpadding="5">
-    <tr>
+<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
+    <tr style="background-color: #f2f2f2;">
         <th>Admission Number</th>
         <th>Full Name</th>
         <th>School</th>
@@ -36,7 +50,7 @@
             N/A
             {% endif %}
         </td>
-        <td>{{ app.created_at }}</td>
+        <td>{{ app.created_at|date:"M d, Y H:i" }}</td>
     </tr>
     {% endfor %}
 </table>
@@ -44,5 +58,5 @@
 <p>You have not submitted any applications yet.</p>
 {% endif %}
 
-<p><a href="{% url 'apply' %}">Apply for Bursary</a></p>
+<p><a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">Apply for Bursary</a></p>
 {% endblock %}
