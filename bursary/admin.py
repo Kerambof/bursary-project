@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 
 from .models import (
     Application,
@@ -9,16 +8,6 @@ from .models import (
     LevelOfStudy,
     ConstituencyAdmin
 )
-
-# =========================
-# EXTEND USER ADMIN (FIX AUTOCOMPLETE)
-# =========================
-class UserAdmin(DefaultUserAdmin):
-    search_fields = ('username', 'email', 'first_name', 'last_name')
-
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
-
 
 # =========================
 # APPLICATION ADMIN
@@ -40,11 +29,9 @@ class ApplicationAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
-        # Superuser sees all
         if request.user.is_superuser:
             return qs
 
-        # Constituency admin sees only their constituency
         if hasattr(request.user, 'constituencyadmin'):
             return qs.filter(
                 constituency=request.user.constituencyadmin.constituency
@@ -59,8 +46,18 @@ class ApplicationAdmin(admin.ModelAdmin):
 @admin.register(ConstituencyAdmin)
 class ConstituencyAdminAdmin(admin.ModelAdmin):
     list_display = ('user', 'constituency')
-    autocomplete_fields = ('user',)
     list_filter = ('constituency',)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """
+        Show ONLY active non-superuser accounts
+        """
+        if db_field.name == "user":
+            kwargs["queryset"] = User.objects.filter(
+                is_active=True,
+                is_superuser=False
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
         """
@@ -71,7 +68,6 @@ class ConstituencyAdminAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     def has_module_permission(self, request):
-        # Only superusers manage constituency admins
         return request.user.is_superuser
 
 
