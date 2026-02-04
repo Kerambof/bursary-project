@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.auth.models import Permission
+
 from django.contrib.auth.models import User
 from .models import (
     Application,
@@ -16,27 +18,27 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = (
         'full_name',
         'admission_number',
-        'county',
         'constituency',
+        'county',
         'level_of_study',
         'created_at'
     )
-    list_filter = ('county', 'constituency', 'level_of_study')
-    search_fields = ('full_name', 'admission_number', 'school', 'phone')
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_staff
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
-        # Superuser sees everything
         if request.user.is_superuser:
             return qs
 
-        # Constituency admin sees only their constituency
-        try:
-            constituency_admin = ConstituencyAdmin.objects.get(user=request.user)
-            return qs.filter(constituency=constituency_admin.constituency)
-        except ConstituencyAdmin.DoesNotExist:
-            return qs.none()
+        if hasattr(request.user, 'constituencyadmin'):
+            return qs.filter(
+                constituency=request.user.constituencyadmin.constituency
+            )
+
+        return qs.none()
 
 
 # =========================
