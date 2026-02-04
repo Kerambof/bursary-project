@@ -1,36 +1,47 @@
-{% extends 'bursary/base.html' %}
+{% extends "bursary/base.html" %}
+{% load static %}
 
 {% block content %}
-<h2>Bursary Application</h2>
-
-<!-- Display messages -->
-{% if messages %}
-  {% for message in messages %}
-    <div 
-      style="padding:10px; margin-bottom:10px; border-radius:5px; 
-             {% if message.tags == 'success' %}background-color:#d4edda; color:#155724;{% endif %}
-             {% if message.tags == 'error' %}background-color:#f8d7da; color:#721c24;{% endif %}
-             {% if message.tags == 'info' %}background-color:#cce5ff; color:#004085;{% endif %}">
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endif %}
+<h2>Submit Bursary Application</h2>
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+
+    <div>
+        <label for="id_county">County:</label>
+        {{ form.county.errors }}
+        {{ form.county }}
+    </div>
+
+    <div>
+        <label for="id_constituency">Constituency:</label>
+        {{ form.constituency.errors }}
+        {{ form.constituency }}
+    </div>
+
+    <div>
+        <label for="id_level_of_study">Level of Study:</label>
+        {{ form.level_of_study.errors }}
+        {{ form.level_of_study }}
+    </div>
+
+    <div>
+        <label for="id_document">Upload Required Document:</label>
+        {{ form.document.errors }}
+        {{ form.document }}
+    </div>
 
     <button type="submit">Submit Application</button>
 </form>
 
-<!-- AJAX for dynamically loading constituencies -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+<script type="text/javascript">
 $(document).ready(function() {
-    const constituencyField = $('#id_constituency');
-    const countyField = $('#id_county');
+    const countyField = $("#id_county");
+    const constituencyField = $("#id_constituency");
 
-    // Disable constituency field initially if empty
+    // Disable constituency initially if no county selected
     if (!countyField.val()) {
         constituencyField.prop('disabled', true);
     }
@@ -39,21 +50,27 @@ $(document).ready(function() {
         const countyId = $(this).val();
         if (countyId) {
             $.ajax({
-                url: "{% url 'load_constituencies' %}",
+                url: "{% url 'ajax_load_constituencies' %}",
                 data: {
                     'county': countyId
                 },
                 success: function(data) {
-                    constituencyField.empty(); // Clear previous options
+                    constituencyField.empty();
                     constituencyField.append('<option value="">Select constituency</option>');
                     data.forEach(function(item) {
                         constituencyField.append('<option value="' + item.id + '">' + item.name + '</option>');
                     });
                     constituencyField.prop('disabled', false);
+                },
+                error: function() {
+                    constituencyField.empty();
+                    constituencyField.append('<option value="">Error loading constituencies</option>');
+                    constituencyField.prop('disabled', true);
                 }
             });
         } else {
             constituencyField.empty();
+            constituencyField.append('<option value="">Select constituency</option>');
             constituencyField.prop('disabled', true);
         }
     });

@@ -17,7 +17,7 @@ class StudentSignUpForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        # Set username to admission_number
+        # Use admission_number as username
         user.username = self.cleaned_data['admission_number']
         user.email = self.cleaned_data['email']
         if commit:
@@ -55,17 +55,18 @@ class ApplicationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Initially, no constituencies are loaded
+        # Disable constituency initially
         self.fields['constituency'].queryset = Constituency.objects.none()
         self.fields['constituency'].widget.attrs.update({'disabled': True})
 
+        # If form has county selected, populate constituencies
         if 'county' in self.data:
             try:
                 county_id = int(self.data.get('county'))
                 self.fields['constituency'].queryset = Constituency.objects.filter(county_id=county_id)
                 self.fields['constituency'].widget.attrs.pop('disabled', None)
             except (ValueError, TypeError):
-                pass  # Invalid input; ignore
+                pass
         elif self.instance.pk and self.instance.county:
-            self.fields['constituency'].queryset = self.instance.county.constituencies.all()
+            self.fields['constituency'].queryset = Constituency.objects.filter(county=self.instance.county)
             self.fields['constituency'].widget.attrs.pop('disabled', None)
