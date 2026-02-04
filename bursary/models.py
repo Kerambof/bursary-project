@@ -45,7 +45,7 @@ class Application(models.Model):
     )
 
     full_name = models.CharField(max_length=100)
-    admission_number = models.CharField(max_length=50, unique=True)
+    admission_number = models.CharField(max_length=50, unique=False)
     school = models.CharField(max_length=100)
     course = models.CharField(max_length=100)
     year_of_study = models.IntegerField()
