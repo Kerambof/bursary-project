@@ -11,15 +11,16 @@ from .views import (
 
 # Simple root redirect view
 def root_redirect(request):
-    # Redirect to login page by default
+    if request.user.is_authenticated:
+        return redirect('student_dashboard')
     return redirect('student_login')
 
 urlpatterns = [
-    path('', root_redirect, name='root_redirect'),  # Root URL
+    path('', root_redirect, name='root_redirect'),  # Root URL handles login/dashboard redirect
     path('signup/', student_signup, name='student_signup'),
-    path('', student_login, name='student_login'),
+    path('login/', student_login, name='student_login'),  # login now has a separate URL
     path('logout/', student_logout, name='student_logout'),
     path('dashboard/', student_dashboard, name='student_dashboard'),
-    path('apply/', apply, name='applsy'),
+    path('apply/', apply, name='applssy'),
     path('ajax/load-constituencies/', load_constituencies, name='ajax_load_constituencies'),
 ]
