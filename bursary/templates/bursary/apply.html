@@ -9,6 +9,48 @@
     {{ form.non_field_errors }}
 
     <div>
+        <label for="id_full_name">Full Name:</label>
+        {{ form.full_name.errors }}
+        {{ form.full_name }}
+    </div>
+
+    <div>
+        <label for="id_admission_number">Admission Number:</label>
+        {{ form.admission_number.errors }}
+        {{ form.admission_number }}
+    </div>
+
+    <div>
+        <label for="id_school">School:</label>
+        {{ form.school.errors }}
+        {{ form.school }}
+    </div>
+
+    <div>
+        <label for="id_course">Course:</label>
+        {{ form.course.errors }}
+        {{ form.course }}
+    </div>
+
+    <div>
+        <label for="id_year_of_study">Year of Study:</label>
+        {{ form.year_of_study.errors }}
+        {{ form.year_of_study }}
+    </div>
+
+    <div>
+        <label for="id_phone">Phone:</label>
+        {{ form.phone.errors }}
+        {{ form.phone }}
+    </div>
+
+    <div>
+        <label for="id_amount_requested">Amount Requested:</label>
+        {{ form.amount_requested.errors }}
+        {{ form.amount_requested }}
+    </div>
+
+    <div>
         <label for="id_county">County:</label>
         {{ form.county.errors }}
         {{ form.county }}
@@ -51,9 +93,7 @@ $(document).ready(function() {
         if (countyId) {
             $.ajax({
                 url: "{% url 'ajax_load_constituencies' %}",
-                data: {
-                    'county': countyId
-                },
+                data: {'county': countyId},
                 success: function(data) {
                     constituencyField.empty();
                     constituencyField.append('<option value="">Select constituency</option>');
@@ -61,11 +101,6 @@ $(document).ready(function() {
                         constituencyField.append('<option value="' + item.id + '">' + item.name + '</option>');
                     });
                     constituencyField.prop('disabled', false);
-                },
-                error: function() {
-                    constituencyField.empty();
-                    constituencyField.append('<option value="">Error loading constituencies</option>');
-                    constituencyField.prop('disabled', true);
                 }
             });
         } else {
