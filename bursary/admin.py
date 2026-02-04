@@ -7,7 +7,7 @@ from .models import (
     County,
     Constituency,
     LevelOfStudy,
-    ConstituencyAdmin
+    ConstituencyOfficer
 )
 
 
@@ -38,9 +38,10 @@ class ApplicationAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
 
-        if hasattr(request.user, 'constituencyadmin'):
+        # Updated to ConstituencyOfficer
+        if hasattr(request.user, 'constituencyofficer'):
             return qs.filter(
-                constituency=request.user.constituencyadmin.constituency
+                constituency=request.user.constituencyofficer.constituency
             )
 
         return qs.none()
@@ -61,10 +62,10 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 # =========================
-# CONSTITUENCY ADMIN LINKING
+# CONSTITUENCY OFFICER LINKING
 # =========================
-@admin.register(ConstituencyAdmin)
-class ConstituencyAdminAdmin(admin.ModelAdmin):
+@admin.register(ConstituencyOfficer)
+class ConstituencyOfficerAdmin(admin.ModelAdmin):
 
     list_display = ('user', 'constituency')
     list_filter = ('constituency',)
@@ -74,7 +75,7 @@ class ConstituencyAdminAdmin(admin.ModelAdmin):
             kwargs["queryset"] = User.objects.filter(
                 is_active=True,
                 is_superuser=False,
-                constituencyadmin__isnull=True
+                constituencyofficer__isnull=True
             )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 

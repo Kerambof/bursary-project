@@ -87,7 +87,7 @@ class Application(models.Model):
 # CONSTITUENCY ADMIN
 # =========================
 
-class ConstituencyAdmin(models.Model):
+class ConstituencyOfficer(models.Model):
     """
     One user → one constituency ONLY
     """

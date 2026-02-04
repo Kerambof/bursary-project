@@ -68,7 +68,7 @@ if os.environ.get("DATABASE_URL"):
     # On Render, use the provided Postgres DATABASE_URL
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.environ.get("postgresql://bursary_db_1cbq_user:SxA4YWK3EumgW6NS1WDBVQ3mWtRaXTUT@dpg-d5ts3tf18n1s73bv3uv0-a.virginia-postgres.render.com/bursary_db_1cbq"),
+            default=os.environ.get("postgresql://bursary_db_ltp6_user:oxoJNiTQPB7yC6R9Xey3GWbpZhsEfcw4@dpg-d61kmnh4tr6s73ck990g-a.virginia-postgres.render.com/bursary_db_ltp6"),
             conn_max_age=600,  # Persistent connections for performance
             ssl_require=True   # Postgres on Render requires SSL
         )
@@ -116,3 +116,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files (uploaded documents)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# settings.py
+
