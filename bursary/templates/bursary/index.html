@@ -1,25 +1,31 @@
+{% extends 'bursary/base.html' %}
+
+{% block content %}
+<h2>Apply for Bursary</h2>
+
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit">Submit Application</button>
 </form>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $("#id_county").change(function () {
-    var url = "{% url 'ajax_load_constituencies' %}";
-    var countyId = $(this).val();
-    $.ajax({
-      url: url,
-      data: {
-        'county': countyId
-      },
-      success: function (data) {
-        $("#id_constituency").html("");
-        data.forEach(function (item) {
-          $("#id_constituency").append('<option value="'+ item.id +'">'+ item.name +'</option>');
+    $("#id_county").change(function() {
+        var url = "{% url 'ajax_load_constituencies' %}";
+        var countyId = $(this).val();
+        $.ajax({
+            url: url,
+            data: { 'county': countyId },
+            success: function(data) {
+                $("#id_constituency").html("");
+                data.forEach(function(constituency){
+                    $("#id_constituency").append(
+                        "<option value='" + constituency.id + "'>" + constituency.name + "</option>"
+                    );
+                });
+            }
         });
-      }
     });
-  });
 </script>
+{% endblock %}

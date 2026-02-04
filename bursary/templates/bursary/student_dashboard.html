@@ -1,0 +1,48 @@
+{% extends 'bursary/base.html' %}
+
+{% block content %}
+<h2>Welcome, {{ request.user.first_name }}</h2>
+<p><a href="{% url 'student_logout' %}">Logout</a></p>
+
+<h3>Your Applications</h3>
+{% if applications %}
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Admission Number</th>
+        <th>Full Name</th>
+        <th>School</th>
+        <th>Course</th>
+        <th>Level of Study</th>
+        <th>County</th>
+        <th>Constituency</th>
+        <th>Amount Requested</th>
+        <th>Document</th>
+        <th>Created At</th>
+    </tr>
+    {% for app in applications %}
+    <tr>
+        <td>{{ app.admission_number }}</td>
+        <td>{{ app.full_name }}</td>
+        <td>{{ app.school }}</td>
+        <td>{{ app.course }}</td>
+        <td>{{ app.level_of_study.name }}</td>
+        <td>{{ app.county.name }}</td>
+        <td>{{ app.constituency.name }}</td>
+        <td>{{ app.amount_requested }}</td>
+        <td>
+            {% if app.document %}
+            <a href="{{ app.document.url }}" target="_blank">View</a>
+            {% else %}
+            N/A
+            {% endif %}
+        </td>
+        <td>{{ app.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>You have not submitted any applications yet.</p>
+{% endif %}
+
+<p><a href="{% url 'apply' %}">Apply for Bursary</a></p>
+{% endblock %}
