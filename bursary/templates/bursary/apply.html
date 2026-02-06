@@ -29,7 +29,7 @@ button:hover { background:#2980b9; }
 input, select, textarea { width: 100%; padding:6px; margin-top:4px; border:1px solid #ccc; border-radius:3px; }
 table { width:100%; border-collapse:collapse; margin-top:10px; }
 table th, table td { border:1px solid #ccc; padding:5px; text-align:left; }
-.add-sibling { margin-top:10px; background:#2ecc71; }
+.add-sibling { margin-top:10px; background:#2ecc71; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer; }
 .remove-sibling { background:#e74c3c; color:white; padding:3px 6px; border:none; border-radius:3px; cursor:pointer; }
 </style>
 
@@ -153,62 +153,40 @@ table th, table td { border:1px solid #ccc; padding:5px; text-align:left; }
 
 <div id="both_alive" class="hidden">
   <h4>Father Details</h4>
-  {{ form.father_name.errors }}
-  {{ form.father_name }}
-  {{ form.father_phone.errors }}
-  {{ form.father_phone }}
-  {{ form.father_occupation.errors }}
-  {{ form.father_occupation }}
-  {{ form.father_id.errors }}
-  {{ form.father_id }}
+  {{ form.father_name.errors }} {{ form.father_name }}
+  {{ form.father_phone.errors }} {{ form.father_phone }}
+  {{ form.father_occupation.errors }} {{ form.father_occupation }}
+  {{ form.father_id.errors }} {{ form.father_id }}
 
   <h4>Mother Details</h4>
-  {{ form.mother_name.errors }}
-  {{ form.mother_name }}
-  {{ form.mother_phone.errors }}
-  {{ form.mother_phone }}
-  {{ form.mother_occupation.errors }}
-  {{ form.mother_occupation }}
-  {{ form.mother_id.errors }}
-  {{ form.mother_id }}
+  {{ form.mother_name.errors }} {{ form.mother_name }}
+  {{ form.mother_phone.errors }} {{ form.mother_phone }}
+  {{ form.mother_occupation.errors }} {{ form.mother_occupation }}
+  {{ form.mother_id.errors }} {{ form.mother_id }}
 </div>
 
 <div id="mother_dead" class="hidden">
   <h4>Mother Details</h4>
-  {{ form.mother_name.errors }}
-  {{ form.mother_name }}
-  {{ form.mother_phone.errors }}
-  {{ form.mother_phone }}
-  {{ form.mother_occupation.errors }}
-  {{ form.mother_occupation }}
-  {{ form.mother_id.errors }}
-  {{ form.mother_id }}
-  {{ form.mother_id_copy.errors }}
-  {{ form.mother_id_copy }}
+  {{ form.mother_name.errors }} {{ form.mother_name }}
+  {{ form.mother_phone.errors }} {{ form.mother_phone }}
+  {{ form.mother_occupation.errors }} {{ form.mother_occupation }}
+  {{ form.mother_id.errors }} {{ form.mother_id }}
+  {{ form.mother_id_copy.errors }} {{ form.mother_id_copy }}
 
-  {{ form.father_death_no.errors }}
-  {{ form.father_death_no }}
-  {{ form.father_death_doc.errors }}
-  {{ form.father_death_doc }}
+  {{ form.father_death_no.errors }} {{ form.father_death_no }}
+  {{ form.father_death_doc.errors }} {{ form.father_death_doc }}
 </div>
 
 <div id="father_dead" class="hidden">
   <h4>Father Details</h4>
-  {{ form.father_name.errors }}
-  {{ form.father_name }}
-  {{ form.father_phone.errors }}
-  {{ form.father_phone }}
-  {{ form.father_occupation.errors }}
-  {{ form.father_occupation }}
-  {{ form.father_id.errors }}
-  {{ form.father_id }}
-  {{ form.father_id_copy.errors }}
-  {{ form.father_id_copy }}
+  {{ form.father_name.errors }} {{ form.father_name }}
+  {{ form.father_phone.errors }} {{ form.father_phone }}
+  {{ form.father_occupation.errors }} {{ form.father_occupation }}
+  {{ form.father_id.errors }} {{ form.father_id }}
+  {{ form.father_id_copy.errors }} {{ form.father_id_copy }}
 
-  {{ form.mother_death_no.errors }}
-  {{ form.mother_death_no }}
-  {{ form.mother_death_doc.errors }}
-  {{ form.mother_death_doc }}
+  {{ form.mother_death_no.errors }} {{ form.mother_death_no }}
+  {{ form.mother_death_doc.errors }} {{ form.mother_death_doc }}
 </div>
 
 <div id="single_mother" class="hidden">
