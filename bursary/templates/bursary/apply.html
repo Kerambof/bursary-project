@@ -1,301 +1,222 @@
 {% extends "bursary/base.html" %}
 {% load static %}
-{% block content %}
 
+{% block content %}
 <h2>Submit Bursary Application</h2>
 
-<!-- Success and error messages -->
+<!-- SUCCESS & ERROR MESSAGES -->
 {% if messages %}
-    {% for message in messages %}
-        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
-            {{ message }}
-        </div>
-    {% endfor %}
+  {% for message in messages %}
+    <div style="padding:10px; margin-bottom:10px; color:white;
+      background-color:{% if message.tags == 'success' %}green{% else %}red{% endif %};">
+      {{ message }}
+    </div>
+  {% endfor %}
 {% endif %}
-
-<!-- Error styling -->
-<style>
-    .errorlist {
-        color: red;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-    .alert {
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-    }
-    .alert.success {
-        background-color: #d4edda;
-        color: #155724;
-    }
-    .alert.error {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-</style>
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    <!-- ------------------------
-         Location & Level
-    ------------------------ -->
-    <div>
-        <label for="id_county">County:</label>
-        {{ form.county.errors }}
-        {{ form.county }}
-    </div>
+    <style>
+        .errorlist {
+            color: red;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        fieldset {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+        }
+        legend {
+            font-weight: bold;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
 
-    <div>
-        <label for="id_constituency">Constituency:</label>
-        {{ form.constituency.errors }}
-        {{ form.constituency }}
-    </div>
+    <!-- LOCATION -->
+    <label>County</label>
+    {{ form.county.errors }}
+    {{ form.county }}
 
-    <div>
-        <label for="id_level_of_study">Level of Study:</label>
-        {{ form.level_of_study.errors }}
-        {{ form.level_of_study }}
-    </div>
+    <label>Constituency</label>
+    {{ form.constituency.errors }}
+    {{ form.constituency }}
 
-    <!-- ------------------------
-         Personal Details
-    ------------------------ -->
-    <h3><b>Personal Details</b></h3>
-    <div>
-        <label for="id_full_name">Full Name:</label>
+    <label>Level of Study</label>
+    {{ form.level_of_study.errors }}
+    {{ form.level_of_study }}
+
+    <!-- PERSONAL DETAILS -->
+    <fieldset>
+        <legend>Personal Details</legend>
+
+        <label>Full Name</label>
         {{ form.full_name.errors }}
         {{ form.full_name }}
-    </div>
 
-    <div>
-        <label>ID No:</label>
-        {{ form.id_no.errors }}
-        {{ form.id_no }}
-        <br>
-        <label>Or Birth Certificate No:</label>
-        {{ form.birth_no.errors }}
-        {{ form.birth_no }}
-    </div>
+        <label>ID Number</label>
+        <input type="text" name="id_number">
 
-    <div>
-        <label>Upload ID Copy:</label>
-        {{ form.id_copy.errors }}
-        {{ form.id_copy }}
-        <br>
-        <label>Upload Birth Certificate:</label>
-        {{ form.birth_copy.errors }}
-        {{ form.birth_copy }}
-    </div>
+        <label>Birth Certificate Number</label>
+        <input type="text" name="birth_cert_number">
 
-    <div>
-        <label>Gender:</label>
-        {{ form.gender.errors }}
-        {{ form.gender }}
-    </div>
+        <label>Upload ID / Birth Certificate</label>
+        <input type="file" name="identity_document">
 
-    <div>
-        <label>Disability:</label>
-        {{ form.disability.errors }}
-        {{ form.disability }}
-        <br>
-        <label>If Yes, details:</label>
-        {{ form.disability_details.errors }}
-        {{ form.disability_details }}
-    </div>
+        <label>Gender</label>
+        <input type="radio" name="gender" value="male"> Male
+        <input type="radio" name="gender" value="female"> Female
 
-    <!-- ------------------------
-         Educational Details
-    ------------------------ -->
-    <h3><b>Educational Details</b></h3>
-    <div>
-        <label>Reg No:</label>
-        {{ form.reg_no.errors }}
-        {{ form.reg_no }}
-    </div>
-    <div>
-        <label>School:</label>
+        <label>Disability</label>
+        <input type="checkbox" id="disability_yes"> Yes
+        <input type="checkbox" id="disability_no"> No
+
+        <div id="disability_details" style="display:none;">
+            <label>Disability Details</label>
+            <textarea name="disability_details"></textarea>
+        </div>
+    </fieldset>
+
+    <!-- EDUCATION DETAILS -->
+    <fieldset>
+        <legend>Educational Details</legend>
+
+        <label>Registration / Admission Number</label>
+        {{ form.admission_number.errors }}
+        {{ form.admission_number }}
+
+        <label>School</label>
         {{ form.school.errors }}
         {{ form.school }}
-    </div>
-    <div>
-        <label>Course:</label>
+
+        <label>Course of Study</label>
         {{ form.course.errors }}
         {{ form.course }}
-    </div>
-    <div>
-        <label>Year of Study:</label>
+
+        <label>Year of Study</label>
         {{ form.year_of_study.errors }}
         {{ form.year_of_study }}
-    </div>
-    <div>
-        <label>Annual Fees Payable:</label>
-        {{ form.annual_fees.errors }}
-        {{ form.annual_fees }}
-        <br>
-        <label>Upload Current Fee Structure:</label>
-        {{ form.fee_structure.errors }}
-        {{ form.fee_structure }}
-    </div>
-    <div>
-        <label>Average Academic Performance:</label>
-        {{ form.academic_performance.errors }}
-        {{ form.academic_performance }}
-        <br>
-        <label>Upload Recent Transcript:</label>
-        {{ form.transcript.errors }}
-        {{ form.transcript }}
-    </div>
 
-    <!-- ------------------------
-         Geo Details
-    ------------------------ -->
-    <h3><b>Geo Details</b></h3>
-    <div>
-        <label>Polling Station:</label>
-        {{ form.polling_station.errors }}
-        {{ form.polling_station }}
-    </div>
-    <div>
-        <label>Sub-location:</label>
-        {{ form.sub_location.errors }}
-        {{ form.sub_location }}
-    </div>
-    <div>
-        <label>Location:</label>
-        {{ form.location.errors }}
-        {{ form.location }}
-    </div>
-    <div>
-        <label>Ward:</label>
-        {{ form.ward.errors }}
-        {{ form.ward }}
-    </div>
+        <label>Annual Fees Payable</label>
+        {{ form.amount_requested.errors }}
+        {{ form.amount_requested }}
 
-    <!-- ------------------------
-         Family Details
-    ------------------------ -->
-    <h3><b>Family Details</b></h3>
-    <div>
-        <label>Parents Status:</label>
-        {{ form.parents_status.errors }}
-        {{ form.parents_status }}
-    </div>
-
-    <div id="parent-fields" style="display:none;">
-        <label>If Parent Disabled, provide details:</label>
-        {{ form.parent_disabled.errors }}
-        {{ form.parent_disabled }}
-        <br>
-        <label>Name:</label> {{ form.disabled_parent_name.errors }} {{ form.disabled_parent_name }}
-        <br>
-        <label>Phone:</label> {{ form.disabled_parent_phone.errors }} {{ form.disabled_parent_phone }}
-        <br>
-        <label>Type of Disability:</label> {{ form.disabled_parent_type.errors }} {{ form.disabled_parent_type }}
-        <br>
-        <label>Upload Supporting Document:</label> {{ form.disabled_parent_doc.errors }} {{ form.disabled_parent_doc }}
-    </div>
-
-    <!-- ------------------------
-         Siblings
-    ------------------------ -->
-    <h3><b>Siblings</b></h3>
-    <div>
-        <label>High School - Names:</label>
-        {{ form.siblings_highschool_names.errors }} {{ form.siblings_highschool_names }}
-        <br>
-        <label>Amount:</label> {{ form.siblings_highschool_amount.errors }} {{ form.siblings_highschool_amount }}
-    </div>
-    <div>
-        <label>College - Names:</label>
-        {{ form.siblings_college_names.errors }} {{ form.siblings_college_names }}
-        <br>
-        <label>Amount:</label> {{ form.siblings_college_amount.errors }} {{ form.siblings_college_amount }}
-    </div>
-    <div>
-        <label>University - Names:</label>
-        {{ form.siblings_university_names.errors }} {{ form.siblings_university_names }}
-        <br>
-        <label>Amount:</label> {{ form.siblings_university_amount.errors }} {{ form.siblings_university_amount }}
-    </div>
-
-    <!-- ------------------------
-         Referees
-    ------------------------ -->
-    <h3><b>Referees</b></h3>
-    <div>
-        <label>1. Name:</label> {{ form.referee1_name.errors }} {{ form.referee1_name }}
-        <br>
-        <label>Telephone:</label> {{ form.referee1_phone.errors }} {{ form.referee1_phone }}
-    </div>
-    <div>
-        <label>2. Name:</label> {{ form.referee2_name.errors }} {{ form.referee2_name }}
-        <br>
-        <label>Telephone:</label> {{ form.referee2_phone.errors }} {{ form.referee2_phone }}
-    </div>
-
-    <!-- ------------------------
-         Supporting Document
-    ------------------------ -->
-    <div>
-        <label>Upload Other Required Document:</label>
+        <label>Upload Fee Structure</label>
         {{ form.document.errors }}
         {{ form.document }}
-    </div>
 
+        <label>Average Academic Performance</label>
+        <input type="radio" name="performance" value="excellent"> Excellent
+        <input type="radio" name="performance" value="very_good"> Very Good
+        <input type="radio" name="performance" value="good"> Good
+        <input type="radio" name="performance" value="fair"> Fair
+        <input type="radio" name="performance" value="poor"> Poor
+
+        <label>Upload Recent Transcript</label>
+        <input type="file" name="transcript">
+    </fieldset>
+
+    <!-- GEO DETAILS -->
+    <fieldset>
+        <legend>Geographical Details</legend>
+
+        <label>Polling Station</label>
+        <input type="text" name="polling_station">
+
+        <label>Sub-location</label>
+        <input type="text" name="sub_location">
+
+        <label>Location</label>
+        <input type="text" name="location">
+
+        <label>Ward</label>
+        <input type="text" name="ward">
+    </fieldset>
+
+    <!-- FAMILY DETAILS -->
+    <fieldset>
+        <legend>Family Details</legend>
+
+        <label>Parents Status</label>
+        <select id="parents_status" name="parents_status">
+            <option value="">-- Select --</option>
+            <option value="both_alive">Both Parents Alive</option>
+            <option value="mother_only">Single Mother</option>
+            <option value="father_only">Single Father</option>
+            <option value="orphan">Total Orphan</option>
+        </select>
+
+        <div id="family_details" style="display:none;">
+            <label>Parent / Guardian Name</label>
+            <input type="text" name="parent_name">
+
+            <label>Phone Number</label>
+            <input type="text" name="parent_phone">
+
+            <label>Occupation</label>
+            <input type="text" name="parent_occupation">
+
+            <label>Upload Supporting Document</label>
+            <input type="file" name="parent_document">
+        </div>
+    </fieldset>
+
+    <!-- SIBLINGS -->
+    <fieldset>
+        <legend>Siblings in School</legend>
+
+        <label>Number of Siblings</label>
+        <input type="number" name="siblings_count">
+
+        <table border="1" width="100%">
+            <tr>
+                <th>Name</th>
+                <th>Level of Study</th>
+                <th>Amount Payable Per Year</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="sibling_name[]"></td>
+                <td><input type="text" name="sibling_level[]"></td>
+                <td><input type="number" name="sibling_amount[]"></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <!-- REFEREES -->
+    <fieldset>
+        <legend>Referees</legend>
+
+        <label>Referee 1 Name</label>
+        <input type="text" name="referee1_name">
+
+        <label>Referee 1 Phone</label>
+        <input type="text" name="referee1_phone">
+
+        <label>Referee 2 Name</label>
+        <input type="text" name="referee2_name">
+
+        <label>Referee 2 Phone</label>
+        <input type="text" name="referee2_phone">
+    </fieldset>
+
+    <br>
     <button type="submit">Submit Application</button>
 </form>
 
-<!-- ------------------------
-     AJAX & Dynamic JS
------------------------- -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    const countyField = $("#id_county");
-    const constituencyField = $("#id_constituency");
-    const parentsStatus = $("#id_parents_status");
-    const parentFields = $("#parent-fields");
+<!-- SIMPLE JS -->
+<script>
+document.getElementById("disability_yes").addEventListener("change", function () {
+    document.getElementById("disability_details").style.display = "block";
+});
 
-    // Disable constituency initially if no county selected
-    if (!countyField.val()) {
-        constituencyField.prop('disabled', true);
-    }
-
-    countyField.change(function() {
-        const countyId = $(this).val();
-        if (countyId) {
-            $.ajax({
-                url: "{% url 'ajax_load_constituencies' %}",
-                data: {'county': countyId},
-                success: function(data) {
-                    constituencyField.empty();
-                    constituencyField.append('<option value="">Select constituency</option>');
-                    data.forEach(function(item) {
-                        constituencyField.append('<option value="' + item.id + '">' + item.name + '</option>');
-                    });
-                    constituencyField.prop('disabled', false);
-                }
-            });
-        } else {
-            constituencyField.empty();
-            constituencyField.append('<option value="">Select constituency</option>');
-            constituencyField.prop('disabled', true);
-        }
-    });
-
-    // Show/hide parent fields dynamically
-    parentsStatus.change(function() {
-        const status = $(this).val();
-        if(status === 'both_alive' || status === 'single_mother' || status === 'single_father' || status === 'orphan' || status === 'parent_disabled'){
-            parentFields.show();
-        } else {
-            parentFields.hide();
-        }
-    }).trigger('change'); // trigger on load
+document.getElementById("parents_status").addEventListener("change", function () {
+    document.getElementById("family_details").style.display = this.value ? "block" : "none";
 });
 </script>
 
