@@ -4,7 +4,7 @@
 
 <h2>Submit Bursary Application</h2>
 
-<!-- Display success or general error messages -->
+<!-- Success and error messages -->
 {% if messages %}
     {% for message in messages %}
         <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
@@ -12,6 +12,29 @@
         </div>
     {% endfor %}
 {% endif %}
+
+<!-- Error styling -->
+<style>
+    .errorlist {
+        color: red;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .alert {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+    .alert.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .alert.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
