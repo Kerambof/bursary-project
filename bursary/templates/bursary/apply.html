@@ -4,42 +4,29 @@
 {% block content %}
 <h2>Submit Bursary Application</h2>
 
-<!-- SUCCESS & ERROR MESSAGES -->
+<!-- Messages -->
 {% if messages %}
   {% for message in messages %}
-    <div style="padding:10px; margin-bottom:10px; color:white;
-      background-color:{% if message.tags == 'success' %}green{% else %}red{% endif %};">
+    <div style="padding:10px;margin-bottom:10px;
+      background:{% if message.tags == 'success' %}#2ecc71{% else %}#e74c3c{% endif %};
+      color:white;">
       {{ message }}
     </div>
   {% endfor %}
 {% endif %}
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data" id="applicationForm">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
     <style>
-        .errorlist {
-            color: red;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        fieldset {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ccc;
-        }
-        legend {
-            font-weight: bold;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-        }
+        .errorlist { color:red; list-style:none; padding:0; margin:0; }
+        fieldset { margin-top:20px; padding:15px; border:1px solid #ccc; }
+        legend { font-weight:bold; }
+        label { display:block; margin-top:10px; }
     </style>
 
-    <!-- LOCATION -->
+    <!-- COUNTY / CONSTITUENCY -->
     <label>County</label>
     {{ form.county.errors }}
     {{ form.county }}
@@ -61,10 +48,10 @@
         {{ form.full_name }}
 
         <label>ID Number</label>
-        <input type="text" name="id_number">
+        <input type="text" id="id_no" name="id_no">
 
         <label>Birth Certificate Number</label>
-        <input type="text" name="birth_cert_number">
+        <input type="text" id="birth_cert_no" name="birth_cert_no">
 
         <label>Upload ID / Birth Certificate</label>
         <input type="file" name="identity_document">
@@ -74,12 +61,15 @@
         <input type="radio" name="gender" value="female"> Female
 
         <label>Disability</label>
-        <input type="checkbox" id="disability_yes"> Yes
-        <input type="checkbox" id="disability_no"> No
+        <input type="radio" name="disability" value="no" checked> No
+        <input type="radio" name="disability" value="yes"> Yes
 
-        <div id="disability_details" style="display:none;">
-            <label>Disability Details</label>
-            <textarea name="disability_details"></textarea>
+        <div id="disability_fields" style="display:none;">
+            <label>Type of Disability</label>
+            <input type="text" name="disability_type">
+
+            <label>Upload Supporting Evidence</label>
+            <input type="file" name="disability_document">
         </div>
     </fieldset>
 
@@ -87,7 +77,7 @@
     <fieldset>
         <legend>Educational Details</legend>
 
-        <label>Registration / Admission Number</label>
+        <label>Registration Number</label>
         {{ form.admission_number.errors }}
         {{ form.admission_number }}
 
@@ -143,17 +133,16 @@
     <fieldset>
         <legend>Family Details</legend>
 
-        <label>Parents Status</label>
-        <select id="parents_status" name="parents_status">
-            <option value="">-- Select --</option>
-            <option value="both_alive">Both Parents Alive</option>
-            <option value="mother_only">Single Mother</option>
-            <option value="father_only">Single Father</option>
-            <option value="orphan">Total Orphan</option>
-        </select>
+        <label>Family Status</label>
+        <input type="radio" name="family_status" value="both_alive"> Both Parents Alive
+        <input type="radio" name="family_status" value="mother_only"> Mother Alive, Father Deceased
+        <input type="radio" name="family_status" value="father_only"> Father Alive, Mother Deceased
+        <input type="radio" name="family_status" value="single_mother"> Single Mother
+        <input type="radio" name="family_status" value="single_father"> Single Father
+        <input type="radio" name="family_status" value="orphan"> Total Orphan
 
-        <div id="family_details" style="display:none;">
-            <label>Parent / Guardian Name</label>
+        <div id="family_dynamic_fields" style="display:none;">
+            <label>Name</label>
             <input type="text" name="parent_name">
 
             <label>Phone Number</label>
@@ -162,14 +151,20 @@
             <label>Occupation</label>
             <input type="text" name="parent_occupation">
 
+            <label>ID Number</label>
+            <input type="text" name="parent_id">
+
+            <label>Burial Permit / Death Certificate Number</label>
+            <input type="text" name="death_cert_no">
+
             <label>Upload Supporting Document</label>
-            <input type="file" name="parent_document">
+            <input type="file" name="death_document">
         </div>
     </fieldset>
 
     <!-- SIBLINGS -->
     <fieldset>
-        <legend>Siblings in School</legend>
+        <legend>Number of Siblings in School</legend>
 
         <label>Number of Siblings</label>
         <input type="number" name="siblings_count">
@@ -178,7 +173,7 @@
             <tr>
                 <th>Name</th>
                 <th>Level of Study</th>
-                <th>Amount Payable Per Year</th>
+                <th>Amount Payable</th>
             </tr>
             <tr>
                 <td><input type="text" name="sibling_name[]"></td>
@@ -209,14 +204,40 @@
     <button type="submit">Submit Application</button>
 </form>
 
-<!-- SIMPLE JS -->
+<!-- JS -->
 <script>
-document.getElementById("disability_yes").addEventListener("change", function () {
-    document.getElementById("disability_details").style.display = "block";
+/* Disability toggle */
+document.querySelectorAll('input[name="disability"]').forEach(el => {
+    el.addEventListener('change', function () {
+        document.getElementById('disability_fields').style.display =
+            this.value === 'yes' ? 'block' : 'none';
+    });
 });
 
-document.getElementById("parents_status").addEventListener("change", function () {
-    document.getElementById("family_details").style.display = this.value ? "block" : "none";
+/* Family status toggle */
+document.querySelectorAll('input[name="family_status"]').forEach(el => {
+    el.addEventListener('change', function () {
+        document.getElementById('family_dynamic_fields').style.display = 'block';
+    });
+});
+
+/* County → Constituency AJAX (RESTORED) */
+document.getElementById('id_county').addEventListener('change', function () {
+    const countyId = this.value;
+    const constituencySelect = document.getElementById('id_constituency');
+
+    constituencySelect.innerHTML = '<option value="">Loading...</option>';
+
+    fetch(`/ajax/load-constituencies/?county=${countyId}`)
+        .then(response => response.json())
+        .then(data => {
+            constituencySelect.innerHTML = '<option value="">Select constituency</option>';
+            data.forEach(item => {
+                constituencySelect.innerHTML +=
+                    `<option value="${item.id}">${item.name}</option>`;
+            });
+            constituencySelect.disabled = false;
+        });
 });
 </script>
 
