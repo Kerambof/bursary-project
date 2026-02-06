@@ -22,7 +22,7 @@
 .errorlist { color:red; list-style:none; padding:0; }
 fieldset { margin-top:20px; padding:15px; border:1px solid #ccc; }
 legend { font-weight:bold; }
-label { display:block; margin-top:10px; }
+label { display:block; margin-top:10px; font-weight:600; }
 .hidden { display:none; }
 </style>
 
@@ -68,12 +68,12 @@ label { display:block; margin-top:10px; }
   <label>Type of Disability</label>
   <input type="text" name="disability_type">
 
-  <label>Upload Supporting Evidence</label>
+  <label>Upload Disability Supporting Evidence</label>
   <input type="file" name="disability_document">
 </div>
 </fieldset>
 
-<!-- EDUCATION -->
+<!-- EDUCATION DETAILS -->
 <fieldset>
 <legend>Educational Details</legend>
 
@@ -97,11 +97,11 @@ label { display:block; margin-top:10px; }
 {{ form.amount_requested.errors }}
 {{ form.amount_requested }}
 
-<label>Upload Fee Structure</label>
+<label>Upload Current Fee Structure</label>
 {{ form.document.errors }}
 {{ form.document }}
 
-<label>Academic Performance</label>
+<label>Average Academic Performance</label>
 <input type="radio" name="performance" value="excellent"> Excellent
 <input type="radio" name="performance" value="very_good"> Very Good
 <input type="radio" name="performance" value="good"> Good
@@ -110,6 +110,23 @@ label { display:block; margin-top:10px; }
 
 <label>Upload Recent Transcript</label>
 <input type="file" name="transcript">
+</fieldset>
+
+<!-- GEO DETAILS -->
+<fieldset>
+<legend>Geographical Details</legend>
+
+<label>Polling Station</label>
+<input type="text" name="polling_station">
+
+<label>Sub-location</label>
+<input type="text" name="sub_location">
+
+<label>Location</label>
+<input type="text" name="location">
+
+<label>Ward</label>
+<input type="text" name="ward">
 </fieldset>
 
 <!-- FAMILY DETAILS -->
@@ -127,101 +144,124 @@ label { display:block; margin-top:10px; }
 <!-- BOTH ALIVE -->
 <div id="both_alive" class="hidden">
   <h4>Father Details</h4>
-  <input type="text" name="father_name" placeholder="Name">
-  <input type="text" name="father_phone" placeholder="Phone">
-  <input type="text" name="father_occupation" placeholder="Occupation">
-  <input type="text" name="father_id" placeholder="ID Number">
+  <label>Father Name</label><input type="text" name="father_name">
+  <label>Father Phone</label><input type="text" name="father_phone">
+  <label>Father Occupation</label><input type="text" name="father_occupation">
+  <label>Father ID Number</label><input type="text" name="father_id">
 
   <h4>Mother Details</h4>
-  <input type="text" name="mother_name" placeholder="Name">
-  <input type="text" name="mother_phone" placeholder="Phone">
-  <input type="text" name="mother_occupation" placeholder="Occupation">
-  <input type="text" name="mother_id" placeholder="ID Number">
+  <label>Mother Name</label><input type="text" name="mother_name">
+  <label>Mother Phone</label><input type="text" name="mother_phone">
+  <label>Mother Occupation</label><input type="text" name="mother_occupation">
+  <label>Mother ID Number</label><input type="text" name="mother_id">
 </div>
 
 <!-- MOTHER ALIVE -->
 <div id="mother_dead" class="hidden">
   <h4>Mother Details</h4>
-  <input type="text" name="mother_name">
-  <input type="text" name="mother_phone">
-  <input type="text" name="mother_occupation">
-  <input type="text" name="mother_id">
-  <input type="file" name="mother_id_copy">
+  <label>Name</label><input type="text" name="mother_name">
+  <label>Phone</label><input type="text" name="mother_phone">
+  <label>Occupation</label><input type="text" name="mother_occupation">
+  <label>ID Number</label><input type="text" name="mother_id">
+  <label>Upload Mother ID Copy</label><input type="file" name="mother_id_copy">
 
-  <label>Father Death Certificate No</label>
+  <label>Father Death Certificate Number</label>
   <input type="text" name="father_death_no">
+  <label>Upload Father Death Certificate</label>
   <input type="file" name="father_death_doc">
 </div>
 
 <!-- FATHER ALIVE -->
 <div id="father_dead" class="hidden">
   <h4>Father Details</h4>
-  <input type="text" name="father_name">
-  <input type="text" name="father_phone">
-  <input type="text" name="father_occupation">
-  <input type="text" name="father_id">
-  <input type="file" name="father_id_copy">
+  <label>Name</label><input type="text" name="father_name">
+  <label>Phone</label><input type="text" name="father_phone">
+  <label>Occupation</label><input type="text" name="father_occupation">
+  <label>ID Number</label><input type="text" name="father_id">
+  <label>Upload Father ID Copy</label><input type="file" name="father_id_copy">
 
-  <label>Mother Death Certificate No</label>
+  <label>Mother Death Certificate Number</label>
   <input type="text" name="mother_death_no">
+  <label>Upload Mother Death Certificate</label>
   <input type="file" name="mother_death_doc">
 </div>
 
 <!-- SINGLE MOTHER -->
 <div id="single_mother" class="hidden">
-  <input type="text" name="mother_name" placeholder="Name">
-  <input type="text" name="mother_phone" placeholder="Phone">
-  <input type="text" name="mother_occupation" placeholder="Occupation">
-  <input type="text" name="mother_id" placeholder="ID Number">
-  <input type="file" name="mother_id_copy">
+  <label>Mother Name</label><input type="text" name="mother_name">
+  <label>Mother Phone</label><input type="text" name="mother_phone">
+  <label>Mother Occupation</label><input type="text" name="mother_occupation">
+  <label>Mother ID Number</label><input type="text" name="mother_id">
+  <label>Upload Mother ID Copy</label><input type="file" name="mother_id_copy">
 </div>
 
 <!-- SINGLE FATHER -->
 <div id="single_father" class="hidden">
-  <input type="text" name="father_name" placeholder="Name">
-  <input type="text" name="father_phone" placeholder="Phone">
-  <input type="text" name="father_occupation" placeholder="Occupation">
-  <input type="text" name="father_id" placeholder="ID Number">
-  <input type="file" name="father_id_copy">
+  <label>Father Name</label><input type="text" name="father_name">
+  <label>Father Phone</label><input type="text" name="father_phone">
+  <label>Father Occupation</label><input type="text" name="father_occupation">
+  <label>Father ID Number</label><input type="text" name="father_id">
+  <label>Upload Father ID Copy</label><input type="file" name="father_id_copy">
 </div>
 
-<!-- ORPHAN -->
+<!-- TOTAL ORPHAN -->
 <div id="orphan" class="hidden">
-  <label>Parents Death Certificate Numbers</label>
-  <input type="text" name="parents_death_no">
-  <input type="file" name="parents_death_docs">
+  <label>Father Death Certificate Number</label>
+  <input type="text" name="father_death_no">
+  <label>Upload Father Death Certificate</label>
+  <input type="file" name="father_death_doc">
+
+  <label>Mother Death Certificate Number</label>
+  <input type="text" name="mother_death_no">
+  <label>Upload Mother Death Certificate</label>
+  <input type="file" name="mother_death_doc">
 
   <h4>Guardian Details</h4>
-  <input type="text" name="guardian_name">
-  <input type="text" name="guardian_phone">
-  <input type="text" name="guardian_occupation">
+  <label>Guardian Name</label><input type="text" name="guardian_name">
+  <label>Guardian Phone</label><input type="text" name="guardian_phone">
+  <label>Guardian Occupation</label><input type="text" name="guardian_occupation">
 </div>
+</fieldset>
+
+<!-- SIBLINGS -->
+<fieldset>
+<legend>Number of Siblings in School</legend>
+<label>Number of Siblings</label>
+<input type="number" name="siblings_count">
+</fieldset>
+
+<!-- REFEREES (RESTORED) -->
+<fieldset>
+<legend>Referees</legend>
+
+<label>Referee 1 Name</label>
+<input type="text" name="referee1_name">
+<label>Referee 1 Phone</label>
+<input type="text" name="referee1_phone">
+
+<label>Referee 2 Name</label>
+<input type="text" name="referee2_name">
+<label>Referee 2 Phone</label>
+<input type="text" name="referee2_phone">
 </fieldset>
 
 <button type="submit">Submit Application</button>
 </form>
 
 <script>
-/* Disability */
+/* Disability toggle */
 document.querySelectorAll('input[name="disability"]').forEach(r=>{
   r.addEventListener('change',()=>{
-    document.getElementById('disability_fields').classList.toggle(
-      'hidden', r.value === 'no'
-    );
+    document.getElementById('disability_fields')
+      .classList.toggle('hidden', r.value === 'no');
   });
 });
 
 /* Family logic */
-const familySections = [
-  'both_alive','mother_dead','father_dead',
-  'single_mother','single_father','orphan'
-];
-
+const sections=['both_alive','mother_dead','father_dead','single_mother','single_father','orphan'];
 document.querySelectorAll('input[name="family_status"]').forEach(r=>{
   r.addEventListener('change',()=>{
-    familySections.forEach(id=>{
-      document.getElementById(id).classList.add('hidden');
-    });
+    sections.forEach(id=>document.getElementById(id).classList.add('hidden'));
     document.getElementById(r.value).classList.remove('hidden');
   });
 });
@@ -229,13 +269,11 @@ document.querySelectorAll('input[name="family_status"]').forEach(r=>{
 /* County → Constituency */
 document.getElementById('id_county').addEventListener('change',function(){
   fetch(`/ajax/load-constituencies/?county=${this.value}`)
-  .then(res=>res.json())
+  .then(r=>r.json())
   .then(data=>{
     const c=document.getElementById('id_constituency');
     c.innerHTML='<option value="">Select constituency</option>';
-    data.forEach(i=>{
-      c.innerHTML+=`<option value="${i.id}">${i.name}</option>`;
-    });
+    data.forEach(i=>c.innerHTML+=`<option value="${i.id}">${i.name}</option>`);
     c.disabled=false;
   });
 });
