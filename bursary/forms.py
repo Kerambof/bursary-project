@@ -37,24 +37,36 @@ class StudentLoginForm(AuthenticationForm):
 # BURSARY APPLICATION FORM
 # ------------------------
 class ApplicationForm(forms.ModelForm):
+
     class Meta:
         model = Application
         fields = [
-            'full_name',
-            'admission_number',
-            'school',
-            'course',
-            'year_of_study',
-            'phone',
-            'amount_requested',
-            'county',
-            'constituency',
-            'level_of_study',
+            # Location & Level
+            'county', 'constituency', 'level_of_study',
+            # Personal Details
+            'full_name', 'admission_number', 'gender', 'id_no', 'birth_no',
+            'id_copy', 'birth_copy', 'disability', 'disability_details', 'phone',
+            # Educational Details
+            'reg_no', 'school', 'course', 'year_of_study', 'amount_requested',
+            'annual_fees', 'fee_structure', 'academic_performance', 'transcript',
+            # Geo Details
+            'polling_station', 'sub_location', 'location', 'ward',
+            # Family Details
+            'parents_status', 'parent_disabled', 'disabled_parent_name', 'disabled_parent_phone',
+            'disabled_parent_type', 'disabled_parent_doc',
+            # Siblings
+            'siblings_highschool_names', 'siblings_highschool_amount',
+            'siblings_college_names', 'siblings_college_amount',
+            'siblings_university_names', 'siblings_university_amount',
+            # Referees
+            'referee1_name', 'referee1_phone', 'referee2_name', 'referee2_phone',
+            # Supporting Document
             'document',
         ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # Initially, no constituencies are loaded
         self.fields['constituency'].queryset = Constituency.objects.none()
         self.fields['constituency'].widget.attrs.update({'disabled': True})
@@ -65,7 +77,7 @@ class ApplicationForm(forms.ModelForm):
                 self.fields['constituency'].queryset = Constituency.objects.filter(county_id=county_id)
                 self.fields['constituency'].widget.attrs.pop('disabled', None)
             except (ValueError, TypeError):
-                pass  # Invalid input; ignore
+                pass
         elif self.instance.pk and self.instance.county:
             self.fields['constituency'].queryset = self.instance.county.constituencies.all()
             self.fields['constituency'].widget.attrs.pop('disabled', None)

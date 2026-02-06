@@ -25,25 +25,67 @@ class ApplicationAdmin(admin.ModelAdmin):
         'created_at'
     )
 
-    list_filter = ('status', 'constituency')
-    search_fields = ('full_name', 'admission_number')
+    list_filter = ('status', 'constituency', 'county', 'level_of_study')
+    search_fields = ('full_name', 'admission_number', 'school', 'course')
     readonly_fields = ('created_at',)
+
+    # Organize fields to match apply.html sections
+    fieldsets = (
+        ("Location & Level", {
+            'fields': ('county', 'constituency', 'level_of_study')
+        }),
+        ("Personal Details", {
+            'fields': (
+                'full_name', 'admission_number', 'gender', 'id_no', 'birth_no',
+                'id_copy', 'birth_copy', 'disability', 'disability_details', 'phone'
+            )
+        }),
+        ("Educational Details", {
+            'fields': (
+                'reg_no', 'school', 'course', 'year_of_study', 'amount_requested',
+                'annual_fees', 'fee_structure', 'academic_performance', 'transcript'
+            )
+        }),
+        ("Geo Details", {
+            'fields': ('polling_station', 'sub_location', 'location', 'ward')
+        }),
+        ("Family Details", {
+            'fields': (
+                'parents_status', 'parent_disabled',
+                'disabled_parent_name', 'disabled_parent_phone',
+                'disabled_parent_type', 'disabled_parent_doc'
+            )
+        }),
+        ("Siblings Details", {
+            'fields': (
+                'siblings_highschool_names', 'siblings_highschool_amount',
+                'siblings_college_names', 'siblings_college_amount',
+                'siblings_university_names', 'siblings_university_amount'
+            )
+        }),
+        ("Referees", {
+            'fields': (
+                'referee1_name', 'referee1_phone',
+                'referee2_name', 'referee2_phone'
+            )
+        }),
+        ("Supporting Document & Status", {
+            'fields': ('document', 'status', 'student_user', 'created_at')
+        }),
+    )
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-
         if request.user.is_superuser:
             return qs
 
-        # Updated to ConstituencyOfficer
         if hasattr(request.user, 'constituencyofficer'):
             return qs.filter(
                 constituency=request.user.constituencyofficer.constituency
             )
-
         return qs.none()
 
     def save_model(self, request, obj, form, change):
@@ -57,7 +99,6 @@ class ApplicationAdmin(admin.ModelAdmin):
                 is_active=True
             )
             obj.student_user = user
-
         super().save_model(request, obj, form, change)
 
 
@@ -66,7 +107,6 @@ class ApplicationAdmin(admin.ModelAdmin):
 # =========================
 @admin.register(ConstituencyOfficer)
 class ConstituencyOfficerAdmin(admin.ModelAdmin):
-
     list_display = ('user', 'constituency')
     list_filter = ('constituency',)
 

@@ -1,6 +1,5 @@
 {% extends "bursary/base.html" %}
 {% load static %}
-
 {% block content %}
 <h2>Submit Bursary Application</h2>
 
@@ -8,48 +7,9 @@
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    <div>
-        <label for="id_full_name">Full Name:</label>
-        {{ form.full_name.errors }}
-        {{ form.full_name }}
-    </div>
-
-    <div>
-        <label for="id_admission_number">Admission Number:</label>
-        {{ form.admission_number.errors }}
-        {{ form.admission_number }}
-    </div>
-
-    <div>
-        <label for="id_school">School:</label>
-        {{ form.school.errors }}
-        {{ form.school }}
-    </div>
-
-    <div>
-        <label for="id_course">Course:</label>
-        {{ form.course.errors }}
-        {{ form.course }}
-    </div>
-
-    <div>
-        <label for="id_year_of_study">Year of Study:</label>
-        {{ form.year_of_study.errors }}
-        {{ form.year_of_study }}
-    </div>
-
-    <div>
-        <label for="id_phone">Phone:</label>
-        {{ form.phone.errors }}
-        {{ form.phone }}
-    </div>
-
-    <div>
-        <label for="id_amount_requested">Amount Requested:</label>
-        {{ form.amount_requested.errors }}
-        {{ form.amount_requested }}
-    </div>
-
+    <!-- ------------------------
+         Location & Level
+    ------------------------ -->
     <div>
         <label for="id_county">County:</label>
         {{ form.county.errors }}
@@ -68,8 +28,186 @@
         {{ form.level_of_study }}
     </div>
 
+    <!-- ------------------------
+         Personal Details
+    ------------------------ -->
+    <h3><b>Personal Details</b></h3>
     <div>
-        <label for="id_document">Upload Required Document:</label>
+        <label for="id_full_name">Full Name:</label>
+        {{ form.full_name.errors }}
+        {{ form.full_name }}
+    </div>
+
+    <div>
+        <label>ID No:</label>
+        {{ form.id_no.errors }}
+        {{ form.id_no }}
+        <br>
+        <label>Or Birth Certificate No:</label>
+        {{ form.birth_no.errors }}
+        {{ form.birth_no }}
+    </div>
+
+    <div>
+        <label>Upload ID Copy:</label>
+        {{ form.id_copy.errors }}
+        {{ form.id_copy }}
+        <br>
+        <label>Upload Birth Certificate:</label>
+        {{ form.birth_copy.errors }}
+        {{ form.birth_copy }}
+    </div>
+
+    <div>
+        <label>Gender:</label>
+        {{ form.gender.errors }}
+        {{ form.gender }}
+    </div>
+
+    <div>
+        <label>Disability:</label>
+        {{ form.disability.errors }}
+        {{ form.disability }}
+        <br>
+        <label>If Yes, details:</label>
+        {{ form.disability_details.errors }}
+        {{ form.disability_details }}
+    </div>
+
+    <!-- ------------------------
+         Educational Details
+    ------------------------ -->
+    <h3><b>Educational Details</b></h3>
+    <div>
+        <label>Reg No:</label>
+        {{ form.reg_no.errors }}
+        {{ form.reg_no }}
+    </div>
+    <div>
+        <label>School:</label>
+        {{ form.school.errors }}
+        {{ form.school }}
+    </div>
+    <div>
+        <label>Course:</label>
+        {{ form.course.errors }}
+        {{ form.course }}
+    </div>
+    <div>
+        <label>Year of Study:</label>
+        {{ form.year_of_study.errors }}
+        {{ form.year_of_study }}
+    </div>
+    <div>
+        <label>Annual Fees Payable:</label>
+        {{ form.annual_fees.errors }}
+        {{ form.annual_fees }}
+        <br>
+        <label>Upload Current Fee Structure:</label>
+        {{ form.fee_structure.errors }}
+        {{ form.fee_structure }}
+    </div>
+    <div>
+        <label>Average Academic Performance:</label>
+        {{ form.academic_performance.errors }}
+        {{ form.academic_performance }}
+        <br>
+        <label>Upload Recent Transcript:</label>
+        {{ form.transcript.errors }}
+        {{ form.transcript }}
+    </div>
+
+    <!-- ------------------------
+         Geo Details
+    ------------------------ -->
+    <h3><b>Geo Details</b></h3>
+    <div>
+        <label>Polling Station:</label>
+        {{ form.polling_station.errors }}
+        {{ form.polling_station }}
+    </div>
+    <div>
+        <label>Sub-location:</label>
+        {{ form.sub_location.errors }}
+        {{ form.sub_location }}
+    </div>
+    <div>
+        <label>Location:</label>
+        {{ form.location.errors }}
+        {{ form.location }}
+    </div>
+    <div>
+        <label>Ward:</label>
+        {{ form.ward.errors }}
+        {{ form.ward }}
+    </div>
+
+    <!-- ------------------------
+         Family Details
+    ------------------------ -->
+    <h3><b>Family Details</b></h3>
+    <div>
+        <label>Parents Status:</label>
+        {{ form.parents_status.errors }}
+        {{ form.parents_status }}
+    </div>
+    <div>
+        <label>If Parent Disabled, provide details:</label>
+        {{ form.parent_disabled.errors }}
+        {{ form.parent_disabled }}
+        <br>
+        <label>Name:</label> {{ form.disabled_parent_name.errors }} {{ form.disabled_parent_name }}
+        <br>
+        <label>Phone:</label> {{ form.disabled_parent_phone.errors }} {{ form.disabled_parent_phone }}
+        <br>
+        <label>Type of Disability:</label> {{ form.disabled_parent_type.errors }} {{ form.disabled_parent_type }}
+        <br>
+        <label>Upload Supporting Document:</label> {{ form.disabled_parent_doc.errors }} {{ form.disabled_parent_doc }}
+    </div>
+
+    <!-- ------------------------
+         Siblings
+    ------------------------ -->
+    <h3><b>Siblings</b></h3>
+    <div>
+        <label>High School - Names:</label>
+        {{ form.siblings_highschool_names.errors }} {{ form.siblings_highschool_names }}
+        <br>
+        <label>Amount:</label> {{ form.siblings_highschool_amount.errors }} {{ form.siblings_highschool_amount }}
+    </div>
+    <div>
+        <label>College - Names:</label>
+        {{ form.siblings_college_names.errors }} {{ form.siblings_college_names }}
+        <br>
+        <label>Amount:</label> {{ form.siblings_college_amount.errors }} {{ form.siblings_college_amount }}
+    </div>
+    <div>
+        <label>University - Names:</label>
+        {{ form.siblings_university_names.errors }} {{ form.siblings_university_names }}
+        <br>
+        <label>Amount:</label> {{ form.siblings_university_amount.errors }} {{ form.siblings_university_amount }}
+    </div>
+
+    <!-- ------------------------
+         Referees
+    ------------------------ -->
+    <h3><b>Referees</b></h3>
+    <div>
+        <label>1. Name:</label> {{ form.referee1_name.errors }} {{ form.referee1_name }}
+        <br>
+        <label>Telephone:</label> {{ form.referee1_phone.errors }} {{ form.referee1_phone }}
+    </div>
+    <div>
+        <label>2. Name:</label> {{ form.referee2_name.errors }} {{ form.referee2_name }}
+        <br>
+        <label>Telephone:</label> {{ form.referee2_phone.errors }} {{ form.referee2_phone }}
+    </div>
+
+    <!-- ------------------------
+         Supporting Document
+    ------------------------ -->
+    <div>
+        <label>Upload Other Required Document:</label>
         {{ form.document.errors }}
         {{ form.document }}
     </div>
@@ -77,6 +215,9 @@
     <button type="submit">Submit Application</button>
 </form>
 
+<!-- ------------------------
+     AJAX for Constituencies
+------------------------ -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -111,4 +252,5 @@ $(document).ready(function() {
     });
 });
 </script>
+
 {% endblock %}

@@ -29,6 +29,7 @@ def student_signup(request):
         form = StudentSignUpForm()
     return render(request, 'bursary/student_signup.html', {'form': form})
 
+
 def student_login(request):
     """
     Student login using username (admission number) and password.
@@ -46,6 +47,7 @@ def student_login(request):
         form = StudentLoginForm()
     return render(request, 'bursary/student_login.html', {'form': form})
 
+
 @login_required
 def student_logout(request):
     """
@@ -54,6 +56,7 @@ def student_logout(request):
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect('student_login')
+
 
 # ------------------------
 # STUDENT DASHBOARD
@@ -66,6 +69,7 @@ def student_dashboard(request):
     """
     applications = Application.objects.filter(student_user=request.user)
     return render(request, 'bursary/student_dashboard.html', {'applications': applications})
+
 
 # ------------------------
 # BURSARY APPLICATION
@@ -89,6 +93,7 @@ def apply(request):
     else:
         form = ApplicationForm()
     return render(request, 'bursary/apply.html', {'form': form})
+
 
 # ------------------------
 # AJAX: Load Constituencies
