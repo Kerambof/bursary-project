@@ -1,41 +1,114 @@
+{% extends "bursary/base.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Submit Bursary Application</h2>
+
+{% if messages %}
+  {% for message in messages %}
+    <div style="padding:10px;margin-bottom:10px;
+      background:{% if message.tags == 'success' %}#2ecc71{% else %}#e74c3c{% endif %};
+      color:white;">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+{{ form.non_field_errors }}
+
+<style>
 .errorlist { color:red; list-style:none; padding:0; }
 fieldset { margin-top:20px; padding:15px; border:1px solid #ccc; }
 legend { font-weight:bold; }
-label { display:block; margin-top:10px; }
 label { display:block; margin-top:10px; font-weight:600; }
 .hidden { display:none; }
 </style>
 
-@@ -68,12 +68,12 @@
-<label>Type of Disability</label>
-<input type="text" name="disability_type">
+<!-- LOCATION -->
+<label>County</label>
+{{ form.county.errors }}
+{{ form.county }}
 
-  <label>Upload Supporting Evidence</label>
+<label>Constituency</label>
+{{ form.constituency.errors }}
+{{ form.constituency }}
+
+<label>Level of Study</label>
+{{ form.level_of_study.errors }}
+{{ form.level_of_study }}
+
+<!-- PERSONAL DETAILS -->
+<fieldset>
+<legend>Personal Details</legend>
+
+<label>Full Name</label>
+{{ form.full_name.errors }}
+{{ form.full_name }}
+
+<label>ID Number</label>
+<input type="text" name="id_no">
+
+<label>Birth Certificate Number</label>
+<input type="text" name="birth_cert_no">
+
+<label>Upload ID / Birth Certificate</label>
+<input type="file" name="identity_document">
+
+<label>Gender</label>
+<input type="radio" name="gender" value="male"> Male
+<input type="radio" name="gender" value="female"> Female
+
+<label>Disability</label>
+<input type="radio" name="disability" value="no" checked> No
+<input type="radio" name="disability" value="yes"> Yes
+
+<div id="disability_fields" class="hidden">
+  <label>Type of Disability</label>
+  <input type="text" name="disability_type">
+
   <label>Upload Disability Supporting Evidence</label>
-<input type="file" name="disability_document">
+  <input type="file" name="disability_document">
 </div>
 </fieldset>
 
-<!-- EDUCATION -->
 <!-- EDUCATION DETAILS -->
 <fieldset>
 <legend>Educational Details</legend>
 
-@@ -97,11 +97,11 @@
+<label>Registration Number</label>
+{{ form.admission_number.errors }}
+{{ form.admission_number }}
+
+<label>School</label>
+{{ form.school.errors }}
+{{ form.school }}
+
+<label>Course of Study</label>
+{{ form.course.errors }}
+{{ form.course }}
+
+<label>Year of Study</label>
+{{ form.year_of_study.errors }}
+{{ form.year_of_study }}
+
+<label>Annual Fees Payable</label>
 {{ form.amount_requested.errors }}
 {{ form.amount_requested }}
 
-<label>Upload Fee Structure</label>
 <label>Upload Current Fee Structure</label>
 {{ form.document.errors }}
 {{ form.document }}
 
-<label>Academic Performance</label>
 <label>Average Academic Performance</label>
 <input type="radio" name="performance" value="excellent"> Excellent
 <input type="radio" name="performance" value="very_good"> Very Good
 <input type="radio" name="performance" value="good"> Good
-@@ -112,6 +112,23 @@
+<input type="radio" name="performance" value="fair"> Fair
+<input type="radio" name="performance" value="poor"> Poor
+
+<label>Upload Recent Transcript</label>
 <input type="file" name="transcript">
 </fieldset>
 
@@ -59,24 +132,24 @@ label { display:block; margin-top:10px; font-weight:600; }
 <!-- FAMILY DETAILS -->
 <fieldset>
 <legend>Family Details</legend>
-@@ -127,118 +144,139 @@
+
+<label>Family Status</label>
+<input type="radio" name="family_status" value="both_alive"> Both Parents Alive  
+<input type="radio" name="family_status" value="mother_dead"> Mother Alive, Father Deceased  
+<input type="radio" name="family_status" value="father_dead"> Father Alive, Mother Deceased  
+<input type="radio" name="family_status" value="single_mother"> Single Mother  
+<input type="radio" name="family_status" value="single_father"> Single Father  
+<input type="radio" name="family_status" value="orphan"> Total Orphan  
+
 <!-- BOTH ALIVE -->
 <div id="both_alive" class="hidden">
-<h4>Father Details</h4>
-  <input type="text" name="father_name" placeholder="Name">
-  <input type="text" name="father_phone" placeholder="Phone">
-  <input type="text" name="father_occupation" placeholder="Occupation">
-  <input type="text" name="father_id" placeholder="ID Number">
+  <h4>Father Details</h4>
   <label>Father Name</label><input type="text" name="father_name">
   <label>Father Phone</label><input type="text" name="father_phone">
   <label>Father Occupation</label><input type="text" name="father_occupation">
   <label>Father ID Number</label><input type="text" name="father_id">
 
-<h4>Mother Details</h4>
-  <input type="text" name="mother_name" placeholder="Name">
-  <input type="text" name="mother_phone" placeholder="Phone">
-  <input type="text" name="mother_occupation" placeholder="Occupation">
-  <input type="text" name="mother_id" placeholder="ID Number">
+  <h4>Mother Details</h4>
   <label>Mother Name</label><input type="text" name="mother_name">
   <label>Mother Phone</label><input type="text" name="mother_phone">
   <label>Mother Occupation</label><input type="text" name="mother_occupation">
@@ -85,53 +158,36 @@ label { display:block; margin-top:10px; font-weight:600; }
 
 <!-- MOTHER ALIVE -->
 <div id="mother_dead" class="hidden">
-<h4>Mother Details</h4>
-  <input type="text" name="mother_name">
-  <input type="text" name="mother_phone">
-  <input type="text" name="mother_occupation">
-  <input type="text" name="mother_id">
-  <input type="file" name="mother_id_copy">
+  <h4>Mother Details</h4>
   <label>Name</label><input type="text" name="mother_name">
   <label>Phone</label><input type="text" name="mother_phone">
   <label>Occupation</label><input type="text" name="mother_occupation">
   <label>ID Number</label><input type="text" name="mother_id">
   <label>Upload Mother ID Copy</label><input type="file" name="mother_id_copy">
 
-  <label>Father Death Certificate No</label>
   <label>Father Death Certificate Number</label>
-<input type="text" name="father_death_no">
+  <input type="text" name="father_death_no">
   <label>Upload Father Death Certificate</label>
-<input type="file" name="father_death_doc">
+  <input type="file" name="father_death_doc">
 </div>
 
 <!-- FATHER ALIVE -->
 <div id="father_dead" class="hidden">
-<h4>Father Details</h4>
-  <input type="text" name="father_name">
-  <input type="text" name="father_phone">
-  <input type="text" name="father_occupation">
-  <input type="text" name="father_id">
-  <input type="file" name="father_id_copy">
+  <h4>Father Details</h4>
   <label>Name</label><input type="text" name="father_name">
   <label>Phone</label><input type="text" name="father_phone">
   <label>Occupation</label><input type="text" name="father_occupation">
   <label>ID Number</label><input type="text" name="father_id">
   <label>Upload Father ID Copy</label><input type="file" name="father_id_copy">
 
-  <label>Mother Death Certificate No</label>
   <label>Mother Death Certificate Number</label>
-<input type="text" name="mother_death_no">
+  <input type="text" name="mother_death_no">
   <label>Upload Mother Death Certificate</label>
-<input type="file" name="mother_death_doc">
+  <input type="file" name="mother_death_doc">
 </div>
 
 <!-- SINGLE MOTHER -->
 <div id="single_mother" class="hidden">
-  <input type="text" name="mother_name" placeholder="Name">
-  <input type="text" name="mother_phone" placeholder="Phone">
-  <input type="text" name="mother_occupation" placeholder="Occupation">
-  <input type="text" name="mother_id" placeholder="ID Number">
-  <input type="file" name="mother_id_copy">
   <label>Mother Name</label><input type="text" name="mother_name">
   <label>Mother Phone</label><input type="text" name="mother_phone">
   <label>Mother Occupation</label><input type="text" name="mother_occupation">
@@ -141,11 +197,6 @@ label { display:block; margin-top:10px; font-weight:600; }
 
 <!-- SINGLE FATHER -->
 <div id="single_father" class="hidden">
-  <input type="text" name="father_name" placeholder="Name">
-  <input type="text" name="father_phone" placeholder="Phone">
-  <input type="text" name="father_occupation" placeholder="Occupation">
-  <input type="text" name="father_id" placeholder="ID Number">
-  <input type="file" name="father_id_copy">
   <label>Father Name</label><input type="text" name="father_name">
   <label>Father Phone</label><input type="text" name="father_phone">
   <label>Father Occupation</label><input type="text" name="father_occupation">
@@ -153,12 +204,8 @@ label { display:block; margin-top:10px; font-weight:600; }
   <label>Upload Father ID Copy</label><input type="file" name="father_id_copy">
 </div>
 
-<!-- ORPHAN -->
 <!-- TOTAL ORPHAN -->
 <div id="orphan" class="hidden">
-  <label>Parents Death Certificate Numbers</label>
-  <input type="text" name="parents_death_no">
-  <input type="file" name="parents_death_docs">
   <label>Father Death Certificate Number</label>
   <input type="text" name="father_death_no">
   <label>Upload Father Death Certificate</label>
@@ -169,10 +216,7 @@ label { display:block; margin-top:10px; font-weight:600; }
   <label>Upload Mother Death Certificate</label>
   <input type="file" name="mother_death_doc">
 
-<h4>Guardian Details</h4>
-  <input type="text" name="guardian_name">
-  <input type="text" name="guardian_phone">
-  <input type="text" name="guardian_occupation">
+  <h4>Guardian Details</h4>
   <label>Guardian Name</label><input type="text" name="guardian_name">
   <label>Guardian Phone</label><input type="text" name="guardian_phone">
   <label>Guardian Occupation</label><input type="text" name="guardian_occupation">
@@ -205,49 +249,33 @@ label { display:block; margin-top:10px; font-weight:600; }
 </form>
 
 <script>
-/* Disability */
 /* Disability toggle */
 document.querySelectorAll('input[name="disability"]').forEach(r=>{
-r.addEventListener('change',()=>{
-    document.getElementById('disability_fields').classList.toggle(
-      'hidden', r.value === 'no'
-    );
+  r.addEventListener('change',()=>{
     document.getElementById('disability_fields')
       .classList.toggle('hidden', r.value === 'no');
-});
+  });
 });
 
 /* Family logic */
-const familySections = [
-  'both_alive','mother_dead','father_dead',
-  'single_mother','single_father','orphan'
-];
-
 const sections=['both_alive','mother_dead','father_dead','single_mother','single_father','orphan'];
 document.querySelectorAll('input[name="family_status"]').forEach(r=>{
-r.addEventListener('change',()=>{
-    familySections.forEach(id=>{
-      document.getElementById(id).classList.add('hidden');
-    });
+  r.addEventListener('change',()=>{
     sections.forEach(id=>document.getElementById(id).classList.add('hidden'));
-document.getElementById(r.value).classList.remove('hidden');
-});
+    document.getElementById(r.value).classList.remove('hidden');
+  });
 });
 
 /* County → Constituency */
 document.getElementById('id_county').addEventListener('change',function(){
-fetch(`/ajax/load-constituencies/?county=${this.value}`)
-  .then(res=>res.json())
+  fetch(`/ajax/load-constituencies/?county=${this.value}`)
   .then(r=>r.json())
-.then(data=>{
-const c=document.getElementById('id_constituency');
-c.innerHTML='<option value="">Select constituency</option>';
-    data.forEach(i=>{
-      c.innerHTML+=`<option value="${i.id}">${i.name}</option>`;
-    });
+  .then(data=>{
+    const c=document.getElementById('id_constituency');
+    c.innerHTML='<option value="">Select constituency</option>';
     data.forEach(i=>c.innerHTML+=`<option value="${i.id}">${i.name}</option>`);
-c.disabled=false;
-});
+    c.disabled=false;
+  });
 });
 </script>
 
