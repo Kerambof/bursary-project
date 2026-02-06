@@ -1,7 +1,17 @@
 {% extends "bursary/base.html" %}
 {% load static %}
 {% block content %}
+
 <h2>Submit Bursary Application</h2>
+
+<!-- Display success or general error messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
@@ -151,7 +161,8 @@
         {{ form.parents_status.errors }}
         {{ form.parents_status }}
     </div>
-    <div>
+
+    <div id="parent-fields" style="display:none;">
         <label>If Parent Disabled, provide details:</label>
         {{ form.parent_disabled.errors }}
         {{ form.parent_disabled }}
@@ -216,13 +227,15 @@
 </form>
 
 <!-- ------------------------
-     AJAX for Constituencies
+     AJAX & Dynamic JS
 ------------------------ -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     const countyField = $("#id_county");
     const constituencyField = $("#id_constituency");
+    const parentsStatus = $("#id_parents_status");
+    const parentFields = $("#parent-fields");
 
     // Disable constituency initially if no county selected
     if (!countyField.val()) {
@@ -250,6 +263,16 @@ $(document).ready(function() {
             constituencyField.prop('disabled', true);
         }
     });
+
+    // Show/hide parent fields dynamically
+    parentsStatus.change(function() {
+        const status = $(this).val();
+        if(status === 'both_alive' || status === 'single_mother' || status === 'single_father' || status === 'orphan' || status === 'parent_disabled'){
+            parentFields.show();
+        } else {
+            parentFields.hide();
+        }
+    }).trigger('change'); // trigger on load
 });
 </script>
 
