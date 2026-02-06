@@ -31,6 +31,7 @@ table { width:100%; border-collapse:collapse; margin-top:10px; }
 table th, table td { border:1px solid #ccc; padding:5px; text-align:left; }
 .add-sibling { margin-top:10px; background:#2ecc71; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer; }
 .remove-sibling { background:#e74c3c; color:white; padding:3px 6px; border:none; border-radius:3px; cursor:pointer; }
+.error { color:red; font-size:0.9em; margin-top:2px; }
 </style>
 
 <!-- LOCATION -->
@@ -232,7 +233,7 @@ table th, table td { border:1px solid #ccc; padding:5px; text-align:left; }
     </tr>
   </thead>
   <tbody>
-    <!-- JS adds rows -->
+    <!-- JS will add rows here -->
   </tbody>
 </table>
 <button type="button" class="add-sibling" id="add_sibling_btn">Add Sibling</button>
