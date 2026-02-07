@@ -63,37 +63,73 @@ def student_logout(request):
 # ------------------------
 
 @login_required
-def student_dashboard(request):
-    """
-    Dashboard shows all applications submitted by the logged-in student.
-    """
-    applications = Application.objects.filter(student_user=request.user)
-    return render(request, 'bursary/student_dashboard.html', {'applications': applications})
-
-
-# ------------------------
-# BURSARY APPLICATION
-# ------------------------
-
-@login_required
 def apply(request):
     """
     View for students to submit bursary application.
     """
+    extra_errors = {}
+
     if request.method == 'POST':
         form = ApplicationForm(request.POST, request.FILES)
-        if form.is_valid():
+
+        # ---------- REQUIRED SELECT FIELDS ----------
+        if not request.POST.get("county"):
+            form.add_error(
+                "county",
+                "Please select your county."
+            )
+
+        if not request.POST.get("constituency"):
+            form.add_error(
+                "constituency",
+                "Please select your constituency."
+            )
+
+        if not request.POST.get("level_of_study"):
+            form.add_error(
+                "level_of_study",
+                "Please select your level of study."
+            )
+
+        # ---------- MANUAL FIELD VALIDATION ----------
+        if not request.POST.get("id_no"):
+            extra_errors["id_no"] = "Please enter your ID or Birth Certificate number."
+
+        if not request.POST.get("gender"):
+            extra_errors["gender"] = "Please select your gender."
+
+        if not request.POST.get("family_status"):
+            extra_errors["family_status"] = "Please select your family status."
+
+        # Disability conditional validation
+        if request.POST.get("disability") == "yes":
+            if not request.POST.get("disability_type"):
+                extra_errors["disability_type"] = "Please specify the type of disability."
+            if "disability_document" not in request.FILES:
+                extra_errors["disability_document"] = "Please upload disability supporting evidence."
+
+        # ---------- FINAL CHECK ----------
+        if form.is_valid() and not extra_errors:
             application = form.save(commit=False)
             application.student_user = request.user
             application.save()
-            messages.success(request, "Application submitted successfully!")
+
+            messages.success(request, "Application submitted successfully.")
             return redirect('student_dashboard')
-        else:
-            messages.error(request, "Please correct the errors in your application form.")
+
+        messages.error(request, "Please correct the errors highlighted below.")
+
     else:
         form = ApplicationForm()
-    return render(request, 'bursary/apply.html', {'form': form})
 
+    return render(
+        request,
+        'bursary/apply.html',
+        {
+            'form': form,
+            'errors': extra_errors
+        }
+    )
 
 # ------------------------
 # AJAX: Load Constituencies

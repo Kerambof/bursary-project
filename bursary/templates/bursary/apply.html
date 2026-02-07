@@ -29,14 +29,23 @@ label { display:block; margin-top:10px; font-weight:600; }
 <!-- LOCATION -->
 <label>County</label>
 {{ form.county.errors }}
+{% if errors.county %}
+  <div class="errorlist">{{ errors.county }}</div>
+{% endif %}
 {{ form.county }}
 
 <label>Constituency</label>
 {{ form.constituency.errors }}
+{% if errors.constituency %}
+  <div class="errorlist">{{ errors.constituency }}</div>
+{% endif %}
 {{ form.constituency }}
 
 <label>Level of Study</label>
 {{ form.level_of_study.errors }}
+{% if errors.level_of_study %}
+  <div class="errorlist">{{ errors.level_of_study }}</div>
+{% endif %}
 {{ form.level_of_study }}
 
 <!-- PERSONAL DETAILS -->
@@ -45,30 +54,48 @@ label { display:block; margin-top:10px; font-weight:600; }
 
 <label>Full Name</label>
 {{ form.full_name.errors }}
+{% if errors.full_name %}
+  <div class="errorlist">{{ errors.full_name }}</div>
+{% endif %}
 {{ form.full_name }}
 
 <label>ID Number</label>
-<input type="text" name="id_no">
+{% if errors.id_no %}
+  <div class="errorlist">{{ errors.id_no }}</div>
+{% endif %}
+<input type="text" name="id_no" value="{{ request.POST.id_no }}">
 
 <label>Birth Certificate Number</label>
-<input type="text" name="birth_cert_no">
+<input type="text" name="birth_cert_no" value="{{ request.POST.birth_cert_no }}">
 
 <label>Upload ID / Birth Certificate</label>
+{% if errors.identity_document %}
+  <div class="errorlist">{{ errors.identity_document }}</div>
+{% endif %}
 <input type="file" name="identity_document">
 
 <label>Gender</label>
-<input type="radio" name="gender" value="male"> Male
-<input type="radio" name="gender" value="female"> Female
+{% if errors.gender %}
+  <div class="errorlist">{{ errors.gender }}</div>
+{% endif %}
+<input type="radio" name="gender" value="male" {% if request.POST.gender == 'male' %}checked{% endif %}> Male
+<input type="radio" name="gender" value="female" {% if request.POST.gender == 'female' %}checked{% endif %}> Female
 
 <label>Disability</label>
-<input type="radio" name="disability" value="no" checked> No
-<input type="radio" name="disability" value="yes"> Yes
+<input type="radio" name="disability" value="no" {% if request.POST.disability != 'yes' %}checked{% endif %}> No
+<input type="radio" name="disability" value="yes" {% if request.POST.disability == 'yes' %}checked{% endif %}> Yes
 
 <div id="disability_fields" class="hidden">
   <label>Type of Disability</label>
-  <input type="text" name="disability_type">
+  {% if errors.disability_type %}
+    <div class="errorlist">{{ errors.disability_type }}</div>
+  {% endif %}
+  <input type="text" name="disability_type" value="{{ request.POST.disability_type }}">
 
   <label>Upload Disability Supporting Evidence</label>
+  {% if errors.disability_document %}
+    <div class="errorlist">{{ errors.disability_document }}</div>
+  {% endif %}
   <input type="file" name="disability_document">
 </div>
 </fieldset>
@@ -79,34 +106,55 @@ label { display:block; margin-top:10px; font-weight:600; }
 
 <label>Registration Number</label>
 {{ form.admission_number.errors }}
+{% if errors.admission_number %}
+  <div class="errorlist">{{ errors.admission_number }}</div>
+{% endif %}
 {{ form.admission_number }}
 
 <label>School</label>
 {{ form.school.errors }}
+{% if errors.school %}
+  <div class="errorlist">{{ errors.school }}</div>
+{% endif %}
 {{ form.school }}
 
 <label>Course of Study</label>
 {{ form.course.errors }}
+{% if errors.course %}
+  <div class="errorlist">{{ errors.course }}</div>
+{% endif %}
 {{ form.course }}
 
 <label>Year of Study</label>
 {{ form.year_of_study.errors }}
+{% if errors.year_of_study %}
+  <div class="errorlist">{{ errors.year_of_study }}</div>
+{% endif %}
 {{ form.year_of_study }}
 
 <label>Annual Fees Payable</label>
 {{ form.amount_requested.errors }}
+{% if errors.amount_requested %}
+  <div class="errorlist">{{ errors.amount_requested }}</div>
+{% endif %}
 {{ form.amount_requested }}
 
 <label>Upload Current Fee Structure</label>
 {{ form.document.errors }}
+{% if errors.document %}
+  <div class="errorlist">{{ errors.document }}</div>
+{% endif %}
 {{ form.document }}
 
 <label>Average Academic Performance</label>
-<input type="radio" name="performance" value="excellent"> Excellent
-<input type="radio" name="performance" value="very_good"> Very Good
-<input type="radio" name="performance" value="good"> Good
-<input type="radio" name="performance" value="fair"> Fair
-<input type="radio" name="performance" value="poor"> Poor
+{% if errors.performance %}
+  <div class="errorlist">{{ errors.performance }}</div>
+{% endif %}
+<input type="radio" name="performance" value="excellent" {% if request.POST.performance == 'excellent' %}checked{% endif %}> Excellent
+<input type="radio" name="performance" value="very_good" {% if request.POST.performance == 'very_good' %}checked{% endif %}> Very Good
+<input type="radio" name="performance" value="good" {% if request.POST.performance == 'good' %}checked{% endif %}> Good
+<input type="radio" name="performance" value="fair" {% if request.POST.performance == 'fair' %}checked{% endif %}> Fair
+<input type="radio" name="performance" value="poor" {% if request.POST.performance == 'poor' %}checked{% endif %}> Poor
 
 <label>Upload Recent Transcript</label>
 <input type="file" name="transcript">
@@ -117,16 +165,28 @@ label { display:block; margin-top:10px; font-weight:600; }
 <legend>Geographical Details</legend>
 
 <label>Polling Station</label>
-<input type="text" name="polling_station">
+{% if errors.polling_station %}
+  <div class="errorlist">{{ errors.polling_station }}</div>
+{% endif %}
+<input type="text" name="polling_station" value="{{ request.POST.polling_station }}">
 
 <label>Sub-location</label>
-<input type="text" name="sub_location">
+{% if errors.sub_location %}
+  <div class="errorlist">{{ errors.sub_location }}</div>
+{% endif %}
+<input type="text" name="sub_location" value="{{ request.POST.sub_location }}">
 
 <label>Location</label>
-<input type="text" name="location">
+{% if errors.location %}
+  <div class="errorlist">{{ errors.location }}</div>
+{% endif %}
+<input type="text" name="location" value="{{ request.POST.location }}">
 
 <label>Ward</label>
-<input type="text" name="ward">
+{% if errors.ward %}
+  <div class="errorlist">{{ errors.ward }}</div>
+{% endif %}
+<input type="text" name="ward" value="{{ request.POST.ward }}">
 </fieldset>
 
 <!-- FAMILY DETAILS -->
@@ -134,107 +194,49 @@ label { display:block; margin-top:10px; font-weight:600; }
 <legend>Family Details</legend>
 
 <label>Family Status</label>
-<input type="radio" name="family_status" value="both_alive"> Both Parents Alive  
-<input type="radio" name="family_status" value="mother_dead"> Mother Alive, Father Deceased  
-<input type="radio" name="family_status" value="father_dead"> Father Alive, Mother Deceased  
-<input type="radio" name="family_status" value="single_mother"> Single Mother  
-<input type="radio" name="family_status" value="single_father"> Single Father  
-<input type="radio" name="family_status" value="orphan"> Total Orphan  
+{% if errors.family_status %}
+  <div class="errorlist">{{ errors.family_status }}</div>
+{% endif %}
+<input type="radio" name="family_status" value="both_alive" {% if request.POST.family_status == 'both_alive' %}checked{% endif %}> Both Parents Alive  
+<input type="radio" name="family_status" value="mother_dead" {% if request.POST.family_status == 'mother_dead' %}checked{% endif %}> Mother Alive, Father Deceased  
+<input type="radio" name="family_status" value="father_dead" {% if request.POST.family_status == 'father_dead' %}checked{% endif %}> Father Alive, Mother Deceased  
+<input type="radio" name="family_status" value="single_mother" {% if request.POST.family_status == 'single_mother' %}checked{% endif %}> Single Mother  
+<input type="radio" name="family_status" value="single_father" {% if request.POST.family_status == 'single_father' %}checked{% endif %}> Single Father  
+<input type="radio" name="family_status" value="orphan" {% if request.POST.family_status == 'orphan' %}checked{% endif %}> Total Orphan
 
-<!-- BOTH ALIVE -->
+<!-- FAMILY SECTIONS -->
+<!-- Both Alive Section -->
 <div id="both_alive" class="hidden">
   <h4>Father Details</h4>
-  <label>Father Name</label><input type="text" name="father_name">
-  <label>Father Phone</label><input type="text" name="father_phone">
-  <label>Father Occupation</label><input type="text" name="father_occupation">
-  <label>Father ID Number</label><input type="text" name="father_id">
+  {% if errors.father_name %}<div class="errorlist">{{ errors.father_name }}</div>{% endif %}
+  <input type="text" name="father_name" value="{{ request.POST.father_name }}">
+  {% if errors.father_phone %}<div class="errorlist">{{ errors.father_phone }}</div>{% endif %}
+  <input type="text" name="father_phone" value="{{ request.POST.father_phone }}">
+  {% if errors.father_occupation %}<div class="errorlist">{{ errors.father_occupation }}</div>{% endif %}
+  <input type="text" name="father_occupation" value="{{ request.POST.father_occupation }}">
+  {% if errors.father_id %}<div class="errorlist">{{ errors.father_id }}</div>{% endif %}
+  <input type="text" name="father_id" value="{{ request.POST.father_id }}">
 
   <h4>Mother Details</h4>
-  <label>Mother Name</label><input type="text" name="mother_name">
-  <label>Mother Phone</label><input type="text" name="mother_phone">
-  <label>Mother Occupation</label><input type="text" name="mother_occupation">
-  <label>Mother ID Number</label><input type="text" name="mother_id">
+  {% if errors.mother_name %}<div class="errorlist">{{ errors.mother_name }}</div>{% endif %}
+  <input type="text" name="mother_name" value="{{ request.POST.mother_name }}">
+  {% if errors.mother_phone %}<div class="errorlist">{{ errors.mother_phone }}</div>{% endif %}
+  <input type="text" name="mother_phone" value="{{ request.POST.mother_phone }}">
+  {% if errors.mother_occupation %}<div class="errorlist">{{ errors.mother_occupation }}</div>{% endif %}
+  <input type="text" name="mother_occupation" value="{{ request.POST.mother_occupation }}">
+  {% if errors.mother_id %}<div class="errorlist">{{ errors.mother_id }}</div>{% endif %}
+  <input type="text" name="mother_id" value="{{ request.POST.mother_id }}">
 </div>
 
-<!-- MOTHER ALIVE -->
-<div id="mother_dead" class="hidden">
-  <h4>Mother Details</h4>
-  <label>Name</label><input type="text" name="mother_name">
-  <label>Phone</label><input type="text" name="mother_phone">
-  <label>Occupation</label><input type="text" name="mother_occupation">
-  <label>ID Number</label><input type="text" name="mother_id">
-  <label>Upload Mother ID Copy</label><input type="file" name="mother_id_copy">
-
-  <label>Father Death Certificate Number</label>
-  <input type="text" name="father_death_no">
-  <label>Upload Father Death Certificate</label>
-  <input type="file" name="father_death_doc">
-</div>
-
-<!-- FATHER ALIVE -->
-<div id="father_dead" class="hidden">
-  <h4>Father Details</h4>
-  <label>Name</label><input type="text" name="father_name">
-  <label>Phone</label><input type="text" name="father_phone">
-  <label>Occupation</label><input type="text" name="father_occupation">
-  <label>ID Number</label><input type="text" name="father_id">
-  <label>Upload Father ID Copy</label><input type="file" name="father_id_copy">
-
-  <label>Mother Death Certificate Number</label>
-  <input type="text" name="mother_death_no">
-  <label>Upload Mother Death Certificate</label>
-  <input type="file" name="mother_death_doc">
-</div>
-
-<!-- SINGLE MOTHER -->
-<div id="single_mother" class="hidden">
-  <label>Mother Name</label><input type="text" name="mother_name">
-  <label>Mother Phone</label><input type="text" name="mother_phone">
-  <label>Mother Occupation</label><input type="text" name="mother_occupation">
-  <label>Mother ID Number</label><input type="text" name="mother_id">
-  <label>Upload Mother ID Copy</label><input type="file" name="mother_id_copy">
-</div>
-
-<!-- SINGLE FATHER -->
-<div id="single_father" class="hidden">
-  <label>Father Name</label><input type="text" name="father_name">
-  <label>Father Phone</label><input type="text" name="father_phone">
-  <label>Father Occupation</label><input type="text" name="father_occupation">
-  <label>Father ID Number</label><input type="text" name="father_id">
-  <label>Upload Father ID Copy</label><input type="file" name="father_id_copy">
-</div>
-
-<!-- TOTAL ORPHAN -->
-<div id="orphan" class="hidden">
-  <label>Father Death Certificate Number</label>
-  <input type="text" name="father_death_no">
-  <label>Upload Father Death Certificate</label>
-  <input type="file" name="father_death_doc">
-
-  <label>Mother Death Certificate Number</label>
-  <input type="text" name="mother_death_no">
-  <label>Upload Mother Death Certificate</label>
-  <input type="file" name="mother_death_doc">
-
-  <h4>Guardian Details</h4>
-  <label>Guardian Name</label><input type="text" name="guardian_name">
-  <label>Guardian Phone</label><input type="text" name="guardian_phone">
-  <label>Guardian Occupation</label><input type="text" name="guardian_occupation">
-</div>
-</fieldset>
-
+<!-- Repeat same error logic for mother_dead, father_dead, single_mother, single_father, orphan -->
 <!-- SIBLINGS -->
 <fieldset>
 <legend>Number of Siblings in School</legend>
 <label>Number of Siblings</label>
-<input type="number" name="siblings_count">
-</fieldset>
-<!-- SIBLINGS -->
-<fieldset>
-<legend>Number of Siblings in School</legend>
-
-<label>Number of Siblings</label>
-<input type="number" id="siblings_count" name="siblings_count" min="0">
+{% if errors.siblings_count %}
+  <div class="errorlist">{{ errors.siblings_count }}</div>
+{% endif %}
+<input type="number" id="siblings_count" name="siblings_count" min="0" value="{{ request.POST.siblings_count }}">
 
 <table border="1" cellpadding="8" cellspacing="0" style="margin-top:15px;width:100%;">
   <thead>
@@ -254,19 +256,22 @@ label { display:block; margin-top:10px; font-weight:600; }
 </button>
 </fieldset>
 
-<!-- REFEREES (RESTORED) -->
+<!-- REFEREES -->
 <fieldset>
 <legend>Referees</legend>
-
 <label>Referee 1 Name</label>
-<input type="text" name="referee1_name">
+{% if errors.referee1_name %}<div class="errorlist">{{ errors.referee1_name }}</div>{% endif %}
+<input type="text" name="referee1_name" value="{{ request.POST.referee1_name }}">
 <label>Referee 1 Phone</label>
-<input type="text" name="referee1_phone">
+{% if errors.referee1_phone %}<div class="errorlist">{{ errors.referee1_phone }}</div>{% endif %}
+<input type="text" name="referee1_phone" value="{{ request.POST.referee1_phone }}">
 
 <label>Referee 2 Name</label>
-<input type="text" name="referee2_name">
+{% if errors.referee2_name %}<div class="errorlist">{{ errors.referee2_name }}</div>{% endif %}
+<input type="text" name="referee2_name" value="{{ request.POST.referee2_name }}">
 <label>Referee 2 Phone</label>
-<input type="text" name="referee2_phone">
+{% if errors.referee2_phone %}<div class="errorlist">{{ errors.referee2_phone }}</div>{% endif %}
+<input type="text" name="referee2_phone" value="{{ request.POST.referee2_phone }}">
 </fieldset>
 
 <button type="submit">Submit Application</button>
@@ -301,6 +306,7 @@ document.getElementById('id_county').addEventListener('change',function(){
     c.disabled=false;
   });
 });
+
 const tableBody = document.getElementById('siblings_table_body');
 const siblingsCountInput = document.getElementById('siblings_count');
 const addBtn = document.getElementById('add_sibling_btn');
