@@ -229,6 +229,30 @@ label { display:block; margin-top:10px; font-weight:600; }
 <label>Number of Siblings</label>
 <input type="number" name="siblings_count">
 </fieldset>
+<!-- SIBLINGS -->
+<fieldset>
+<legend>Number of Siblings in School</legend>
+
+<label>Number of Siblings</label>
+<input type="number" id="siblings_count" name="siblings_count" min="0">
+
+<table border="1" cellpadding="8" cellspacing="0" style="margin-top:15px;width:100%;">
+  <thead>
+    <tr>
+      <th>Sibling Name</th>
+      <th>Institution</th>
+      <th>Amount Payable Per Year</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="siblings_table_body">
+  </tbody>
+</table>
+
+<button type="button" id="add_sibling_btn" style="margin-top:10px;">
+  Add Sibling
+</button>
+</fieldset>
 
 <!-- REFEREES (RESTORED) -->
 <fieldset>
@@ -276,6 +300,34 @@ document.getElementById('id_county').addEventListener('change',function(){
     data.forEach(i=>c.innerHTML+=`<option value="${i.id}">${i.name}</option>`);
     c.disabled=false;
   });
+});
+const tableBody = document.getElementById('siblings_table_body');
+const siblingsCountInput = document.getElementById('siblings_count');
+const addBtn = document.getElementById('add_sibling_btn');
+
+function updateSiblingCount() {
+  siblingsCountInput.value = tableBody.children.length;
+}
+
+addBtn.addEventListener('click', () => {
+  const row = document.createElement('tr');
+
+  row.innerHTML = `
+    <td><input type="text" name="sibling_name[]" required></td>
+    <td><input type="text" name="sibling_institution[]" required></td>
+    <td><input type="number" name="sibling_amount[]" required></td>
+    <td>
+      <button type="button" class="remove_btn">Remove</button>
+    </td>
+  `;
+
+  row.querySelector('.remove_btn').addEventListener('click', () => {
+    row.remove();
+    updateSiblingCount();
+  });
+
+  tableBody.appendChild(row);
+  updateSiblingCount();
 });
 </script>
 
