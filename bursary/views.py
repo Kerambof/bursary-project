@@ -224,3 +224,4 @@ def load_constituencies(request):
     county_id = request.GET.get('county')
     constituencies = Constituency.objects.filter(county_id=county_id)
     return JsonResponse(list(constituencies.values('id', 'name')), safe=False)
+

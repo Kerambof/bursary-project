@@ -205,30 +205,176 @@ label { display:block; margin-top:10px; font-weight:600; }
 <input type="radio" name="family_status" value="orphan" {% if request.POST.family_status == 'orphan' %}checked{% endif %}> Total Orphan
 
 <!-- FAMILY SECTIONS -->
-<!-- Both Alive Section -->
+<!-- FAMILY DETAILS -->
+<fieldset>
+<legend>Family Details</legend>
+
+<label>Family Status</label>
+{% if errors.family_status %}
+  <div class="errorlist">{{ errors.family_status }}</div>
+{% endif %}
+<input type="radio" name="family_status" value="both_alive" {% if request.POST.family_status == 'both_alive' %}checked{% endif %}> Both Parents Alive  
+<input type="radio" name="family_status" value="mother_dead" {% if request.POST.family_status == 'mother_dead' %}checked{% endif %}> Mother Alive, Father Deceased  
+<input type="radio" name="family_status" value="father_dead" {% if request.POST.family_status == 'father_dead' %}checked{% endif %}> Father Alive, Mother Deceased  
+<input type="radio" name="family_status" value="single_mother" {% if request.POST.family_status == 'single_mother' %}checked{% endif %}> Single Mother  
+<input type="radio" name="family_status" value="single_father" {% if request.POST.family_status == 'single_father' %}checked{% endif %}> Single Father  
+<input type="radio" name="family_status" value="orphan" {% if request.POST.family_status == 'orphan' %}checked{% endif %}> Total Orphan
+
+<!-- BOTH ALIVE -->
 <div id="both_alive" class="hidden">
   <h4>Father Details</h4>
   {% if errors.father_name %}<div class="errorlist">{{ errors.father_name }}</div>{% endif %}
   <input type="text" name="father_name" value="{{ request.POST.father_name }}">
+  
   {% if errors.father_phone %}<div class="errorlist">{{ errors.father_phone }}</div>{% endif %}
   <input type="text" name="father_phone" value="{{ request.POST.father_phone }}">
+  
   {% if errors.father_occupation %}<div class="errorlist">{{ errors.father_occupation }}</div>{% endif %}
   <input type="text" name="father_occupation" value="{{ request.POST.father_occupation }}">
+  
   {% if errors.father_id %}<div class="errorlist">{{ errors.father_id }}</div>{% endif %}
   <input type="text" name="father_id" value="{{ request.POST.father_id }}">
 
   <h4>Mother Details</h4>
   {% if errors.mother_name %}<div class="errorlist">{{ errors.mother_name }}</div>{% endif %}
   <input type="text" name="mother_name" value="{{ request.POST.mother_name }}">
+  
   {% if errors.mother_phone %}<div class="errorlist">{{ errors.mother_phone }}</div>{% endif %}
   <input type="text" name="mother_phone" value="{{ request.POST.mother_phone }}">
+  
   {% if errors.mother_occupation %}<div class="errorlist">{{ errors.mother_occupation }}</div>{% endif %}
   <input type="text" name="mother_occupation" value="{{ request.POST.mother_occupation }}">
+  
   {% if errors.mother_id %}<div class="errorlist">{{ errors.mother_id }}</div>{% endif %}
   <input type="text" name="mother_id" value="{{ request.POST.mother_id }}">
 </div>
 
-<!-- Repeat same error logic for mother_dead, father_dead, single_mother, single_father, orphan -->
+<!-- MOTHER DEAD -->
+<div id="mother_dead" class="hidden">
+  <h4>Mother Details</h4>
+  {% if errors.mother_name %}<div class="errorlist">{{ errors.mother_name }}</div>{% endif %}
+  <input type="text" name="mother_name" value="{{ request.POST.mother_name }}">
+  
+  {% if errors.mother_phone %}<div class="errorlist">{{ errors.mother_phone }}</div>{% endif %}
+  <input type="text" name="mother_phone" value="{{ request.POST.mother_phone }}">
+  
+  {% if errors.mother_occupation %}<div class="errorlist">{{ errors.mother_occupation }}</div>{% endif %}
+  <input type="text" name="mother_occupation" value="{{ request.POST.mother_occupation }}">
+  
+  {% if errors.mother_id %}<div class="errorlist">{{ errors.mother_id }}</div>{% endif %}
+  <input type="text" name="mother_id" value="{{ request.POST.mother_id }}">
+
+  <label>Father Death Certificate Number</label>
+  <input type="text" name="father_death_no" value="{{ request.POST.father_death_no }}">
+  
+  <label>Upload Father Death Certificate</label>
+  <input type="file" name="father_death_doc">
+</div>
+
+<!-- FATHER DEAD -->
+<div id="father_dead" class="hidden">
+  <h4>Father Details</h4>
+  {% if errors.father_name %}<div class="errorlist">{{ errors.father_name }}</div>{% endif %}
+  <input type="text" name="father_name" value="{{ request.POST.father_name }}">
+  
+  {% if errors.father_phone %}<div class="errorlist">{{ errors.father_phone }}</div>{% endif %}
+  <input type="text" name="father_phone" value="{{ request.POST.father_phone }}">
+  
+  {% if errors.father_occupation %}<div class="errorlist">{{ errors.father_occupation }}</div>{% endif %}
+  <input type="text" name="father_occupation" value="{{ request.POST.father_occupation }}">
+  
+  {% if errors.father_id %}<div class="errorlist">{{ errors.father_id }}</div>{% endif %}
+  <input type="text" name="father_id" value="{{ request.POST.father_id }}">
+
+  <label>Mother Death Certificate Number</label>
+  <input type="text" name="mother_death_no" value="{{ request.POST.mother_death_no }}">
+  
+  <label>Upload Mother Death Certificate</label>
+  <input type="file" name="mother_death_doc">
+</div>
+
+<!-- SINGLE MOTHER -->
+<div id="single_mother" class="hidden">
+  <h4>Mother Details</h4>
+  {% if errors.mother_name %}<div class="errorlist">{{ errors.mother_name }}</div>{% endif %}
+  <input type="text" name="mother_name" value="{{ request.POST.mother_name }}">
+  
+  {% if errors.mother_phone %}<div class="errorlist">{{ errors.mother_phone }}</div>{% endif %}
+  <input type="text" name="mother_phone" value="{{ request.POST.mother_phone }}">
+  
+  {% if errors.mother_occupation %}<div class="errorlist">{{ errors.mother_occupation }}</div>{% endif %}
+  <input type="text" name="mother_occupation" value="{{ request.POST.mother_occupation }}">
+  
+  {% if errors.mother_id %}<div class="errorlist">{{ errors.mother_id }}</div>{% endif %}
+  <input type="text" name="mother_id" value="{{ request.POST.mother_id }}">
+</div>
+
+<!-- SINGLE FATHER -->
+<div id="single_father" class="hidden">
+  <h4>Father Details</h4>
+  {% if errors.father_name %}<div class="errorlist">{{ errors.father_name }}</div>{% endif %}
+  <input type="text" name="father_name" value="{{ request.POST.father_name }}">
+  
+  {% if errors.father_phone %}<div class="errorlist">{{ errors.father_phone }}</div>{% endif %}
+  <input type="text" name="father_phone" value="{{ request.POST.father_phone }}">
+  
+  {% if errors.father_occupation %}<div class="errorlist">{{ errors.father_occupation }}</div>{% endif %}
+  <input type="text" name="father_occupation" value="{{ request.POST.father_occupation }}">
+  
+  {% if errors.father_id %}<div class="errorlist">{{ errors.father_id }}</div>{% endif %}
+  <input type="text" name="father_id" value="{{ request.POST.father_id }}">
+</div>
+
+<!-- ORPHAN -->
+<div id="orphan" class="hidden">
+  <label>Father Death Certificate Number</label>
+  <input type="text" name="father_death_no" value="{{ request.POST.father_death_no }}">
+  <label>Upload Father Death Certificate</label>
+  <input type="file" name="father_death_doc">
+
+  <label>Mother Death Certificate Number</label>
+  <input type="text" name="mother_death_no" value="{{ request.POST.mother_death_no }}">
+  <label>Upload Mother Death Certificate</label>
+  <input type="file" name="mother_death_doc">
+
+  <h4>Guardian Details</h4>
+  {% if errors.guardian_name %}<div class="errorlist">{{ errors.guardian_name }}</div>{% endif %}
+  <input type="text" name="guardian_name" value="{{ request.POST.guardian_name }}">
+  
+  {% if errors.guardian_phone %}<div class="errorlist">{{ errors.guardian_phone }}</div>{% endif %}
+  <input type="text" name="guardian_phone" value="{{ request.POST.guardian_phone }}">
+  
+  {% if errors.guardian_occupation %}<div class="errorlist">{{ errors.guardian_occupation }}</div>{% endif %}
+  <input type="text" name="guardian_occupation" value="{{ request.POST.guardian_occupation }}">
+</div>
+
+</fieldset>
+
+<!-- Family Section JS -->
+<script>
+const familySections = ['both_alive','mother_dead','father_dead','single_mother','single_father','orphan'];
+const familyRadios = document.querySelectorAll('input[name="family_status"]');
+
+function showFamilySection(value) {
+  familySections.forEach(id => document.getElementById(id).classList.add('hidden'));
+  const section = document.getElementById(value);
+  if(section) section.classList.remove('hidden');
+}
+
+// Listen for changes
+familyRadios.forEach(radio => {
+  radio.addEventListener('change', () => showFamilySection(radio.value));
+});
+
+// Show section on page load if a value was previously selected
+window.addEventListener('DOMContentLoaded', () => {
+  const checkedRadio = document.querySelector('input[name="family_status"]:checked');
+  if(checkedRadio) {
+    showFamilySection(checkedRadio.value);
+  }
+});
+</script>
+
 <!-- SIBLINGS -->
 <fieldset>
 <legend>Number of Siblings in School</legend>
