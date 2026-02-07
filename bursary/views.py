@@ -68,7 +68,6 @@ def student_dashboard(request):
     """
     applications = Application.objects.filter(student_user=request.user)
     return render(request, 'bursary/student_dashboard.html', {'applications': applications})
-
 @login_required
 def apply(request):
     """
@@ -194,7 +193,7 @@ def apply(request):
         if form.is_valid() and not extra_errors:
             application = form.save(commit=False)
             application.student_user = request.user
-            application.save()
+            application.save()  # <-- This now saves all form fields automatically
             messages.success(request, "Application submitted successfully!")
             return redirect('student_dashboard')
 
@@ -224,4 +223,3 @@ def load_constituencies(request):
     county_id = request.GET.get('county')
     constituencies = Constituency.objects.filter(county_id=county_id)
     return JsonResponse(list(constituencies.values('id', 'name')), safe=False)
-

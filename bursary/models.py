@@ -120,11 +120,9 @@ class Application(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.admission_number}"
 
-
 # =========================
-# CONSTITUENCY ADMIN
+# CONSTITUENCY OFFICER
 # =========================
-
 class ConstituencyOfficer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     constituency = models.OneToOneField(Constituency, on_delete=models.CASCADE)

@@ -104,7 +104,7 @@ label { display:block; margin-top:10px; font-weight:600; }
 <fieldset>
 <legend>Educational Details</legend>
 
-<label>Registration Number</label>
+<label>Reg No/Admin No:</label>
 {{ form.admission_number.errors }}
 {% if errors.admission_number %}
   <div class="errorlist">{{ errors.admission_number }}</div>
@@ -125,7 +125,7 @@ label { display:block; margin-top:10px; font-weight:600; }
 {% endif %}
 {{ form.course }}
 
-<label>Year of Study</label>
+<label>Year of Study/ Form</label>
 {{ form.year_of_study.errors }}
 {% if errors.year_of_study %}
   <div class="errorlist">{{ errors.year_of_study }}</div>
