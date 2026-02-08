@@ -42,7 +42,7 @@ class ApplicationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-       self.fields['county'].queryset = County.objects.all()
+        self.fields['county'].queryset = County.objects.all()
         self.fields['county'].empty_label = "Select County"
 
         # Constituency: initially empty if no county selected

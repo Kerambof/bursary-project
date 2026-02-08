@@ -33,7 +33,7 @@ class LevelOfStudy(models.Model):
 # =========================
 
 class Application(models.Model):
-    
+
     LEVEL_CHOICES = (
         ('university', 'University'),
         ('college', 'College'),
@@ -49,11 +49,11 @@ class Application(models.Model):
         blank=True,
         related_name='applications'
     )
-       # Location
- # Location
-county = models.ForeignKey(County, on_delete=models.SET_NULL, null=True)
-constituency = models.ForeignKey(Constituency, on_delete=models.SET_NULL, null=True)
-level_of_study = models.ForeignKey(LevelOfStudy, on_delete=models.SET_NULL, null=True)
+
+    # Location
+    county = models.ForeignKey(County, on_delete=models.SET_NULL, null=True)
+    constituency = models.ForeignKey(Constituency, on_delete=models.SET_NULL, null=True)
+    level_of_study = models.ForeignKey(LevelOfStudy, on_delete=models.SET_NULL, null=True)
 
     # Personal
     full_name = models.CharField(max_length=200)
@@ -109,14 +109,13 @@ level_of_study = models.ForeignKey(LevelOfStudy, on_delete=models.SET_NULL, null
     referee2_name = models.CharField(max_length=200)
     referee2_phone = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-
 
 # =========================
 # CONSTITUENCY OFFICER
