@@ -50,9 +50,10 @@ class Application(models.Model):
         related_name='applications'
     )
        # Location
-    county = models.CharField(max_length=100)
-    constituency = models.CharField(max_length=100)
-    level_of_study = models.CharField(max_length=50)
+ # Location
+county = models.ForeignKey(County, on_delete=models.SET_NULL, null=True)
+constituency = models.ForeignKey(Constituency, on_delete=models.SET_NULL, null=True)
+level_of_study = models.ForeignKey(LevelOfStudy, on_delete=models.SET_NULL, null=True)
 
     # Personal
     full_name = models.CharField(max_length=200)
