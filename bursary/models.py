@@ -33,13 +33,7 @@ class LevelOfStudy(models.Model):
 # =========================
 
 class Application(models.Model):
-
-    STATUS_CHOICES = (
-        ('PENDING', 'Pending'),
-        ('APPROVED', 'Approved'),
-        ('REJECTED', 'Rejected'),
-    )
-
+    
     LEVEL_CHOICES = (
         ('university', 'University'),
         ('college', 'College'),
@@ -55,70 +49,73 @@ class Application(models.Model):
         blank=True,
         related_name='applications'
     )
-    full_name = models.CharField(max_length=255)
+       # Location
+    county = models.CharField(max_length=100)
+    constituency = models.CharField(max_length=100)
+    level_of_study = models.CharField(max_length=50)
+
+    # Personal
+    full_name = models.CharField(max_length=200)
+    id_no = models.CharField(max_length=20)
+    birth_cert_no = models.CharField(max_length=50, blank=True, null=True)
+    identity_document = models.FileField(upload_to='documents/')
+    gender = models.CharField(max_length=10)
+    disability = models.CharField(max_length=5)
+    disability_type = models.CharField(max_length=100, blank=True, null=True)
+    disability_document = models.FileField(upload_to='documents/', blank=True, null=True)
+
+    # Education
     admission_number = models.CharField(max_length=50)
-    gender = models.CharField(max_length=10, choices=(('Male','Male'),('Female','Female')), null=True, blank=True)
-    id_no = models.CharField(max_length=50, blank=True, null=True)
-    birth_no = models.CharField(max_length=50, blank=True, null=True)
-    id_copy = models.FileField(upload_to='documents/id/', blank=True, null=True)
-    birth_copy = models.FileField(upload_to='documents/birth/', blank=True, null=True)
-    disability = models.BooleanField(default=False)
-    disability_details = models.TextField(blank=True, null=True)
-    phone = models.CharField(max_length=20)
-
-    # Educational details
-    reg_no = models.CharField(max_length=50, blank=True, null=True)
-    school = models.CharField(max_length=255)
-    course = models.CharField(max_length=255)
-    year_of_study = models.IntegerField()
+    school = models.CharField(max_length=200)
+    course = models.CharField(max_length=200)
+    year_of_study = models.CharField(max_length=20)
     amount_requested = models.DecimalField(max_digits=10, decimal_places=2)
-    annual_fees = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    fee_structure = models.FileField(upload_to='documents/fee_structure/', blank=True, null=True)
-    academic_performance = models.CharField(max_length=20, choices=(('Excellent','Excellent'),('Very Good','Very Good'),('Good','Good'),('Fair','Fair'),('Poor','Poor')), blank=True, null=True)
-    transcript = models.FileField(upload_to='documents/transcript/', blank=True, null=True)
+    document = models.FileField(upload_to='documents/')
+    performance = models.CharField(max_length=20)
+    transcript = models.FileField(upload_to='documents/')
 
-    # Location and level
-    county = models.ForeignKey(County, on_delete=models.SET_NULL, null=True, related_name='applications')
-    constituency = models.ForeignKey(Constituency, on_delete=models.SET_NULL, null=True, related_name='applications')
-    level_of_study = models.CharField(max_length=20, choices=LEVEL_CHOICES)
+    # Geo
+    polling_station = models.CharField(max_length=200)
+    sub_location = models.CharField(max_length=200)
+    location = models.CharField(max_length=200)
+    ward = models.CharField(max_length=200)
 
-    # Geo details
-    polling_station = models.CharField(max_length=255, blank=True, null=True)
-    sub_location = models.CharField(max_length=255, blank=True, null=True)
-    location = models.CharField(max_length=255, blank=True, null=True)
-    ward = models.CharField(max_length=255, blank=True, null=True)
+    # Family
+    family_status = models.CharField(max_length=50)
+    father_name = models.CharField(max_length=200, blank=True, null=True)
+    father_phone = models.CharField(max_length=20, blank=True, null=True)
+    father_occupation = models.CharField(max_length=200, blank=True, null=True)
+    father_id = models.CharField(max_length=20, blank=True, null=True)
+    mother_name = models.CharField(max_length=200, blank=True, null=True)
+    mother_phone = models.CharField(max_length=20, blank=True, null=True)
+    mother_occupation = models.CharField(max_length=200, blank=True, null=True)
+    mother_id = models.CharField(max_length=20, blank=True, null=True)
+    father_death_no = models.CharField(max_length=50, blank=True, null=True)
+    father_death_doc = models.FileField(upload_to='documents/', blank=True, null=True)
+    mother_death_no = models.CharField(max_length=50, blank=True, null=True)
+    mother_death_doc = models.FileField(upload_to='documents/', blank=True, null=True)
+    guardian_name = models.CharField(max_length=200, blank=True, null=True)
+    guardian_phone = models.CharField(max_length=20, blank=True, null=True)
+    guardian_occupation = models.CharField(max_length=200, blank=True, null=True)
 
-    # Family details
-    parents_status = models.CharField(max_length=50, choices=(('both_alive','Both Alive'),('mother_alive','Mother Alive'),('father_alive','Father Alive'),('single_mother','Single Mother'),('single_father','Single Father'),('orphan','Orphan')), blank=True, null=True)
-    parent_disabled = models.BooleanField(default=False)
-    disabled_parent_name = models.CharField(max_length=255, blank=True, null=True)
-    disabled_parent_phone = models.CharField(max_length=20, blank=True, null=True)
-    disabled_parent_type = models.CharField(max_length=255, blank=True, null=True)
-    disabled_parent_doc = models.FileField(upload_to='documents/disabled_parent/', blank=True, null=True)
-
-    # Siblings
-    siblings_highschool_names = models.TextField(blank=True, null=True)
-    siblings_highschool_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    siblings_college_names = models.TextField(blank=True, null=True)
-    siblings_college_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    siblings_university_names = models.TextField(blank=True, null=True)
-    siblings_university_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    # Siblings (comma-separated)
+    siblings_names = models.TextField(blank=True, null=True)
+    siblings_amounts = models.TextField(blank=True, null=True)
 
     # Referees
-    referee1_name = models.CharField(max_length=255, blank=True, null=True)
-    referee1_phone = models.CharField(max_length=20, blank=True, null=True)
-    referee2_name = models.CharField(max_length=255, blank=True, null=True)
-    referee2_phone = models.CharField(max_length=20, blank=True, null=True)
-
-    # Supporting documents
-    document = models.FileField(upload_to='documents/')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
-
-    # Timestamp
+    referee1_name = models.CharField(max_length=200)
+    referee1_phone = models.CharField(max_length=20)
+    referee2_name = models.CharField(max_length=200)
+    referee2_phone = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
-    def __str__(self):
-        return f"{self.full_name} - {self.admission_number}"
 
 # =========================
 # CONSTITUENCY OFFICER

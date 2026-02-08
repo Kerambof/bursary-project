@@ -70,147 +70,32 @@ def student_dashboard(request):
     return render(request, 'bursary/student_dashboard.html', {'applications': applications})
 @login_required
 def apply(request):
-    """
-    View for students to submit bursary application with full validation.
-    """
-    extra_errors = {}
-
+    errors = {}
     if request.method == 'POST':
         form = ApplicationForm(request.POST, request.FILES)
 
-        # -----------------------
-        # LOCATION SECTION
-        # -----------------------
-        if not request.POST.get("county"):
-            form.add_error("county", "Please select your county.")
+        if form.is_valid():
+            app = form.save(commit=False)
+            app.student_user = request.user
 
-        if not request.POST.get("constituency"):
-            form.add_error("constituency", "Please select your constituency.")
+            # Save siblings as comma-separated strings
+            names = request.POST.getlist('sibling_name[]')
+            amounts = request.POST.getlist('sibling_amount[]')
+            app.siblings_names = ", ".join(names)
+            app.siblings_amounts = ", ".join(amounts)
 
-        if not request.POST.get("level_of_study"):
-            form.add_error("level_of_study", "Please select your level of study.")
-
-        # -----------------------
-        # PERSONAL DETAILS
-        # -----------------------
-        if not request.POST.get("full_name"):
-            form.add_error("full_name", "Full name is required.")
-
-        if not request.POST.get("gender"):
-            extra_errors["gender"] = "Please select your gender."
-
-        id_no = request.POST.get("id_no")
-        birth_cert_no = request.POST.get("birth_cert_no")
-        if not id_no and not birth_cert_no:
-            extra_errors["id_no"] = "Enter either ID number or Birth Certificate number."
-
-        if "identity_document" not in request.FILES:
-            extra_errors["identity_document"] = "Please upload ID or Birth Certificate."
-
-        # Disability logic
-        if request.POST.get("disability") == "yes":
-            if not request.POST.get("disability_type"):
-                extra_errors["disability_type"] = "Please specify type of disability."
-            if "disability_document" not in request.FILES:
-                extra_errors["disability_document"] = "Please upload supporting evidence for disability."
-
-        # -----------------------
-        # EDUCATION DETAILS
-        # -----------------------
-        required_education_fields = [
-            "admission_number", "school", "course", "year_of_study",
-            "amount_requested", "document"
-        ]
-        for field in required_education_fields:
-            if not request.POST.get(field) and not request.FILES.get(field):
-                form.add_error(field, f"{field.replace('_', ' ').capitalize()} is required.")
-
-        # -----------------------
-        # GEO DETAILS
-        # -----------------------
-        geo_fields = ["polling_station", "sub_location", "location", "ward"]
-        for field in geo_fields:
-            if not request.POST.get(field):
-                extra_errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
-
-        # -----------------------
-        # FAMILY STATUS
-        # -----------------------
-        family_status = request.POST.get("family_status")
-        if not family_status:
-            extra_errors["family_status"] = "Please select your family status."
-        else:
-            # Depending on the status, check all fields under that section
-            status_fields = []
-            if family_status == "both_alive":
-                status_fields = [
-                    "father_name","father_phone","father_occupation","father_id",
-                    "mother_name","mother_phone","mother_occupation","mother_id"
-                ]
-            elif family_status == "mother_dead":
-                status_fields = [
-                    "mother_name","mother_phone","mother_occupation","mother_id_copy",
-                    "father_death_no","father_death_doc"
-                ]
-            elif family_status == "father_dead":
-                status_fields = [
-                    "father_name","father_phone","father_occupation","father_id_copy",
-                    "mother_death_no","mother_death_doc"
-                ]
-            elif family_status == "single_mother":
-                status_fields = ["mother_name","mother_phone","mother_occupation","mother_id_copy"]
-            elif family_status == "single_father":
-                status_fields = ["father_name","father_phone","father_occupation","father_id_copy"]
-            elif family_status == "orphan":
-                status_fields = [
-                    "father_death_no","father_death_doc",
-                    "mother_death_no","mother_death_doc",
-                    "guardian_name","guardian_phone","guardian_occupation"
-                ]
-            for field in status_fields:
-                if not request.POST.get(field) and not request.FILES.get(field):
-                    extra_errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
-
-        # -----------------------
-        # SIBLINGS
-        # -----------------------
-        siblings_count = request.POST.get("siblings_count")
-        if not siblings_count:
-            extra_errors["siblings_count"] = "Please enter number of siblings."
-        # Table is optional → no further validation
-
-        # -----------------------
-        # REFEREES
-        # -----------------------
-        referee_fields = ["referee1_name","referee1_phone","referee2_name","referee2_phone"]
-        for field in referee_fields:
-            if not request.POST.get(field):
-                extra_errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
-
-        # -----------------------
-        # FINAL CHECK
-        # -----------------------
-        if form.is_valid() and not extra_errors:
-            application = form.save(commit=False)
-            application.student_user = request.user
-            application.save()  # <-- This now saves all form fields automatically
+            app.save()
             messages.success(request, "Application submitted successfully!")
             return redirect('student_dashboard')
-
-        messages.error(request, "Please correct the errors highlighted below.")
+        else:
+            messages.error(request, "Please fix the errors below.")
+            errors = form.errors  # Pass errors to template
 
     else:
         form = ApplicationForm()
 
-    return render(
-        request,
-        'bursary/apply.html',
-        {
-            'form': form,
-            'errors': extra_errors
-        }
-    )
-
+    return render(request, 'bursary/apply.html', {'form': form, 'errors': errors})
+ 
  
 # ------------------------
 # AJAX: Load Constituencies
