@@ -6,13 +6,11 @@
 <!-- Messages -->
 {% if messages %}
   {% for message in messages %}
-    <div 
-      style="padding: 10px; margin-bottom: 10px; border-radius: 5px;
-             {% if message.tags == 'success' %}background-color: #d4edda; color: #155724;{% endif %}
-             {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24;{% endif %}
-             {% if message.tags == 'info' %}background-color: #d1ecf1; color: #0c5460;{% endif %}">
-      {{ message }}
-    </div>
+   <div style="padding: 10px; margin-bottom: 10px; border-radius: 5px;
+    {% if message.tags == 'success' %}background-color: #d4edda; color: #155724;{% elif message.tags == 'error' %}background-color: #f8d7da; color: #721c24;{% elif message.tags == 'info' %}background-color: #d1ecf1; color: #0c5460;{% endif %}">
+    {{ message }}
+</div>
+
   {% endfor %}
 {% endif %}
 

@@ -42,18 +42,19 @@ class ApplicationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Initially no constituencies are loaded
-        self.fields['constituency'].queryset = Constituency.objects.none()
-        self.fields['constituency'].widget.attrs.update({'disabled': True})
+       self.fields['county'].queryset = County.objects.all()
+        self.fields['county'].empty_label = "Select County"
 
-        # Dynamic loading based on county
+        # Constituency: initially empty if no county selected
+        self.fields['constituency'].queryset = Constituency.objects.none()
+        self.fields['constituency'].empty_label = "Select Constituency"
+
+        # Load constituencies if POST or editing
         if 'county' in self.data:
             try:
                 county_id = int(self.data.get('county'))
                 self.fields['constituency'].queryset = Constituency.objects.filter(county_id=county_id)
-                self.fields['constituency'].widget.attrs.pop('disabled', None)
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk and self.instance.county:
             self.fields['constituency'].queryset = self.instance.county.constituencies.all()
-            self.fields['constituency'].widget.attrs.pop('disabled', None)
