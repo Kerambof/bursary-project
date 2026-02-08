@@ -64,7 +64,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # DATABASE
 # Works locally (SQLite) and on Render (Postgres)
 # -----------------------------
-DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_lulx_user:ZnpO71b0Uhtx0O9rKRqeHq6a1TwjuZ44@dpg-d62qam7fte5s73b9h4bg-a.virginia-postgres.render.com/bursary_db_lulx"
+DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_7c6i_user:NGGB4ePDl3pxOZwAohrrfyyoDObUVkms@dpg-d64f7p14tr6s73ejdkvg-a.virginia-postgres.render.com/bursary_db_7c6i"
 
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
