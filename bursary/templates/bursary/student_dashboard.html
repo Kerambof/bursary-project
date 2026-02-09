@@ -43,15 +43,7 @@
         <td>{{ app.county.name }}</td>
         <td>{{ app.constituency.name }}</td>
         <td>{{ app.amount_requested }}</td>
-        <td>
-            {% if app.status == 'pending' %}
-                <span style="color:orange; font-weight:bold;">Pending</span>
-            {% elif app.status == 'approved' %}
-                <span style="color:green; font-weight:bold;">Approved</span>
-            {% elif app.status == 'rejected' %}
-                <span style="color:red; font-weight:bold;">Rejected</span>
-            {% endif %}
-        </td>
+        <td>{{ app.get_status_display }}</td>
         <td>{{ app.created_at|date:"M d, Y H:i" }}</td>
     </tr>
     {% endfor %}
@@ -61,19 +53,31 @@
 {% endif %}
 
 <!-- Apply Button Logic: Disabled if there is a pending application -->
-{% if applications|length > 0 and applications|dictsortreversed:"created_at"|first.status == "pending" %}
-  <p style="color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px; border: 1px solid #ffeeba;">
-    You already have a pending application. You can only apply once per year. Please wait for it to be processed.
-  </p>
-  <p>
-    <button style="font-weight: bold; text-decoration: underline; color: gray; cursor: not-allowed;" disabled>
-      Apply for Bursary (Pending Application)
-    </button>
-  </p>
+{% if applications %}
+    {% with applications|dictsortreversed:"created_at"|first as latest_app %}
+        {% if latest_app.status == "pending" %}
+            <p style="color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px; border: 1px solid #ffeeba;">
+                You already have a pending application. You can only apply once per year. Please wait for it to be processed.
+            </p>
+            <p>
+                <button style="font-weight: bold; text-decoration: underline; color: gray; cursor: not-allowed;" disabled>
+                    Apply for Bursary (Pending Application)
+                </button>
+            </p>
+        {% else %}
+            <p>
+                <a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">
+                    Apply for Bursary
+                </a>
+            </p>
+        {% endif %}
+    {% endwith %}
 {% else %}
-  <p>
-    <a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">
-      Apply for Bursary
-    </a>
-  </p>
+    <p>
+        <a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">
+            Apply for Bursary
+        </a>
+    </p>
 {% endif %}
+
+{% endblock %}
