@@ -30,8 +30,8 @@
         <th>County</th>
         <th>Constituency</th>
         <th>Amount Requested</th>
-        <th>Document</th>
-        <th>Created At</th>
+        <th>Status</th>
+        <th>Date Applied</th>
     </tr>
     {% for app in applications %}
     <tr>
@@ -44,10 +44,12 @@
         <td>{{ app.constituency.name }}</td>
         <td>{{ app.amount_requested }}</td>
         <td>
-            {% if app.document %}
-            <a href="{{ app.document.url }}" target="_blank">View</a>
-            {% else %}
-            N/A
+            {% if app.status == 'pending' %}
+                <span style="color:orange; font-weight:bold;">Pending</span>
+            {% elif app.status == 'approved' %}
+                <span style="color:green; font-weight:bold;">Approved</span>
+            {% elif app.status == 'rejected' %}
+                <span style="color:red; font-weight:bold;">Rejected</span>
             {% endif %}
         </td>
         <td>{{ app.created_at|date:"M d, Y H:i" }}</td>
@@ -58,5 +60,20 @@
 <p>You have not submitted any applications yet.</p>
 {% endif %}
 
-<p><a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">Apply for Bursary</a></p>
-{% endblock %}
+<!-- Apply Button Logic: Disabled if there is a pending application -->
+{% if applications|length > 0 and applications|dictsortreversed:"created_at"|first.status == "pending" %}
+  <p style="color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px; border: 1px solid #ffeeba;">
+    You already have a pending application. You can only apply once per year. Please wait for it to be processed.
+  </p>
+  <p>
+    <button style="font-weight: bold; text-decoration: underline; color: gray; cursor: not-allowed;" disabled>
+      Apply for Bursary (Pending Application)
+    </button>
+  </p>
+{% else %}
+  <p>
+    <a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">
+      Apply for Bursary
+    </a>
+  </p>
+{% endif %}
