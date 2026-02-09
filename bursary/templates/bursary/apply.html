@@ -3,6 +3,19 @@
 
 {% block content %}
 <h2>Submit Bursary Application</h2>
+{% if application %}
+  <div style="margin-bottom:15px;">
+    <strong>Application Status:</strong>
+    {% if application.status == 'pending' %}
+      <span style="color:orange; font-weight:bold;">Pending</span>
+    {% elif application.status == 'approved' %}
+      <span style="color:green; font-weight:bold;">Approved</span>
+    {% elif application.status == 'rejected' %}
+      <span style="color:red; font-weight:bold;">Rejected</span>
+    {% endif %}
+  </div>
+{% endif %}
+
 
 {% if messages %}
   {% for message in messages %}

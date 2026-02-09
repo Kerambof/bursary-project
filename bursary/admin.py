@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from django.utils.html import format_html
+from django.urls import path
+from django.shortcuts import redirect, get_object_or_404
 
 from .models import (
     Application,
@@ -22,7 +25,8 @@ class ApplicationAdmin(admin.ModelAdmin):
         'admission_number',
         'constituency',
         'status',
-        'created_at'
+        'created_at',
+        'action_buttons',  # <-- added column for approve/reject
     )
 
     list_filter = ('status', 'constituency', 'county', 'level_of_study')
@@ -74,6 +78,52 @@ class ApplicationAdmin(admin.ModelAdmin):
         }),
     )
 
+    # ---------------------------
+    # Approve / Reject buttons
+    # ---------------------------
+    def action_buttons(self, obj):
+        if obj.status == 'pending':
+            return format_html(
+                '<a class="button" href="{}">Approve</a>&nbsp;'
+                '<a class="button" href="{}">Reject</a>',
+                f'approve/{obj.id}/', f'reject/{obj.id}/'
+            )
+        return '-'
+
+    action_buttons.short_description = 'Actions'
+    action_buttons.allow_tags = True
+
+    # ---------------------------
+    # Custom URLs for actions
+    # ---------------------------
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('approve/<int:application_id>/', self.admin_site.admin_view(self.approve_app), name='approve_app'),
+            path('reject/<int:application_id>/', self.admin_site.admin_view(self.reject_app), name='reject_app'),
+        ]
+        return custom_urls + urls
+
+    # ---------------------------
+    # Button handlers
+    # ---------------------------
+    def approve_app(self, request, application_id):
+        app = get_object_or_404(Application, id=application_id)
+        app.status = 'approved'
+        app.save()
+        self.message_user(request, f"Application '{app.full_name}' approved!")
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    def reject_app(self, request, application_id):
+        app = get_object_or_404(Application, id=application_id)
+        app.status = 'rejected'
+        app.save()
+        self.message_user(request, f"Application '{app.full_name}' rejected!")
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    # ---------------------------
+    # Existing code
+    # ---------------------------
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
 

@@ -71,6 +71,12 @@ def student_dashboard(request):
 @login_required
 def apply(request):
     errors = {}
+    try:
+        # get the latest application for this student, if any
+        application = request.user.applications.latest('created_at')
+    except Application.DoesNotExist:
+        application = None
+
     if request.method == 'POST':
         form = ApplicationForm(request.POST, request.FILES)
 
@@ -94,7 +100,16 @@ def apply(request):
     else:
         form = ApplicationForm()
 
-    return render(request, 'bursary/apply.html', {'form': form, 'errors': errors})
+    return render(
+        request,
+        'bursary/apply.html',
+        {
+            'form': form,
+            'errors': errors,
+            'application': application  # <-- pass application to template
+        }
+    )
+
  
  
 # ------------------------
