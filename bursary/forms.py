@@ -6,10 +6,6 @@ from .models import Application, County, Constituency
 # ------------------------
 # STUDENT SIGNUP
 # ------------------------
-from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
-
 class StudentSignUpForm(UserCreationForm):
     full_name = forms.CharField(max_length=100, required=True)
     id_no = forms.CharField(max_length=20, required=True, label="ID No / Birth Certificate No")
@@ -47,8 +43,13 @@ class StudentSignUpForm(UserCreationForm):
 # STUDENT LOGIN
 # ------------------------
 class StudentLoginForm(AuthenticationForm):
-    username = forms.CharField(label='Id NO / Birth Certificate No')
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(
+        label='ID No / Birth Certificate No',
+        widget=forms.TextInput(attrs={'placeholder': 'Enter your ID/Birth Cert No'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+    )
 
 # ------------------------
 # APPLICATION FORM
