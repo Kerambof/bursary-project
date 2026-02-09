@@ -22,16 +22,15 @@ ALLOWED_HOSTS = ['bursary-project.onrender.com']
 # APPLICATIONS
 # -----------------------------
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'django.contrib.admin',         # <-- admin MUST come first
+    'grappelli',                    # Grappelli after admin
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bursary',
-    'grappelli',
-    'django.contrib.admin',
-
+   
+    'bursary',                      # your app
 ]
 
 MIDDLEWARE = [
@@ -101,11 +100,12 @@ STATICFILES_DIRS = [
 ]
 
 # -----------------------------
+# MEDIA FILES
+# -----------------------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# -----------------------------
 # DEFAULT PRIMARY KEY
 # -----------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Media files (uploaded documents)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# settings.py
-
