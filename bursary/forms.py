@@ -6,53 +6,48 @@ from .models import Application, County, Constituency
 # ------------------------
 # STUDENT SIGNUP
 # ------------------------
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
+
 class StudentSignUpForm(UserCreationForm):
-    full_name = forms.CharField(
-        max_length=100,
-        required=True,
-        label="Full Name"
-    )
-
-    id_or_birth_cert = forms.CharField(
-        max_length=50,
-        required=True,
-        label="ID No / Birth Certificate No"
-    )
-
+    full_name = forms.CharField(max_length=100, required=True)
+    id_no = forms.CharField(max_length=20, required=True, label="ID No / Birth Certificate No")
     email = forms.EmailField(required=False)
 
     class Meta:
         model = User
-        fields = (
-            'full_name',
-            'id_or_birth_cert',
-            'email',
-            'password1',
-            'password2'
-        )
+        fields = ('full_name', 'id_no', 'email', 'password1', 'password2')
 
-    def clean_id_or_birth_cert(self):
-        value = self.cleaned_data['id_or_birth_cert']
-        if User.objects.filter(username=value).exists():
-            raise forms.ValidationError(
-                "An account with this ID/Birth Certificate number already exists."
-            )
-        return value
+    def clean_id_no(self):
+        id_no = self.cleaned_data['id_no']
+        if User.objects.filter(username=id_no).exists():
+            raise forms.ValidationError("This ID / Birth Certificate No is already registered.")
+        return id_no
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.username = self.cleaned_data['id_or_birth_cert']
+        # Use ID No / Birth Certificate No as username
+        user.username = self.cleaned_data['id_no']
+
+        # Store full name in first_name and last_name
+        full_name = self.cleaned_data['full_name'].strip()
+        parts = full_name.split(" ", 1)
+        user.first_name = parts[0]
+        user.last_name = parts[1] if len(parts) > 1 else ""
+
+        # Store email if provided
         user.email = self.cleaned_data.get('email', '')
-        user.first_name = self.cleaned_data['full_name']
 
         if commit:
             user.save()
         return user
+
 # ------------------------
 # STUDENT LOGIN
 # ------------------------
 class StudentLoginForm(AuthenticationForm):
-    username = forms.CharField(label='Admission Number')
+    username = forms.CharField(label='Id NO / Birth Certificate No')
     password = forms.CharField(widget=forms.PasswordInput)
 
 # ------------------------

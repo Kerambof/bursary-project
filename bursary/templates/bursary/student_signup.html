@@ -17,13 +17,14 @@
     {% endif %}
   </p>
 
-  <p>
-    {{ form.email.label_tag }}<br>
+ <p>
+    {{ form.email.label_tag }} (optional)<br>
     {{ form.email }}
     {% if form.email.errors %}
-      <span style="color:red;">{{ form.email.errors|striptags }}</span>
+        <br>
+        <span style="color: red;">{{ form.email.errors|striptags }}</span>
     {% endif %}
-  </p>
+</p>
 
   <p>
     {{ form.password1.label_tag }}<br>
