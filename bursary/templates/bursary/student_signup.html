@@ -1,36 +1,45 @@
-{% extends 'bursary/base.html' %}
-
-{% block content %}
-<h2>Student Sign Up</h2>
-
-<!-- Messages -->
-{% if messages %}
-  {% for message in messages %}
-   <div style="padding: 10px; margin-bottom: 10px; border-radius: 5px;
-    {% if message.tags == 'success' %}background-color: #d4edda; color: #155724;{% elif message.tags == 'error' %}background-color: #f8d7da; color: #721c24;{% elif message.tags == 'info' %}background-color: #d1ecf1; color: #0c5460;{% endif %}">
-    {{ message }}
-</div>
-
-  {% endfor %}
-{% endif %}
-
 <form method="POST">
-    {% csrf_token %}
-    
-    <!-- Form fields with errors -->
-    {% for field in form %}
-        <p>
-            {{ field.label_tag }}<br>
-            {{ field }}
-            {% if field.errors %}
-                <br>
-                <span style="color: red;">{{ field.errors|striptags }}</span>
-            {% endif %}
-        </p>
-    {% endfor %}
-    
-    <button type="submit">Sign Up</button>
-</form>
+  {% csrf_token %}
 
-<p>Already have an account? <a href="{% url 'student_login' %}">Login here</a></p>
-{% endblock %}
+  <p>
+    {{ form.full_name.label_tag }}<br>
+    {{ form.full_name }}
+    {% if form.full_name.errors %}
+      <span style="color:red;">{{ form.full_name.errors|striptags }}</span>
+    {% endif %}
+  </p>
+
+  <p>
+    {{ form.id_or_birth_cert.label_tag }}<br>
+    {{ form.id_or_birth_cert }}
+    {% if form.id_or_birth_cert.errors %}
+      <span style="color:red;">{{ form.id_or_birth_cert.errors|striptags }}</span>
+    {% endif %}
+  </p>
+
+  <p>
+    {{ form.email.label_tag }}<br>
+    {{ form.email }}
+    {% if form.email.errors %}
+      <span style="color:red;">{{ form.email.errors|striptags }}</span>
+    {% endif %}
+  </p>
+
+  <p>
+    {{ form.password1.label_tag }}<br>
+    {{ form.password1 }}
+    {% if form.password1.errors %}
+      <span style="color:red;">{{ form.password1.errors|striptags }}</span>
+    {% endif %}
+  </p>
+
+  <p>
+    {{ form.password2.label_tag }}<br>
+    {{ form.password2 }}
+    {% if form.password2.errors %}
+      <span style="color:red;">{{ form.password2.errors|striptags }}</span>
+    {% endif %}
+  </p>
+
+  <button type="submit">Sign Up</button>
+</form>

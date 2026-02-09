@@ -7,22 +7,47 @@ from .models import Application, County, Constituency
 # STUDENT SIGNUP
 # ------------------------
 class StudentSignUpForm(UserCreationForm):
-    full_name = forms.CharField(max_length=100, required=True)
-    admission_number = forms.CharField(max_length=50, required=True)
-    email = forms.EmailField(required=True)
+    full_name = forms.CharField(
+        max_length=100,
+        required=True,
+        label="Full Name"
+    )
+
+    id_or_birth_cert = forms.CharField(
+        max_length=50,
+        required=True,
+        label="ID No / Birth Certificate No"
+    )
+
+    email = forms.EmailField(required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'full_name', 'admission_number', 'email', 'password1', 'password2')
+        fields = (
+            'full_name',
+            'id_or_birth_cert',
+            'email',
+            'password1',
+            'password2'
+        )
+
+    def clean_id_or_birth_cert(self):
+        value = self.cleaned_data['id_or_birth_cert']
+        if User.objects.filter(username=value).exists():
+            raise forms.ValidationError(
+                "An account with this ID/Birth Certificate number already exists."
+            )
+        return value
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.username = self.cleaned_data['admission_number']
-        user.email = self.cleaned_data['email']
+        user.username = self.cleaned_data['id_or_birth_cert']
+        user.email = self.cleaned_data.get('email', '')
+        user.first_name = self.cleaned_data['full_name']
+
         if commit:
             user.save()
         return user
-
 # ------------------------
 # STUDENT LOGIN
 # ------------------------
