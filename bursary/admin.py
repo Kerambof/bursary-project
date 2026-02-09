@@ -25,58 +25,71 @@ class ApplicationAdmin(admin.ModelAdmin):
         'admission_number',
         'constituency',
         'status',
-        'created_at',
-        'action_buttons',  # <-- added column for approve/reject
+        'date_applied',
+        'action_buttons',  # approve/reject
     )
 
     list_filter = ('status', 'constituency', 'county', 'level_of_study')
     search_fields = ('full_name', 'admission_number', 'school', 'course')
-    readonly_fields = ('created_at',)
+    readonly_fields = ('created_at', 'student_user', 'document')
 
-    # Organize fields to match apply.html sections
+    # Organize fields with collapsible sections
     fieldsets = (
+        ("Student Info", {
+            'fields': (
+                'student_user',
+                'full_name',
+                'admission_number',
+                'gender',
+                'id_no',
+                'birth_cert_no',
+                'phone',
+                'disability',
+                'disability_type'
+            )
+        }),
         ("Location & Level", {
-            'fields': ('county', 'constituency', 'level_of_study')
+            'fields': ('county', 'constituency', 'level_of_study', 'polling_station', 'sub_location', 'location', 'ward')
         }),
-        ("Personal Details", {
-            'fields': (
-                'full_name', 'admission_number', 'gender', 'id_no', 'birth_no',
-                'id_copy', 'birth_copy', 'disability', 'disability_details', 'phone'
-            )
-        }),
-        ("Educational Details", {
-            'fields': (
-                'reg_no', 'school', 'course', 'year_of_study', 'amount_requested',
-                'annual_fees', 'fee_structure', 'academic_performance', 'transcript'
-            )
-        }),
-        ("Geo Details", {
-            'fields': ('polling_station', 'sub_location', 'location', 'ward')
+        ("Education Details", {
+            'fields': ('school', 'course', 'year_of_study', 'amount_requested', 'performance', 'transcript')
         }),
         ("Family Details", {
             'fields': (
-                'parents_status', 'parent_disabled',
-                'disabled_parent_name', 'disabled_parent_phone',
-                'disabled_parent_type', 'disabled_parent_doc'
-            )
-        }),
-        ("Siblings Details", {
-            'fields': (
-                'siblings_highschool_names', 'siblings_highschool_amount',
-                'siblings_college_names', 'siblings_college_amount',
-                'siblings_university_names', 'siblings_university_amount'
-            )
+                'family_status',
+                'father_name', 'father_phone', 'father_occupation', 'father_id',
+                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
+                'guardian_name', 'guardian_phone', 'guardian_occupation',
+                'father_death_no', 'father_death_doc', 'mother_death_no', 'mother_death_doc',
+                'siblings_names', 'siblings_amounts'
+            ),
+            'classes': ('collapse',)  # collapsible
         }),
         ("Referees", {
-            'fields': (
-                'referee1_name', 'referee1_phone',
-                'referee2_name', 'referee2_phone'
-            )
+            'fields': ('referee1_name', 'referee1_phone', 'referee2_name', 'referee2_phone'),
+            'classes': ('collapse',)  # collapsible
         }),
-        ("Supporting Document & Status", {
-            'fields': ('document', 'status', 'student_user', 'created_at')
+        ("Status & Timestamps", {
+            'fields': ('status', 'created_at', 'document')
         }),
     )
+
+    # ---------------------------
+    # Display created_at as Date Applied
+    # ---------------------------
+    def date_applied(self, obj):
+        return obj.created_at.strftime("%d %b %Y")
+    date_applied.admin_order_field = 'created_at'
+    date_applied.short_description = 'Date Applied'
+
+    # ---------------------------
+    # Document clickable link
+    # ---------------------------
+    def document_link(self, obj):
+        if obj.document:
+            return format_html('<a href="{}" target="_blank">View Document</a>', obj.document.url)
+        return "-"
+    document_link.short_description = 'Document'
 
     # ---------------------------
     # Approve / Reject buttons
@@ -122,7 +135,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         return redirect(request.META.get('HTTP_REFERER'))
 
     # ---------------------------
-    # Existing code
+    # Permissions & Queryset
     # ---------------------------
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
@@ -131,17 +144,14 @@ class ApplicationAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-
         if hasattr(request.user, 'constituencyofficer'):
-            return qs.filter(
-                constituency=request.user.constituencyofficer.constituency
-            )
+            return qs.filter(constituency=request.user.constituencyofficer.constituency)
         return qs.none()
 
+    # ---------------------------
+    # Auto-create student login on first save
+    # ---------------------------
     def save_model(self, request, obj, form, change):
-        """
-        Auto-create student login on first save
-        """
         if not obj.student_user:
             user = User.objects.create(
                 username=obj.admission_number,

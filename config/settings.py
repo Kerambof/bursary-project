@@ -29,6 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bursary',
+    'grappelli',
+    'django.contrib.admin',
+
 ]
 
 MIDDLEWARE = [
