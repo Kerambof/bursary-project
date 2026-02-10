@@ -21,47 +21,32 @@ from .models import (
 class ApplicationAdmin(admin.ModelAdmin):
 
     list_display = (
-        'full_name',
-        'level_of_study',
-        'school',
-        'admission_number',  # Reg No/Admin No
-        'amount_requested',  # Annual Fees
-        'constituency',
-        'display_family_status',
-        'display_disability',
-        'status',  # Application status
-        'date_applied',  # formatted created_at
-    )
+    'full_name',
+    'level_of_study',
+    'school',
+    'admission_number',  # Reg No/Admin No
+    'amount_requested',  # Annual Fees
+    'constituency',
+    'family_status_display',
+    'disability_display',
+    'status',  # Application status
+    'date_applied',  # formatted created_at
+)
 
-    # ---------------------------
-    # Display created_at as Date Applied
-    # ---------------------------
-    def date_applied(self, obj):
-        return obj.created_at.strftime("%d %b %Y")
-    date_applied.admin_order_field = 'created_at'
-    date_applied.short_description = 'Date Applied'
+# Family status dynamically from obj
+def family_status_display(self, obj):
+    if obj.family_status:
+        # Replace underscores with spaces and capitalize each word
+        return obj.family_status.replace('_', ' ').title()
+    return '-'
+family_status_display.short_description = 'Family Status'
 
-    # ---------------------------
-    # Family status display only selected value
-    # ---------------------------
-    def display_family_status(self, obj):
-        status_map = {
-            'both_alive': 'Both Parents Alive',
-            'mother_alive_father_deceased': 'Mother Alive, Father Deceased',
-            'father_alive_mother_deceased': 'Father Alive, Mother Deceased',
-            'single_mother': 'Single Mother',
-            'single_father': 'Single Father',
-            'total_orphan': 'Total Orphan',
-        }
-        return status_map.get(obj.family_status, '-')
-    display_family_status.short_description = 'Family Status'
-
-    # ---------------------------
-    # Disability display only yes/no
-    # ---------------------------
-    def display_disability(self, obj):
-        return 'Yes' if obj.disability == 'yes' else 'No'
-    display_disability.short_description = 'Disability'
+# Disability dynamically from obj
+def disability_display(self, obj):
+    if obj.disability:
+        return obj.disability.capitalize()  # Yes / No
+    return '-'
+disability_display.short_description = 'Disability'
 
     list_filter = (
         'status',
