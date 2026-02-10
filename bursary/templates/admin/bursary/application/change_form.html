@@ -1,0 +1,62 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{{ original.full_name }}</h1>
+
+<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
+  <tr><th colspan="2">Personal Information</th></tr>
+  <tr><td>Full Name</td><td>{{ original.full_name }}</td></tr>
+  <tr><td>ID Number</td><td>{{ original.id_no }}</td></tr>
+  <tr><td>Birth Cert No</td><td>{{ original.birth_cert_no }}</td></tr>
+  <tr><td>Gender</td><td>{{ original.gender }}</td></tr>
+  <tr><td>Disability</td><td>{{ original.disability }}</td></tr>
+  <tr><td>Disability Type</td><td>{{ original.disability_type }}</td></tr>
+</table>
+
+<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
+  <tr><th colspan="2">Education Details</th></tr>
+  <tr><td>Level of Study</td><td>{{ original.level_of_study }}</td></tr>
+  <tr><td>School</td><td>{{ original.school }}</td></tr>
+  <tr><td>Course</td><td>{{ original.course }}</td></tr>
+  <tr><td>Admission Number</td><td>{{ original.admission_number }}</td></tr>
+  <tr><td>Year of Study</td><td>{{ original.year_of_study }}</td></tr>
+  <tr><td>Performance</td><td>{{ original.performance }}</td></tr>
+  <tr><td>Annual Fees</td><td>{{ original.amount_requested }}</td></tr>
+</table>
+
+<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
+  <tr><th colspan="2">Family Background</th></tr>
+  {% if original.family_status %}
+    <tr><td>Family Status</td><td>{{ original.family_status|capfirst|replace:"_"," " }}</td></tr>
+  {% endif %}
+  {% if original.father_name %}<tr><td>Father Name</td><td>{{ original.father_name }}</td></tr>{% endif %}
+  {% if original.mother_name %}<tr><td>Mother Name</td><td>{{ original.mother_name }}</td></tr>{% endif %}
+  {% if original.guardian_name %}<tr><td>Guardian Name</td><td>{{ original.guardian_name }}</td></tr>{% endif %}
+</table>
+
+<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
+  <tr><th colspan="2">Location</th></tr>
+  <tr><td>County</td><td>{{ original.county }}</td></tr>
+  <tr><td>Constituency</td><td>{{ original.constituency }}</td></tr>
+  <tr><td>Ward</td><td>{{ original.ward }}</td></tr>
+  <tr><td>Location</td><td>{{ original.location }}</td></tr>
+  <tr><td>Sub-location</td><td>{{ original.sub_location }}</td></tr>
+  <tr><td>Polling Station</td><td>{{ original.polling_station }}</td></tr>
+</table>
+
+<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
+  <tr><th colspan="2">Siblings</th></tr>
+  <tr><td>Names</td><td>{{ original.siblings_names }}</td></tr>
+  <tr><td>Amounts</td><td>{{ original.siblings_amounts }}</td></tr>
+</table>
+
+<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
+  <tr><th colspan="2">Referees</th></tr>
+  <tr><td>Referee 1 Name</td><td>{{ original.referee1_name }}</td></tr>
+  <tr><td>Referee 1 Phone</td><td>{{ original.referee1_phone }}</td></tr>
+  <tr><td>Referee 2 Name</td><td>{{ original.referee2_name }}</td></tr>
+  <tr><td>Referee 2 Phone</td><td>{{ original.referee2_phone }}</td></tr>
+</table>
+
+{% endblock %}
