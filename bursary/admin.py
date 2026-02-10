@@ -53,7 +53,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         'county',
         'constituency',
         'level_of_study',
-        'date_applied',
+        'created_at',
     )
 
     search_fields = (
