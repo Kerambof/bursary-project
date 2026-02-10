@@ -28,7 +28,7 @@
 <table style="width:100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
   <tr><th colspan="2">Family Background</th></tr>
   {% if original.family_status %}
-    <tr><td>Family Status</td><td>{{ original.family_status|capfirst|replace:"_"," " }}</td></tr>
+    <tr><td>Family Status</td><td>{{ original.family_status|capfirst|cut:"_"|capfirst }}</td></tr>
   {% endif %}
   {% if original.father_name %}<tr><td>Father Name</td><td>{{ original.father_name }}</td></tr>{% endif %}
   {% if original.mother_name %}<tr><td>Mother Name</td><td>{{ original.mother_name }}</td></tr>{% endif %}
