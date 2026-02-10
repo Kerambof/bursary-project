@@ -67,132 +67,132 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     # 🔑 MAIN FIX IS HERE
     def get_fieldsets(self, request, obj=None):
-    base_fieldsets = [
-        ('Student & Status', {
-            'fields': ('student_user', 'status', 'created_at'),
-            'classes': ('wide',)  # makes fields more table-like
-        }),
+        base_fieldsets = [
+            ('Student & Status', {
+                'fields': ('student_user', 'status', 'created_at'),
+                'classes': ('wide',)  # makes fields more table-like
+            }),
 
-        ('Personal Information', {
-            'fields': (
-                'full_name',
-                'id_no',
-                'birth_cert_no',
-                'gender',
-                'identity_document',
-                'disability',
-                'disability_type',
-                'disability_document',
-            ),
-            'classes': ('collapse', 'wide'),  # can collapse section
-        }),
+            ('Personal Information', {
+                'fields': (
+                    'full_name',
+                    'id_no',
+                    'birth_cert_no',
+                    'gender',
+                    'identity_document',
+                    'disability',
+                    'disability_type',
+                    'disability_document',
+                ),
+                'classes': ('collapse', 'wide'),  # can collapse section
+            }),
 
-        ('Education Details', {
-            'fields': (
-                'level_of_study',
-                'school',
-                'course',
-                'admission_number',
-                'year_of_study',
-                'performance',
-                'amount_requested',
-                'document',
-                'transcript',
-            ),
-            'classes': ('wide',),
-        }),
+            ('Education Details', {
+                'fields': (
+                    'level_of_study',
+                    'school',
+                    'course',
+                    'admission_number',
+                    'year_of_study',
+                    'performance',
+                    'amount_requested',
+                    'document',
+                    'transcript',
+                ),
+                'classes': ('wide',),
+            }),
 
-        ('Location', {
-            'fields': (
-                'county',
-                'constituency',
-                'ward',
-                'location',
-                'sub_location',
-                'polling_station',
-            ),
-            'classes': ('wide',),
-        }),
-    ]
+            ('Location', {
+                'fields': (
+                    'county',
+                    'constituency',
+                    'ward',
+                    'location',
+                    'sub_location',
+                    'polling_station',
+                ),
+                'classes': ('wide',),
+            }),
+        ]
 
-    # If object is not yet created
-    if not obj:
+        # If object is not yet created
+        if not obj:
+            base_fieldsets.append(
+                ('Family Background', {
+                    'fields': ('family_status',),
+                    'classes': ('wide',),
+                })
+            )
+            return base_fieldsets
+
+        family_fields = []
+        status = obj.family_status
+
+        if status == 'both_alive':
+            family_fields = [
+                'father_name', 'father_phone', 'father_occupation', 'father_id',
+                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
+            ]
+
+        elif status == 'mother_dead':
+            family_fields = [
+                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
+                'father_death_no', 'father_death_doc',
+            ]
+
+        elif status == 'father_dead':
+            family_fields = [
+                'father_name', 'father_phone', 'father_occupation', 'father_id',
+                'mother_death_no', 'mother_death_doc',
+            ]
+
+        elif status == 'single_mother':
+            family_fields = [
+                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
+            ]
+
+        elif status == 'single_father':
+            family_fields = [
+                'father_name', 'father_phone', 'father_occupation', 'father_id',
+            ]
+
+        elif status == 'orphan':
+            family_fields = [
+                'father_death_no', 'father_death_doc',
+                'mother_death_no', 'mother_death_doc',
+                'guardian_name', 'guardian_phone', 'guardian_occupation',
+            ]
+
+        # show only filled fields
+        family_fields = [f for f in family_fields if getattr(obj, f)]
+        if family_fields:
+            base_fieldsets.append(
+                ('Family Background', {
+                    'fields': tuple(family_fields),
+                    'classes': ('wide',),
+                })
+            )
+
         base_fieldsets.append(
-            ('Family Background', {
-                'fields': ('family_status',),
+            ('Siblings', {
+                'fields': ('siblings_names', 'siblings_amounts'),
                 'classes': ('wide',),
             })
         )
+
+        base_fieldsets.append(
+            ('Referees', {
+                'fields': (
+                    'referee1_name',
+                    'referee1_phone',
+                    'referee2_name',
+                    'referee2_phone',
+                ),
+                'classes': ('wide',),
+            })
+        )
+
         return base_fieldsets
-
-    family_fields = []
-    status = obj.family_status
-
-    if status == 'both_alive':
-        family_fields = [
-            'father_name', 'father_phone', 'father_occupation', 'father_id',
-            'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
-        ]
-
-    elif status == 'mother_dead':
-        family_fields = [
-            'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
-            'father_death_no', 'father_death_doc',
-        ]
-
-    elif status == 'father_dead':
-        family_fields = [
-            'father_name', 'father_phone', 'father_occupation', 'father_id',
-            'mother_death_no', 'mother_death_doc',
-        ]
-
-    elif status == 'single_mother':
-        family_fields = [
-            'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
-        ]
-
-    elif status == 'single_father':
-        family_fields = [
-            'father_name', 'father_phone', 'father_occupation', 'father_id',
-        ]
-
-    elif status == 'orphan':
-        family_fields = [
-            'father_death_no', 'father_death_doc',
-            'mother_death_no', 'mother_death_doc',
-            'guardian_name', 'guardian_phone', 'guardian_occupation',
-        ]
-
-    # show only filled fields
-    family_fields = [f for f in family_fields if getattr(obj, f)]
-    if family_fields:
-        base_fieldsets.append(
-            ('Family Background', {
-                'fields': tuple(family_fields),
-                'classes': ('wide',),
-            })
-        )
-
-    base_fieldsets.append(
-        ('Siblings', {
-            'fields': ('siblings_names', 'siblings_amounts'),
-            'classes': ('wide',),
-        })
-    )
-
-    base_fieldsets.append(
-        ('Referees', {
-            'fields': (
-                'referee1_name',
-                'referee1_phone',
-                'referee2_name',
-                'referee2_phone',
-            ),
-            'classes': ('wide',),
-        })
-    )
-
-    return base_fieldsets
 
     # ---------------------------
     # Display created_at as Date Applied
