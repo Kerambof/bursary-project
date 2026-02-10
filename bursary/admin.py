@@ -22,15 +22,46 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     list_display = (
         'full_name',
-        'id_no',
-        'student_user',
-        'county',
-        'constituency',
         'level_of_study',
-        'amount_requested',
-        'status',
-        'created_at',
+        'school',
+        'admission_number',  # Reg No/Admin No
+        'amount_requested',  # Annual Fees
+        'constituency',
+        'display_family_status',
+        'display_disability',
+        'status',  # Application status
+        'date_applied',  # formatted created_at
     )
+
+    # ---------------------------
+    # Display created_at as Date Applied
+    # ---------------------------
+    def date_applied(self, obj):
+        return obj.created_at.strftime("%d %b %Y")
+    date_applied.admin_order_field = 'created_at'
+    date_applied.short_description = 'Date Applied'
+
+    # ---------------------------
+    # Family status display only selected value
+    # ---------------------------
+    def display_family_status(self, obj):
+        status_map = {
+            'both_alive': 'Both Parents Alive',
+            'mother_alive_father_deceased': 'Mother Alive, Father Deceased',
+            'father_alive_mother_deceased': 'Father Alive, Mother Deceased',
+            'single_mother': 'Single Mother',
+            'single_father': 'Single Father',
+            'total_orphan': 'Total Orphan',
+        }
+        return status_map.get(obj.family_status, '-')
+    display_family_status.short_description = 'Family Status'
+
+    # ---------------------------
+    # Disability display only yes/no
+    # ---------------------------
+    def display_disability(self, obj):
+        return 'Yes' if obj.disability == 'yes' else 'No'
+    display_disability.short_description = 'Disability'
 
     list_filter = (
         'status',
