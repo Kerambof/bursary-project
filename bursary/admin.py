@@ -21,32 +21,32 @@ from .models import (
 class ApplicationAdmin(admin.ModelAdmin):
 
     list_display = (
-    'full_name',
-    'level_of_study',
-    'school',
-    'admission_number',  # Reg No/Admin No
-    'amount_requested',  # Annual Fees
-    'constituency',
-    'family_status_display',
-    'disability_display',
-    'status',  # Application status
-    'date_applied',  # formatted created_at
-)
+        'full_name',
+        'level_of_study',
+        'school',
+        'admission_number',  # Reg No/Admin No
+        'amount_requested',  # Annual Fees
+        'constituency',
+        'family_status_display',
+        'disability_display',
+        'status',  # Application status
+        'date_applied',  # formatted created_at
+    )
 
-# Family status dynamically from obj
-def family_status_display(self, obj):
-    if obj.family_status:
-        # Replace underscores with spaces and capitalize each word
-        return obj.family_status.replace('_', ' ').title()
-    return '-'
-family_status_display.short_description = 'Family Status'
+    # Family status dynamically from obj
+    def family_status_display(self, obj):
+        if obj.family_status:
+            # Replace underscores with spaces and capitalize each word
+            return obj.family_status.replace('_', ' ').title()
+        return '-'
+    family_status_display.short_description = 'Family Status'
 
-# Disability dynamically from obj
-def disability_display(self, obj):
-    if obj.disability:
-        return obj.disability.capitalize()  # Yes / No
-    return '-'
-disability_display.short_description = 'Disability'
+    # Disability dynamically from obj
+    def disability_display(self, obj):
+        if obj.disability:
+            return obj.disability.capitalize()  # Yes / No
+        return '-'
+    disability_display.short_description = 'Disability'
 
     list_filter = (
         'status',
