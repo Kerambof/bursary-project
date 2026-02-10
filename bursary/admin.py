@@ -96,7 +96,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             }),
         ]
 
-        # If object is not yet created, show minimal family fields
+        # If object is not yet created
         if not obj:
             base_fieldsets.append(
                 ('Family Background', {
@@ -105,40 +105,56 @@ class ApplicationAdmin(admin.ModelAdmin):
             )
             return base_fieldsets
 
-        family_fields = ['family_status']
-
+        family_fields = []
         status = obj.family_status
 
         if status == 'both_alive':
-            family_fields += [
+            family_fields = [
                 'father_name', 'father_phone', 'father_occupation', 'father_id',
                 'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
             ]
 
-        elif status in ['mother_alive_father_deceased', 'single_mother']:
-            family_fields += [
+        elif status == 'mother_dead':
+            family_fields = [
                 'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
                 'father_death_no', 'father_death_doc',
             ]
 
-        elif status in ['father_alive_mother_deceased', 'single_father']:
-            family_fields += [
+        elif status == 'father_dead':
+            family_fields = [
                 'father_name', 'father_phone', 'father_occupation', 'father_id',
                 'mother_death_no', 'mother_death_doc',
             ]
 
-        elif status == 'total_orphan':
-            family_fields += [
+        elif status == 'single_mother':
+            family_fields = [
+                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
+            ]
+
+        elif status == 'single_father':
+            family_fields = [
+                'father_name', 'father_phone', 'father_occupation', 'father_id',
+            ]
+
+        elif status == 'orphan':
+            family_fields = [
                 'father_death_no', 'father_death_doc',
                 'mother_death_no', 'mother_death_doc',
                 'guardian_name', 'guardian_phone', 'guardian_occupation',
             ]
 
-        base_fieldsets.append(
-            ('Family Background', {
-                'fields': tuple(family_fields)
-            })
-        )
+        # ✅ SHOW ONLY FILLED FIELDS
+        family_fields = [
+            field for field in family_fields
+            if getattr(obj, field)
+        ]
+
+        if family_fields:
+            base_fieldsets.append(
+                ('Family Background', {
+                    'fields': tuple(family_fields)
+                })
+            )
 
         base_fieldsets.append(
             ('Siblings', {
