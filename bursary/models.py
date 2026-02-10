@@ -11,6 +11,7 @@ class County(models.Model):
     def __str__(self):
         return self.name
 
+
 class Constituency(models.Model):
     county = models.ForeignKey(
         County,
@@ -22,11 +23,13 @@ class Constituency(models.Model):
     def __str__(self):
         return f"{self.name} ({self.county.name})"
 
+
 class LevelOfStudy(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
+
 
 # =========================
 # APPLICATION MODEL
@@ -34,14 +37,7 @@ class LevelOfStudy(models.Model):
 
 class Application(models.Model):
 
-    LEVEL_CHOICES = (
-        ('university', 'University'),
-        ('college', 'College'),
-        ('kmtc', 'KMTC'),
-        ('high', 'High School'),
-    )
-
-    # Student & application details
+    # Student
     student_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -99,7 +95,7 @@ class Application(models.Model):
     guardian_phone = models.CharField(max_length=20, blank=True, null=True)
     guardian_occupation = models.CharField(max_length=200, blank=True, null=True)
 
-    # Siblings (comma-separated)
+    # Siblings
     siblings_names = models.TextField(blank=True, null=True)
     siblings_amounts = models.TextField(blank=True, null=True)
 
@@ -108,6 +104,7 @@ class Application(models.Model):
     referee1_phone = models.CharField(max_length=20)
     referee2_name = models.CharField(max_length=200)
     referee2_phone = models.CharField(max_length=20)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     STATUS_CHOICES = [
@@ -117,9 +114,14 @@ class Application(models.Model):
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
+    def __str__(self):
+        return f"{self.full_name} – {self.id_no} ({self.status})"
+
+
 # =========================
 # CONSTITUENCY OFFICER
 # =========================
+
 class ConstituencyOfficer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     constituency = models.OneToOneField(Constituency, on_delete=models.CASCADE)

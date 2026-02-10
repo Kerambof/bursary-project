@@ -22,55 +22,108 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     list_display = (
         'full_name',
-        'admission_number',
+        'id_no',
+        'student_user',
+        'county',
         'constituency',
+        'level_of_study',
+        'amount_requested',
         'status',
-        'date_applied',
-        'action_buttons',  # approve/reject
+        'created_at',
     )
 
-    list_filter = ('status', 'constituency', 'county', 'level_of_study')
-    search_fields = ('full_name', 'admission_number', 'school', 'course')
-    readonly_fields = ('created_at', 'student_user', 'document')
+    list_filter = (
+        'status',
+        'county',
+        'constituency',
+        'level_of_study',
+        'created_at',
+    )
 
-    # Organize fields with collapsible sections
+    search_fields = (
+        'full_name',
+        'id_no',
+        'admission_number',
+        'school',
+    )
+
+    readonly_fields = ('created_at',)
+
     fieldsets = (
-        ("Student Info", {
+        ('Student & Status', {
+            'fields': ('student_user', 'status', 'created_at')
+        }),
+
+        ('Personal Information', {
             'fields': (
-                'student_user',
                 'full_name',
-                'admission_number',
-                'gender',
                 'id_no',
                 'birth_cert_no',
-                'phone',
+                'gender',
+                'identity_document',
                 'disability',
-                'disability_type'
+                'disability_type',
+                'disability_document',
             )
         }),
-        ("Location & Level", {
-            'fields': ('county', 'constituency', 'level_of_study', 'polling_station', 'sub_location', 'location', 'ward')
+
+        ('Education Details', {
+            'fields': (
+                'level_of_study',
+                'school',
+                'course',
+                'admission_number',
+                'year_of_study',
+                'performance',
+                'amount_requested',
+                'document',
+                'transcript',
+            )
         }),
-        ("Education Details", {
-            'fields': ('school', 'course', 'year_of_study', 'amount_requested', 'performance', 'transcript')
+
+        ('Location', {
+            'fields': (
+                'county',
+                'constituency',
+                'ward',
+                'location',
+                'sub_location',
+                'polling_station',
+            )
         }),
-        ("Family Details", {
+
+        ('Family Background', {
             'fields': (
                 'family_status',
-                'father_name', 'father_phone', 'father_occupation', 'father_id',
-                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
-                'guardian_name', 'guardian_phone', 'guardian_occupation',
-                'father_death_no', 'father_death_doc', 'mother_death_no', 'mother_death_doc',
-                'siblings_names', 'siblings_amounts'
-            ),
-            'classes': ('collapse',)  # collapsible
+                'father_name',
+                'father_phone',
+                'father_occupation',
+                'father_id',
+                'father_death_no',
+                'father_death_doc',
+                'mother_name',
+                'mother_phone',
+                'mother_occupation',
+                'mother_id',
+                'mother_death_no',
+                'mother_death_doc',
+                'guardian_name',
+                'guardian_phone',
+                'guardian_occupation',
+            )
         }),
-        ("Referees", {
-            'fields': ('referee1_name', 'referee1_phone', 'referee2_name', 'referee2_phone'),
-            'classes': ('collapse',)  # collapsible
+
+        ('Siblings', {
+            'fields': ('siblings_names', 'siblings_amounts')
         }),
-        ("Status & Timestamps", {
-            'fields': ('status', 'created_at', 'document')
+
+        ('Referees', {
+            'fields': (
+                'referee1_name',
+                'referee1_phone',
+                'referee2_name',
+                'referee2_phone',
+            )
         }),
     )
 
