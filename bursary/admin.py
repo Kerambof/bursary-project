@@ -25,7 +25,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         'level_of_study',
         'school',
         'admission_number',  # Reg No/Admin No
-        'amount_requested',  # Annual Fees
+        'annual_fee_display',  # Annual Fee (updated)
         'constituency',
         'family_status_display',
         'disability_display',
@@ -33,10 +33,15 @@ class ApplicationAdmin(admin.ModelAdmin):
         'date_applied',  # formatted created_at
     )
 
+    # Annual Fee display (renamed column header only)
+    def annual_fee_display(self, obj):
+        return obj.amount_requested
+    annual_fee_display.short_description = 'Annual Fee'
+    annual_fee_display.admin_order_field = 'amount_requested'
+
     # Family status dynamically from obj
     def family_status_display(self, obj):
         if obj.family_status:
-            # Replace underscores with spaces and capitalize each word
             return obj.family_status.replace('_', ' ').title()
         return '-'
     family_status_display.short_description = 'Family Status'
@@ -65,12 +70,11 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     readonly_fields = ('created_at',)
 
-    # 🔑 MAIN FIX IS HERE
     def get_fieldsets(self, request, obj=None):
         base_fieldsets = [
             ('Student & Status', {
                 'fields': ('student_user', 'status', 'created_at'),
-                'classes': ('wide',)  # makes fields more table-like
+                'classes': ('wide',)
             }),
 
             ('Personal Information', {
@@ -84,7 +88,7 @@ class ApplicationAdmin(admin.ModelAdmin):
                     'disability_type',
                     'disability_document',
                 ),
-                'classes': ('collapse', 'wide'),  # can collapse section
+                'classes': ('collapse', 'wide'),
             }),
 
             ('Education Details', {
@@ -115,7 +119,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             }),
         ]
 
-        # If object is not yet created
         if not obj:
             base_fieldsets.append(
                 ('Family Background', {
@@ -163,7 +166,6 @@ class ApplicationAdmin(admin.ModelAdmin):
                 'guardian_name', 'guardian_phone', 'guardian_occupation',
             ]
 
-        # show only filled fields
         family_fields = [f for f in family_fields if getattr(obj, f)]
         if family_fields:
             base_fieldsets.append(
@@ -194,26 +196,17 @@ class ApplicationAdmin(admin.ModelAdmin):
 
         return base_fieldsets
 
-    # ---------------------------
-    # Display created_at as Date Applied
-    # ---------------------------
     def date_applied(self, obj):
         return obj.created_at.strftime("%d %b %Y")
     date_applied.admin_order_field = 'created_at'
     date_applied.short_description = 'Date Applied'
 
-    # ---------------------------
-    # Document clickable link
-    # ---------------------------
     def document_link(self, obj):
         if obj.document:
             return format_html('<a href="{}" target="_blank">View Document</a>', obj.document.url)
         return "-"
     document_link.short_description = 'Document'
 
-    # ---------------------------
-    # Approve / Reject buttons
-    # ---------------------------
     def action_buttons(self, obj):
         if obj.status == 'pending':
             return format_html(
@@ -226,9 +219,6 @@ class ApplicationAdmin(admin.ModelAdmin):
     action_buttons.short_description = 'Actions'
     action_buttons.allow_tags = True
 
-    # ---------------------------
-    # Custom URLs for actions
-    # ---------------------------
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
@@ -237,9 +227,6 @@ class ApplicationAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
 
-    # ---------------------------
-    # Button handlers
-    # ---------------------------
     def approve_app(self, request, application_id):
         app = get_object_or_404(Application, id=application_id)
         app.status = 'approved'
@@ -254,9 +241,6 @@ class ApplicationAdmin(admin.ModelAdmin):
         self.message_user(request, f"Application '{app.full_name}' rejected!")
         return redirect(request.META.get('HTTP_REFERER'))
 
-    # ---------------------------
-    # Permissions & Queryset
-    # ---------------------------
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
 
@@ -268,9 +252,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             return qs.filter(constituency=request.user.constituencyofficer.constituency)
         return qs.none()
 
-    # ---------------------------
-    # Auto-create student login on first save
-    # ---------------------------
     def save_model(self, request, obj, form, change):
         if not obj.student_user:
             user = User.objects.create(
@@ -308,9 +289,6 @@ class ConstituencyOfficerAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
 
-# =========================
-# OTHER MODELS
-# =========================
 admin.site.register(County)
 admin.site.register(Constituency)
 admin.site.register(LevelOfStudy)
