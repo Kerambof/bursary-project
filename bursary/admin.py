@@ -24,32 +24,36 @@ class ApplicationAdmin(admin.ModelAdmin):
         'full_name',
         'level_of_study',
         'school',
-        'admission_number',  # Reg No/Admin No
-        'annual_fee_display',  # Annual Fee (updated)
+        'admission_number',
+        'annual_fee_display',
         'constituency',
         'family_status_display',
         'disability_display',
-        'status',  # Application status
-        'date_applied',  # formatted created_at
+        'status',
+        'date_applied',
     )
 
-    # Annual Fee display (renamed column header only)
+    # ✅ Change label inside admin detail page
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
+        if db_field.name == "amount_requested":
+            formfield.label = "Annual Fee"
+        return formfield
+
     def annual_fee_display(self, obj):
         return obj.amount_requested
     annual_fee_display.short_description = 'Annual Fee'
     annual_fee_display.admin_order_field = 'amount_requested'
 
-    # Family status dynamically from obj
     def family_status_display(self, obj):
         if obj.family_status:
             return obj.family_status.replace('_', ' ').title()
         return '-'
     family_status_display.short_description = 'Family Status'
 
-    # Disability dynamically from obj
     def disability_display(self, obj):
         if obj.disability:
-            return obj.disability.capitalize()  # Yes / No
+            return obj.disability.capitalize()
         return '-'
     disability_display.short_description = 'Disability'
 
@@ -99,7 +103,7 @@ class ApplicationAdmin(admin.ModelAdmin):
                     'admission_number',
                     'year_of_study',
                     'performance',
-                    'amount_requested',
+                    'amount_requested',  # ← remains same field
                     'document',
                     'transcript',
                 ),

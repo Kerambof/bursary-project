@@ -4,7 +4,6 @@
 {% block content %}
 <h2>Submit Bursary Application</h2>
 
-
 {% if messages %}
   {% for message in messages %}
     <div style="padding:10px;margin-bottom:10px;
@@ -133,7 +132,8 @@ label { display:block; margin-top:10px; font-weight:600; }
 {% endif %}
 {{ form.year_of_study }}
 
-<label>Annual Fees Payable</label>
+<!-- ✅ ONLY CHANGE DONE HERE -->
+<label>Annual Fee</label>
 {{ form.amount_requested.errors }}
 {% if errors.amount_requested %}
   <div class="errorlist">{{ errors.amount_requested }}</div>
@@ -160,6 +160,7 @@ label { display:block; margin-top:10px; font-weight:600; }
 <label>Upload Recent Transcript</label>
 <input type="file" name="transcript">
 </fieldset>
+
 
 <!-- GEO DETAILS -->
 <fieldset>

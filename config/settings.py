@@ -5,6 +5,7 @@ Django settings for config project.
 import os
 from pathlib import Path
 import dj_database_url
+import cloudinary  # 👈 Added for Cloudinary
 
 # -----------------------------
 # BASE DIRECTORY
@@ -31,6 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
    
     'bursary',                      # your app
+    'cloudinary',                   # 👈 Added Cloudinary
+    'cloudinary_storage',           # 👈 Added Cloudinary storage
 ]
 
 MIDDLEWARE = [
@@ -104,6 +107,19 @@ STATICFILES_DIRS = [
 # -----------------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# -----------------------------
+# CLOUDINARY CONFIGURATION
+# -----------------------------
+cloudinary.config(
+    cloud_name="dmc4zspa0",   # 👈 replace with your Cloudinary Cloud Name
+    api_key="543182367999143",         # 👈 replace with your Cloudinary API Key
+    api_secret="9WJeoMU4fXyJgo0QPVXvclfGdh0",   # 👈 replace with your Cloudinary API Secret
+    secure=True
+)
+
+# Use Cloudinary for all uploaded media files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # -----------------------------
 # DEFAULT PRIMARY KEY
