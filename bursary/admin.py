@@ -210,15 +210,14 @@ class ApplicationAdmin(admin.ModelAdmin):
         return "-"
     document_link.short_description = 'Document'
 
-   def action_buttons(self, obj):
-    if obj.status == 'pending':
-        return format_html(
-            '<a class="button" style="background-color:#4CAF50;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="{}">Approve</a>&nbsp;'
-            '<a class="button" style="background-color:#e74c3c;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="{}">Reject</a>',
-            f'approve/{obj.id}/', f'reject/{obj.id}/'
-        )
-    return '-'
-
+    def action_buttons(self, obj):
+        if obj.status == 'pending':
+            return format_html(
+                '<a class="button" style="background-color:#4CAF50;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="{}">Approve</a>&nbsp;'
+                '<a class="button" style="background-color:#e74c3c;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="{}">Reject</a>',
+                f'approve/{obj.id}/', f'reject/{obj.id}/'
+            )
+        return '-'
 
     action_buttons.short_description = 'Actions'
     action_buttons.allow_tags = True
