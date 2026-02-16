@@ -48,7 +48,7 @@
       </div>
 
       <div class="form-field">
-        <label>ID Number</label>
+        <label>ID Number     OR</label>
         <input type="text" name="id_no" value="{{ request.POST.id_no }}">
         {% if errors.id_no %}<div class="error-text">{{ errors.id_no }}</div>{% endif %}
       </div>
@@ -565,14 +565,21 @@ addBtn.addEventListener('click', () => {
 /* Fieldsets */
 fieldset {
   margin-top: 20px;
-  padding: 15px 20px;
+  padding: 20px 25px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 12px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+fieldset:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 legend {
   font-weight: bold;
   padding: 0 10px;
+  color: #4CAF50;
 }
 
 /* Form Fields */
@@ -608,34 +615,116 @@ legend {
 /* Radio buttons inline */
 .form-field input[type="radio"] {
   margin-right: 5px;
+  margin-top: 5px;
 }
 
 /* Error messages */
-.error-text {
+.error-text, .errorlist {
   color: #d93025;
   font-size: 13px;
   margin-top: 3px;
 }
 
 /* Submit button */
-.btn-submit {
-  width: 100%;
-  padding: 14px;
-  margin-top: 20px;
+button[type="submit"], #add_sibling_btn {
+  padding: 12px 20px;
+  margin-top: 15px;
   background-color: #4CAF50;
   border: none;
   border-radius: 8px;
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.btn-submit:hover {
+button[type="submit"]:hover, #add_sibling_btn:hover {
   background-color: #45a049;
 }
 
 /* Hide sections */
 .hidden { display: none; }
+
+/* Siblings Table */
+#siblings_table_body input[type="text"],
+#siblings_table_body input[type="number"] {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+#siblings_table_body .remove_btn {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#siblings_table_body .remove_btn:hover {
+  background-color: #c0392b;
+}
+
+/* Family Details & Referees */
+fieldset label {
+  font-weight: 500;
+}
+
+fieldset input[type="text"],
+fieldset input[type="number"] {
+  transition: border-color 0.3s;
+}
+
+fieldset input[type="text"]:focus,
+fieldset input[type="number"]:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76,175,80,0.2);
+}
+
+/* Geographical Details Inputs */
+fieldset input[type="text"], fieldset input[type="number"], fieldset select {
+  margin-bottom: 12px;
+}
+
+/* Interactive hover for inputs */
+fieldset input[type="text"]:hover,
+fieldset input[type="number"]:hover,
+fieldset select:hover {
+  border-color: #81c784;
+}
+
+/* Responsive table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+table th {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .bursary-container {
+    padding: 15px;
+    margin: 20px;
+  }
+  table, table th, table td {
+    font-size: 13px;
+  }
+}
 </style>
+
 {% endblock %}
