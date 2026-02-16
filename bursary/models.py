@@ -66,7 +66,7 @@ class Application(models.Model):
     school = models.CharField(max_length=200)
     course = models.CharField(max_length=200)
     year_of_study = models.CharField(max_length=20)
-    amount_requested = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Annual Fee")
+    amount_requested = models.DecimalField(max_digits=10, decimal_places=2)
     document = models.FileField(upload_to='documents/')
     performance = models.CharField(max_length=20)
     transcript = models.FileField(upload_to='documents/')

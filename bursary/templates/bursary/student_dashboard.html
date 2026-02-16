@@ -29,7 +29,7 @@
         <th>Level of Study</th>
         <th>County</th>
         <th>Constituency</th>
-        <th>Amount Requested</th>
+        <th>Annual fee</th>
         <th>Status</th>
         <th>Date Applied</th>
     </tr>
@@ -42,7 +42,7 @@
         <td>{{ app.level_of_study.name }}</td>
         <td>{{ app.county.name }}</td>
         <td>{{ app.constituency.name }}</td>
-        <td>{{ app.amount_requested }}</td>
+        <td>{{ app.annual_fee }}</td>
         <td>{{ app.get_status_display }}</td>
         <td>{{ app.created_at|date:"M d, Y H:i" }}</td>
     </tr>
