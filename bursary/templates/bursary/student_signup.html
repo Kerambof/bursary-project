@@ -1,66 +1,167 @@
 {% extends 'bursary/base.html' %}
 
 {% block content %}
-<h2>Student Sign Up</h2>
+<div class="signup-container">
+  <h2>Student Sign Up</h2>
 
-<!-- Messages -->
-{% if messages %}
-  {% for message in messages %}
-   <div style="padding: 10px; margin-bottom: 10px; border-radius: 5px;
-    {% if message.tags == 'success' %}background-color: #d4edda; color: #155724;
-    {% elif message.tags == 'error' %}background-color: #f8d7da; color: #721c24;
-    {% elif message.tags == 'info' %}background-color: #d1ecf1; color: #0c5460;
-    {% endif %}">
-    {{ message }}
-   </div>
-  {% endfor %}
-{% endif %}
-
-<form method="POST">
-    {% csrf_token %}
-
-    <!-- Full Name -->
-    <p>
-        {{ form.full_name.label_tag }}<br>
-        {{ form.full_name }}
-        {% if form.full_name.errors %}
-            <br><span style="color:red;">{{ form.full_name.errors|striptags }}</span>
-        {% endif %}
-    </p>
-
-    <!-- ID No / Birth Certificate No -->
-    <p>
-        {{ form.id_no.label_tag }}<br>
-        {{ form.id_no }}
-        {% if form.id_no.errors %}
-            <br><span style="color:red;">{{ form.id_no.errors|striptags }}</span>
-        {% endif %}
-    </p>
-
-    <!-- Email (Optional) -->
-    <p>
-        {{ form.email.label_tag }} (Optional)<br>
-        {{ form.email }}
-        {% if form.email.errors %}
-            <br><span style="color:red;">{{ form.email.errors|striptags }}</span>
-        {% endif %}
-    </p>
-
-    <!-- Password Fields -->
-    {% for field in form %}
-        {% if field.name != 'full_name' and field.name != 'id_no' and field.name != 'email' %}
-        <p>
-            {{ field.label_tag }}<br>
-            {{ field }}
-            {% if field.errors %}
-                <br><span style="color:red;">{{ field.errors|striptags }}</span>
-            {% endif %}
-        </p>
-        {% endif %}
+  <!-- Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
     {% endfor %}
+  {% endif %}
 
-    <button type="submit">Sign Up</button>
-</form>
+  <form method="POST">
+      {% csrf_token %}
 
-<p>Already have an account? <a href="{% url 'student_login' %}">Login here</a></p>
+      <!-- Full Name -->
+      <p class="form-field">
+          {{ form.full_name.label_tag }}<br>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}
+              <span class="error-text">{{ form.full_name.errors|striptags }}</span>
+          {% endif %}
+      </p>
+
+      <!-- ID No / Birth Certificate No -->
+      <p class="form-field">
+          {{ form.id_no.label_tag }}<br>
+          {{ form.id_no }}
+          {% if form.id_no.errors %}
+              <span class="error-text">{{ form.id_no.errors|striptags }}</span>
+          {% endif %}
+      </p>
+
+      <!-- Email (Optional) -->
+      <p class="form-field">
+          {{ form.email.label_tag }} (Optional)<br>
+          {{ form.email }}
+          {% if form.email.errors %}
+              <span class="error-text">{{ form.email.errors|striptags }}</span>
+          {% endif %}
+      </p>
+
+      <!-- Other Fields (Password etc.) -->
+      {% for field in form %}
+          {% if field.name != 'full_name' and field.name != 'id_no' and field.name != 'email' %}
+          <p class="form-field">
+              {{ field.label_tag }}<br>
+              {{ field }}
+              {% if field.errors %}
+                  <span class="error-text">{{ field.errors|striptags }}</span>
+              {% endif %}
+          </p>
+          {% endif %}
+      {% endfor %}
+
+      <button type="submit" class="btn-signup">Sign Up</button>
+  </form>
+
+  <p class="login-text">
+    Already have an account? <a href="{% url 'student_login' %}">Login here</a>
+  </p>
+</div>
+
+<style>
+/* Container */
+.signup-container {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 30px 25px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.signup-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* Form fields */
+.form-field {
+    margin-bottom: 20px;
+}
+
+.form-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.form-field input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Error text */
+.error-text {
+    color: #d93025;
+    font-size: 13px;
+}
+
+/* Messages */
+.message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Signup button */
+.btn-signup {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-signup:hover {
+    background-color: #45a049;
+}
+
+/* Login link */
+.login-text {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-text a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}
+</style>
 {% endblock %}

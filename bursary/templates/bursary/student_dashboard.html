@@ -1,83 +1,213 @@
 {% extends 'bursary/base.html' %}
 
 {% block content %}
-<h2>Welcome, {{ request.user.first_name }}</h2>
-<p><a href="{% url 'student_logout' %}">Logout</a></p>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2>Welcome, {{ request.user.first_name }}</h2>
+    <a href="{% url 'student_logout' %}" class="logout-btn">Logout</a>
+  </div>
 
-<!-- Messages -->
-{% if messages %}
-  {% for message in messages %}
-    <div 
-      style="padding: 10px; margin-bottom: 10px; border-radius: 5px;
-             {% if message.tags == 'success' %}background-color: #d4edda; color: #155724;{% endif %}
-             {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24;{% endif %}
-             {% if message.tags == 'info' %}background-color: #d1ecf1; color: #0c5460;{% endif %}">
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endif %}
-
-<h3>Your Applications</h3>
-
-{% if applications %}
-<table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
-    <tr style="background-color: #f2f2f2;">
-        <th>Admission Number</th>
-        <th>Full Name</th>
-        <th>School</th>
-        <th>Course</th>
-        <th>Level of Study</th>
-        <th>County</th>
-        <th>Constituency</th>
-        <th>Annual fee</th>
-        <th>Status</th>
-        <th>Date Applied</th>
-    </tr>
-    {% for app in applications %}
-    <tr>
-        <td>{{ app.admission_number }}</td>
-        <td>{{ app.full_name }}</td>
-        <td>{{ app.school }}</td>
-        <td>{{ app.course }}</td>
-        <td>{{ app.level_of_study.name }}</td>
-        <td>{{ app.county.name }}</td>
-        <td>{{ app.constituency.name }}</td>
-        <td>{{ app.amount_requested }}</td>
-        <td>{{ app.get_status_display }}</td>
-        <td>{{ app.created_at|date:"M d, Y H:i" }}</td>
-    </tr>
+  <!-- Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="dashboard-message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
     {% endfor %}
-</table>
-{% else %}
-<p>You have not submitted any applications yet.</p>
-{% endif %}
+  {% endif %}
 
-<!-- Apply Button Logic: Disabled if there is a pending application -->
-{% if applications %}
-    {% with applications|dictsortreversed:"created_at"|first as latest_app %}
-        {% if latest_app.status == "pending" %}
-            <p style="color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px; border: 1px solid #ffeeba;">
-                You already have a pending application. You can only apply once per year. Please wait for it to be processed.
-            </p>
-            <p>
-                <button style="font-weight: bold; text-decoration: underline; color: gray; cursor: not-allowed;" disabled>
+  <h3>Your Applications</h3>
+
+  {% if applications %}
+  <div class="table-container">
+    <table class="applications-table">
+        <thead>
+            <tr>
+                <th>Admission Number</th>
+                <th>Full Name</th>
+                <th>School</th>
+                <th>Course</th>
+                <th>Level of Study</th>
+                <th>County</th>
+                <th>Constituency</th>
+                <th>Annual Fee</th>
+                <th>Status</th>
+                <th>Date Applied</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for app in applications %}
+            <tr>
+                <td>{{ app.admission_number }}</td>
+                <td>{{ app.full_name }}</td>
+                <td>{{ app.school }}</td>
+                <td>{{ app.course }}</td>
+                <td>{{ app.level_of_study.name }}</td>
+                <td>{{ app.county.name }}</td>
+                <td>{{ app.constituency.name }}</td>
+                <td>{{ app.amount_requested }}</td>
+                <td>{{ app.get_status_display }}</td>
+                <td>{{ app.created_at|date:"M d, Y H:i" }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="no-applications">You have not submitted any applications yet.</p>
+  {% endif %}
+
+  <!-- Apply Button Logic -->
+  <div class="apply-section">
+    {% if applications %}
+        {% with applications|dictsortreversed:"created_at"|first as latest_app %}
+            {% if latest_app.status == "pending" %}
+                <p class="pending-msg">
+                    You already have a pending application. You can only apply once per year. Please wait for it to be processed.
+                </p>
+                <button class="apply-btn disabled" disabled>
                     Apply for Bursary (Pending Application)
                 </button>
-            </p>
-        {% else %}
-            <p>
-                <a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">
+            {% else %}
+                <a href="{% url 'apply' %}" class="apply-btn">
                     Apply for Bursary
                 </a>
-            </p>
-        {% endif %}
-    {% endwith %}
-{% else %}
-    <p>
-        <a href="{% url 'apply' %}" style="font-weight: bold; text-decoration: underline;">
+            {% endif %}
+        {% endwith %}
+    {% else %}
+        <a href="{% url 'apply' %}" class="apply-btn">
             Apply for Bursary
         </a>
-    </p>
-{% endif %}
+    {% endif %}
+  </div>
+</div>
 
+<style>
+/* Dashboard container */
+.dashboard-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px 25px;
+    font-family: Arial, sans-serif;
+}
+
+/* Header and logout */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.logout-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c82333;
+}
+
+/* Messages */
+.dashboard-message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+}
+
+.dashboard-message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.dashboard-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.dashboard-message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Applications Table */
+.table-container {
+    overflow-x: auto;
+}
+
+.applications-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.applications-table th, .applications-table td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.applications-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.applications-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.applications-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* No applications message */
+.no-applications {
+    padding: 15px;
+    background-color: #e2e3e5;
+    border-radius: 6px;
+    text-align: center;
+    color: #383d41;
+}
+
+/* Apply section */
+.apply-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.apply-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.apply-btn:hover {
+    background-color: #45a049;
+}
+
+.apply-btn.disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Pending message */
+.pending-msg {
+    color: #856404;
+    background-color: #fff3cd;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ffeeba;
+    margin-bottom: 10px;
+}
+</style>
 {% endblock %}

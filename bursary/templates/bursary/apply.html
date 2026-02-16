@@ -2,165 +2,136 @@
 {% load static %}
 
 {% block content %}
-<h2>Submit Bursary Application</h2>
+<div class="bursary-container">
+  <h2>Submit Bursary Application</h2>
 
-{% if messages %}
-  {% for message in messages %}
-    <div style="padding:10px;margin-bottom:10px;
-      background:{% if message.tags == 'success' %}#2ecc71{% else %}#e74c3c{% endif %};
-      color:white;">
-      {{ message }}
+  <!-- Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <!-- LOCATION -->
+    <div class="form-field">
+      <label>County</label>
+      {{ form.county }}
+      {% if errors.county %}<div class="error-text">{{ errors.county }}</div>{% endif %}
     </div>
-  {% endfor %}
-{% endif %}
 
-<form method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-{{ form.non_field_errors }}
+    <div class="form-field">
+      <label>Constituency</label>
+      {{ form.constituency }}
+      {% if errors.constituency %}<div class="error-text">{{ errors.constituency }}</div>{% endif %}
+    </div>
 
-<style>
-.errorlist { color:red; list-style:none; padding:0; }
-fieldset { margin-top:20px; padding:15px; border:1px solid #ccc; }
-legend { font-weight:bold; }
-label { display:block; margin-top:10px; font-weight:600; }
-.hidden { display:none; }
-</style>
+    <div class="form-field">
+      <label>Level of Study</label>
+      {{ form.level_of_study }}
+      {% if errors.level_of_study %}<div class="error-text">{{ errors.level_of_study }}</div>{% endif %}
+    </div>
 
-<!-- LOCATION -->
-<label>County</label>
-{{ form.county.errors }}
-{% if errors.county %}
-  <div class="errorlist">{{ errors.county }}</div>
-{% endif %}
-{{ form.county }}
+    <!-- PERSONAL DETAILS -->
+    <fieldset>
+      <legend>Personal Details</legend>
 
-<label>Constituency</label>
-{{ form.constituency.errors }}
-{% if errors.constituency %}
-  <div class="errorlist">{{ errors.constituency }}</div>
-{% endif %}
-{{ form.constituency }}
+      <div class="form-field">
+        <label>Full Name</label>
+        {{ form.full_name }}
+        {% if errors.full_name %}<div class="error-text">{{ errors.full_name }}</div>{% endif %}
+      </div>
 
-<label>Level of Study</label>
-{{ form.level_of_study.errors }}
-{% if errors.level_of_study %}
-  <div class="errorlist">{{ errors.level_of_study }}</div>
-{% endif %}
-{{ form.level_of_study }}
+      <div class="form-field">
+        <label>ID Number</label>
+        <input type="text" name="id_no" value="{{ request.POST.id_no }}">
+        {% if errors.id_no %}<div class="error-text">{{ errors.id_no }}</div>{% endif %}
+      </div>
 
-<!-- PERSONAL DETAILS -->
-<fieldset>
-<legend>Personal Details</legend>
+      <div class="form-field">
+        <label>Birth Certificate Number</label>
+        <input type="text" name="birth_cert_no" value="{{ request.POST.birth_cert_no }}">
+      </div>
 
-<label>Full Name</label>
-{{ form.full_name.errors }}
-{% if errors.full_name %}
-  <div class="errorlist">{{ errors.full_name }}</div>
-{% endif %}
-{{ form.full_name }}
+      <div class="form-field">
+        <label>Upload ID / Birth Certificate</label>
+        <input type="file" name="identity_document">
+        {% if errors.identity_document %}<div class="error-text">{{ errors.identity_document }}</div>{% endif %}
+      </div>
 
-<label>ID Number</label>
-{% if errors.id_no %}
-  <div class="errorlist">{{ errors.id_no }}</div>
-{% endif %}
-<input type="text" name="id_no" value="{{ request.POST.id_no }}">
+      <div class="form-field">
+        <label>Gender</label><br>
+        <input type="radio" name="gender" value="male" {% if request.POST.gender == 'male' %}checked{% endif %}> Male
+        <input type="radio" name="gender" value="female" {% if request.POST.gender == 'female' %}checked{% endif %}> Female
+        {% if errors.gender %}<div class="error-text">{{ errors.gender }}</div>{% endif %}
+      </div>
 
-<label>Birth Certificate Number</label>
-<input type="text" name="birth_cert_no" value="{{ request.POST.birth_cert_no }}">
+      <div class="form-field">
+        <label>Disability</label><br>
+        <input type="radio" name="disability" value="no" {% if request.POST.disability != 'yes' %}checked{% endif %}> No
+        <input type="radio" name="disability" value="yes" {% if request.POST.disability == 'yes' %}checked{% endif %}> Yes
+      </div>
 
-<label>Upload ID / Birth Certificate</label>
-{% if errors.identity_document %}
-  <div class="errorlist">{{ errors.identity_document }}</div>
-{% endif %}
-<input type="file" name="identity_document">
+      <div id="disability_fields" class="hidden">
+        <div class="form-field">
+          <label>Type of Disability</label>
+          <input type="text" name="disability_type" value="{{ request.POST.disability_type }}">
+          {% if errors.disability_type %}<div class="error-text">{{ errors.disability_type }}</div>{% endif %}
+        </div>
 
-<label>Gender</label>
-{% if errors.gender %}
-  <div class="errorlist">{{ errors.gender }}</div>
-{% endif %}
-<input type="radio" name="gender" value="male" {% if request.POST.gender == 'male' %}checked{% endif %}> Male
-<input type="radio" name="gender" value="female" {% if request.POST.gender == 'female' %}checked{% endif %}> Female
+        <div class="form-field">
+          <label>Upload Disability Supporting Evidence</label>
+          <input type="file" name="disability_document">
+          {% if errors.disability_document %}<div class="error-text">{{ errors.disability_document }}</div>{% endif %}
+        </div>
+      </div>
+    </fieldset>
 
-<label>Disability</label>
-<input type="radio" name="disability" value="no" {% if request.POST.disability != 'yes' %}checked{% endif %}> No
-<input type="radio" name="disability" value="yes" {% if request.POST.disability == 'yes' %}checked{% endif %}> Yes
+    <!-- EDUCATION DETAILS -->
+    <fieldset>
+      <legend>Educational Details</legend>
 
-<div id="disability_fields" class="hidden">
-  <label>Type of Disability</label>
-  {% if errors.disability_type %}
-    <div class="errorlist">{{ errors.disability_type }}</div>
-  {% endif %}
-  <input type="text" name="disability_type" value="{{ request.POST.disability_type }}">
+      <div class="form-field">
+        <label>Reg No/Admin No</label>
+        {{ form.admission_number }}
+        {% if errors.admission_number %}<div class="error-text">{{ errors.admission_number }}</div>{% endif %}
+      </div>
 
-  <label>Upload Disability Supporting Evidence</label>
-  {% if errors.disability_document %}
-    <div class="errorlist">{{ errors.disability_document }}</div>
-  {% endif %}
-  <input type="file" name="disability_document">
-</div>
-</fieldset>
+      <div class="form-field">
+        <label>School</label>
+        {{ form.school }}
+        {% if errors.school %}<div class="error-text">{{ errors.school }}</div>{% endif %}
+      </div>
 
-<!-- EDUCATION DETAILS -->
-<fieldset>
-<legend>Educational Details</legend>
+      <div class="form-field">
+        <label>Course of Study</label>
+        {{ form.course }}
+        {% if errors.course %}<div class="error-text">{{ errors.course }}</div>{% endif %}
+      </div>
 
-<label>Reg No/Admin No:</label>
-{{ form.admission_number.errors }}
-{% if errors.admission_number %}
-  <div class="errorlist">{{ errors.admission_number }}</div>
-{% endif %}
-{{ form.admission_number }}
+      <div class="form-field">
+        <label>Year of Study/ Form</label>
+        {{ form.year_of_study }}
+        {% if errors.year_of_study %}<div class="error-text">{{ errors.year_of_study }}</div>{% endif %}
+      </div>
 
-<label>School</label>
-{{ form.school.errors }}
-{% if errors.school %}
-  <div class="errorlist">{{ errors.school }}</div>
-{% endif %}
-{{ form.school }}
+      <div class="form-field">
+        <label>Annual Fee</label>
+        {{ form.amount_requested }}
+        {% if errors.amount_requested %}<div class="error-text">{{ errors.amount_requested }}</div>{% endif %}
+      </div>
 
-<label>Course of Study</label>
-{{ form.course.errors }}
-{% if errors.course %}
-  <div class="errorlist">{{ errors.course }}</div>
-{% endif %}
-{{ form.course }}
-
-<label>Year of Study/ Form</label>
-{{ form.year_of_study.errors }}
-{% if errors.year_of_study %}
-  <div class="errorlist">{{ errors.year_of_study }}</div>
-{% endif %}
-{{ form.year_of_study }}
-
-<!-- ✅ ONLY CHANGE DONE HERE -->
-<label>Annual Fee</label>
-{{ form.amount_requested.errors }}
-{% if errors.amount_requested %}
-  <div class="errorlist">{{ errors.amount_requested }}</div>
-{% endif %}
-{{ form.amount_requested }}
-
-<label>Upload Current Fee Structure</label>
-{{ form.document.errors }}
-{% if errors.document %}
-  <div class="errorlist">{{ errors.document }}</div>
-{% endif %}
-{{ form.document }}
-
-<label>Average Academic Performance</label>
-{% if errors.performance %}
-  <div class="errorlist">{{ errors.performance }}</div>
-{% endif %}
-<input type="radio" name="performance" value="excellent" {% if request.POST.performance == 'excellent' %}checked{% endif %}> Excellent
-<input type="radio" name="performance" value="very_good" {% if request.POST.performance == 'very_good' %}checked{% endif %}> Very Good
-<input type="radio" name="performance" value="good" {% if request.POST.performance == 'good' %}checked{% endif %}> Good
-<input type="radio" name="performance" value="fair" {% if request.POST.performance == 'fair' %}checked{% endif %}> Fair
-<input type="radio" name="performance" value="poor" {% if request.POST.performance == 'poor' %}checked{% endif %}> Poor
-
-<label>Upload Recent Transcript</label>
-<input type="file" name="transcript">
-</fieldset>
-
+      <div class="form-field">
+        <label>Upload Current Fee Structure</label>
+        {{ form.document }}
+        {% if errors.document %}<div class="error-text">{{ errors.document }}</div>{% endif %}
+      </div>
+    </fieldset>
 
 <!-- GEO DETAILS -->
 <fieldset>
@@ -560,4 +531,112 @@ addBtn.addEventListener('click', () => {
 });
 </script>
 
+{% endblock %}
+<style>
+/* Container */
+.bursary-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 25px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+  font-family: Arial, sans-serif;
+}
+
+/* Headings */
+.bursary-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* Messages */
+.message {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  text-align: center;
+  color: white;
+}
+
+.message.success { background-color: #2ecc71; }
+.message.error { background-color: #e74c3c; }
+
+/* Fieldsets */
+fieldset {
+  margin-top: 20px;
+  padding: 15px 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+legend {
+  font-weight: bold;
+  padding: 0 10px;
+}
+
+/* Form Fields */
+.form-field {
+  margin-bottom: 15px;
+}
+
+.form-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.form-field input[type="text"],
+.form-field input[type="number"],
+.form-field input[type="file"],
+.form-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: 0.3s;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* Radio buttons inline */
+.form-field input[type="radio"] {
+  margin-right: 5px;
+}
+
+/* Error messages */
+.error-text {
+  color: #d93025;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+/* Submit button */
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: #45a049;
+}
+
+/* Hide sections */
+.hidden { display: none; }
+</style>
 {% endblock %}
