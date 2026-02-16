@@ -170,14 +170,12 @@ class ApplicationAdmin(admin.ModelAdmin):
                 'guardian_name', 'guardian_phone', 'guardian_occupation',
             ]
 
-        family_fields = [f for f in family_fields if getattr(obj, f)]
-        if family_fields:
-            base_fieldsets.append(
-                ('Family Background', {
-                    'fields': tuple(family_fields),
-                    'classes': ('wide',),
-                })
-            )
+        base_fieldsets.append(
+        ('Family Background', {
+            'fields': tuple(family_fields),
+            'classes': ('wide',),
+        })
+    )
 
         base_fieldsets.append(
             ('Siblings', {

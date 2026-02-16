@@ -198,7 +198,7 @@ label { display:block; margin-top:10px; font-weight:600; }
 {% if errors.family_status %}
   <div class="errorlist">{{ errors.family_status }}</div>
 {% endif %}
-<input type="radio" name="family_status" value="both_alive" {% if request.POST.family_status == 'both_alive' %}checked{% endif %}> Both Parents Alive  
+<input type="radio" name="family_status" value="both_alive" required {% if request.POST.family_status == 'both_alive' %}checked{% endif %}> Both Parents Alive  
 <input type="radio" name="family_status" value="mother_dead" {% if request.POST.family_status == 'mother_dead' %}checked{% endif %}> Mother Alive, Father Deceased  
 <input type="radio" name="family_status" value="father_dead" {% if request.POST.family_status == 'father_dead' %}checked{% endif %}> Father Alive, Mother Deceased  
 <input type="radio" name="family_status" value="single_mother" {% if request.POST.family_status == 'single_mother' %}checked{% endif %}> Single Mother  
@@ -418,24 +418,39 @@ const familySections = ['both_alive','mother_dead','father_dead','single_mother'
 const familyRadios = document.querySelectorAll('input[name="family_status"]');
 
 function showFamilySection(value) {
-  familySections.forEach(id => document.getElementById(id).classList.add('hidden'));
-  const section = document.getElementById(value);
-  if(section) section.classList.remove('hidden');
+  familySections.forEach(id => {
+    const section = document.getElementById(id);
+    section.classList.add('hidden');
+
+    // remove required from hidden inputs
+    section.querySelectorAll('input').forEach(input => {
+      input.removeAttribute('required');
+    });
+  });
+
+  const activeSection = document.getElementById(value);
+  if(activeSection){
+    activeSection.classList.remove('hidden');
+
+    // make visible inputs required
+    activeSection.querySelectorAll('input[type="text"]').forEach(input => {
+      input.setAttribute('required', 'required');
+    });
+  }
 }
 
-// Listen for changes
 familyRadios.forEach(radio => {
   radio.addEventListener('change', () => showFamilySection(radio.value));
 });
 
-// Show section on page load if a value was previously selected
 window.addEventListener('DOMContentLoaded', () => {
   const checkedRadio = document.querySelector('input[name="family_status"]:checked');
-  if(checkedRadio) {
+  if(checkedRadio){
     showFamilySection(checkedRadio.value);
   }
 });
 </script>
+
 
 <!-- SIBLINGS -->
 <fieldset>
