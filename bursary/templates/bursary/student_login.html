@@ -1,50 +1,50 @@
 {% extends 'bursary/base.html' %}
+{% load static %}
 
 {% block content %}
-<h2>Student Login</h2>
+<div class="login-container">
+  <h2>Student Login</h2>
 
-<!-- Messages -->
-{% if messages %}
-  {% for message in messages %}
-    <div style="padding:10px;margin-bottom:10px;border-radius:5px;
-      {% if message.tags == 'success' %}background:#d4edda;color:#155724;{% endif %}
-      {% if message.tags == 'error' %}background:#f8d7da;color:#721c24;{% endif %}
-      {% if message.tags == 'info' %}background:#d1ecf1;color:#0c5460;{% endif %}">
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endif %}
-
-<form method="POST">
-  {% csrf_token %}
-
-  <p>
-    {{ form.username.label_tag }}<br>
-    {{ form.username }}
-    {% if form.username.errors %}
-      <span style="color:red;">{{ form.username.errors|striptags }}</span>
-    {% endif %}
-  </p>
-
-  <p>
-    {{ form.password.label_tag }}<br>
-    {{ form.password }}
-    {% if form.password.errors %}
-      <span style="color:red;">{{ form.password.errors|striptags }}</span>
-    {% endif %}
-  </p>
-
-  {% if form.non_field_errors %}
-    <div style="color:red; margin-bottom:10px;">
-      {{ form.non_field_errors|striptags }}
-    </div>
+  <!-- Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
   {% endif %}
 
-  <button type="submit">Login</button>
-</form>
+  <form method="POST">
+    {% csrf_token %}
 
-<p style="margin-top:15px;">
-  Don't have an account?
-  <a href="{% url 'student_signup' %}">Sign up here</a>
-</p>
+    <p class="form-field">
+      {{ form.username.label_tag }}<br>
+      {{ form.username }}
+      {% if form.username.errors %}
+        <span class="error-text">{{ form.username.errors|striptags }}</span>
+      {% endif %}
+    </p>
+
+    <p class="form-field">
+      {{ form.password.label_tag }}<br>
+      {{ form.password }}
+      {% if form.password.errors %}
+        <span class="error-text">{{ form.password.errors|striptags }}</span>
+      {% endif %}
+    </p>
+
+    {% if form.non_field_errors %}
+      <div class="error-text non-field-errors">
+        {{ form.non_field_errors|striptags }}
+      </div>
+    {% endif %}
+
+    <button type="submit" class="btn-login">Login</button>
+  </form>
+
+  <p class="signup-text">
+    Don't have an account? 
+    <a href="{% url 'student_signup' %}">Sign up here</a>
+  </p>
+</div>
 {% endblock %}
