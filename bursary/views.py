@@ -65,9 +65,27 @@ def student_logout(request):
 def student_dashboard(request):
     """
     Dashboard shows all applications submitted by the logged-in student.
+    Also extracts student's full name from latest application.
     """
-    applications = Application.objects.filter(student_user=request.user)
-    return render(request, 'bursary/student_dashboard.html', {'applications': applications})
+
+    applications = Application.objects.filter(
+        student_user=request.user
+    ).order_by('-created_at')
+
+    latest_application = applications.first()
+
+    # Get full name from application if exists
+    if latest_application:
+        student_full_name = latest_application.full_name
+    else:
+        student_full_name = request.user.username  # fallback
+
+    context = {
+        'applications': applications,
+        'student_full_name': student_full_name
+    }
+
+    return render(request, 'bursary/student_dashboard.html', context)
 @login_required
 def apply(request):
     errors = {}

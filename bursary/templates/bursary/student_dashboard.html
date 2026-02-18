@@ -6,12 +6,10 @@
   <!-- Welcome Header -->
   <div class="welcome-card">
       <div>
-          <h2>
-              Welcome back, 
-              <span class="user-name">
-                  {{ request.user.first_name }} {{ request.user.last_name }}
-              </span> 👋
-          </h2>
+          <h2 class="welcome-title">
+    Welcome  {{ student_full_name }}
+</h2>
+
           <p class="sub-text">Here is an overview of your bursary applications.</p>
       </div>
       <a href="{% url 'student_logout' %}" class="logout-btn">Logout</a>
