@@ -100,12 +100,12 @@ class ApplicationAdmin(admin.ModelAdmin):
     disability_document_link.short_description = 'Disability Document'
 
     def document_link(self, obj):
-    if obj.document:
-        # Generate a secure signed URL for private files
-        url, options = cloudinary_url(obj.document.name, secure=True)
-        return format_html('<a href="{}" target="_blank">View Document</a>', url)
-    return "-"
-document_link.short_description = 'Document'
+        if obj.document:
+            # Generate a secure signed URL for private files
+            url, options = cloudinary_url(obj.document.name, secure=True)
+            return format_html('<a href="{}" target="_blank">View Document</a>', url)
+        return "-"
+    document_link.short_description = 'Document'
 
     def transcript_link(self, obj):
         if obj.transcript:
