@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.utils.html import format_html
 from django.urls import path
+from cloudinary.utils import cloudinary_url
 from django.shortcuts import redirect, get_object_or_404
 
 from .models import (
@@ -99,10 +100,12 @@ class ApplicationAdmin(admin.ModelAdmin):
     disability_document_link.short_description = 'Disability Document'
 
     def document_link(self, obj):
-        if obj.document:
-            return format_html('<a href="{}" target="_blank">View Document</a>', obj.document.url)
-        return "-"
-    document_link.short_description = 'Document'
+    if obj.document:
+        # Generate a secure signed URL for private files
+        url, options = cloudinary_url(obj.document.name, secure=True)
+        return format_html('<a href="{}" target="_blank">View Document</a>', url)
+    return "-"
+document_link.short_description = 'Document'
 
     def transcript_link(self, obj):
         if obj.transcript:
