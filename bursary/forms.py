@@ -48,7 +48,11 @@ class StudentLoginForm(AuthenticationForm):
         widget=forms.TextInput(attrs={'placeholder': 'Enter your ID/Birth Cert No'})
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+        label='Password',
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Password',
+            'autocomplete': 'new-password'  # ✅ fixed template error
+        })
     )
 
 # ------------------------
