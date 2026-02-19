@@ -73,7 +73,54 @@ class ApplicationAdmin(admin.ModelAdmin):
         'school',
     )
 
-    readonly_fields = ('created_at',)
+    readonly_fields = (
+        'created_at',
+        'identity_document_link',
+        'disability_document_link',
+        'document_link',
+        'transcript_link',
+        'father_death_doc_link',
+        'mother_death_doc_link',
+    )
+
+    # =========================
+    # Cloudinary file links
+    # =========================
+    def identity_document_link(self, obj):
+        if obj.identity_document:
+            return format_html('<a href="{}" target="_blank">View Identity Document</a>', obj.identity_document.url)
+        return "-"
+    identity_document_link.short_description = 'Identity Document'
+
+    def disability_document_link(self, obj):
+        if obj.disability_document:
+            return format_html('<a href="{}" target="_blank">View Disability Document</a>', obj.disability_document.url)
+        return "-"
+    disability_document_link.short_description = 'Disability Document'
+
+    def document_link(self, obj):
+        if obj.document:
+            return format_html('<a href="{}" target="_blank">View Document</a>', obj.document.url)
+        return "-"
+    document_link.short_description = 'Document'
+
+    def transcript_link(self, obj):
+        if obj.transcript:
+            return format_html('<a href="{}" target="_blank">View Transcript</a>', obj.transcript.url)
+        return "-"
+    transcript_link.short_description = 'Transcript'
+
+    def father_death_doc_link(self, obj):
+        if obj.father_death_doc:
+            return format_html('<a href="{}" target="_blank">View Father Death Doc</a>', obj.father_death_doc.url)
+        return "-"
+    father_death_doc_link.short_description = 'Father Death Doc'
+
+    def mother_death_doc_link(self, obj):
+        if obj.mother_death_doc:
+            return format_html('<a href="{}" target="_blank">View Mother Death Doc</a>', obj.mother_death_doc.url)
+        return "-"
+    mother_death_doc_link.short_description = 'Mother Death Doc'
 
     def get_fieldsets(self, request, obj=None):
         base_fieldsets = [
@@ -197,18 +244,44 @@ class ApplicationAdmin(admin.ModelAdmin):
             })
         )
 
+        # Inject Cloudinary file links into appropriate sections
+        if obj:
+            # Personal Information
+            personal = dict(base_fieldsets[1][1])
+            personal_fields = list(personal['fields'])
+            if 'identity_document' in personal_fields:
+                personal_fields.append('identity_document_link')
+            if 'disability_document' in personal_fields:
+                personal_fields.append('disability_document_link')
+            personal['fields'] = tuple(personal_fields)
+            base_fieldsets[1] = (base_fieldsets[1][0], personal)
+
+            # Education Details
+            education = dict(base_fieldsets[2][1])
+            education_fields = list(education['fields'])
+            if 'document' in education_fields:
+                education_fields.append('document_link')
+            if 'transcript' in education_fields:
+                education_fields.append('transcript_link')
+            education['fields'] = tuple(education_fields)
+            base_fieldsets[2] = (base_fieldsets[2][0], education)
+
+            # Family Background
+            family = dict(base_fieldsets[3][1])
+            family_fields = list(family['fields'])
+            if 'father_death_doc' in family_fields:
+                family_fields.append('father_death_doc_link')
+            if 'mother_death_doc' in family_fields:
+                family_fields.append('mother_death_doc_link')
+            family['fields'] = tuple(family_fields)
+            base_fieldsets[3] = (base_fieldsets[3][0], family)
+
         return base_fieldsets
 
     def date_applied(self, obj):
         return obj.created_at.strftime("%d %b %Y")
     date_applied.admin_order_field = 'created_at'
     date_applied.short_description = 'Date Applied'
-
-    def document_link(self, obj):
-        if obj.document:
-            return format_html('<a href="{}" target="_blank">View Document</a>', obj.document.url)
-        return "-"
-    document_link.short_description = 'Document'
 
     def action_buttons(self, obj):
         if obj.status == 'pending':

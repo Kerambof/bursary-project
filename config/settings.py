@@ -69,7 +69,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # DATABASE
 # Works locally (SQLite) and on Render (Postgres)
 # -----------------------------
-DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_7c6i_user:NGGB4ePDl3pxOZwAohrrfyyoDObUVkms@dpg-d64f7p14tr6s73ejdkvg-a.virginia-postgres.render.com/bursary_db_7c6i"
+DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_32rh_user:zsbe4EYzyi2NwXpL3gd0CoNFQXp7DxJH@dpg-d6bfn7ali9vc73dge3eg-a.virginia-postgres.render.com/bursary_db_32rh"
 
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
@@ -102,11 +102,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# -----------------------------
-# MEDIA FILES
-# -----------------------------
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # -----------------------------
 # CLOUDINARY CONFIGURATION
@@ -128,3 +123,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'student_login'
 LOGIN_REDIRECT_URL = 'student_dashboard'
 LOGOUT_REDIRECT_URL = 'student_login'
+
+# Session expires after 3 hours (in seconds)
+SESSION_COOKIE_AGE = 60 * 60 * 3  # 3 hours
+
+# Expire session if browser closes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Expire if inactive
+SESSION_SAVE_EVERY_REQUEST = True

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField  # 👈 Updated import
 
 # =========================
 # CORE MODELS
@@ -55,11 +56,11 @@ class Application(models.Model):
     full_name = models.CharField(max_length=200)
     id_no = models.CharField(max_length=20)
     birth_cert_no = models.CharField(max_length=50, blank=True, null=True)
-    identity_document = models.FileField(upload_to='documents/')
+    identity_document = CloudinaryField('Identity Document')  # 👈 Updated to CloudinaryField
     gender = models.CharField(max_length=10)
     disability = models.CharField(max_length=5)
     disability_type = models.CharField(max_length=100, blank=True, null=True)
-    disability_document = models.FileField(upload_to='documents/', blank=True, null=True)
+    disability_document = CloudinaryField('Disability Document', blank=True, null=True)  # 👈 Updated
 
     # Education
     admission_number = models.CharField(max_length=50)
@@ -67,9 +68,9 @@ class Application(models.Model):
     course = models.CharField(max_length=200)
     year_of_study = models.CharField(max_length=20)
     amount_requested = models.DecimalField(max_digits=10, decimal_places=2)
-    document = models.FileField(upload_to='documents/')
+    document = CloudinaryField('Document')  # 👈 Updated
     performance = models.CharField(max_length=20)
-    transcript = models.FileField(upload_to='documents/')
+    transcript = CloudinaryField('Transcript')  # 👈 Updated
 
     # Geo
     polling_station = models.CharField(max_length=200)
@@ -88,9 +89,9 @@ class Application(models.Model):
     mother_occupation = models.CharField(max_length=200, blank=True, null=True)
     mother_id = models.CharField(max_length=20, blank=True, null=True)
     father_death_no = models.CharField(max_length=50, blank=True, null=True)
-    father_death_doc = models.FileField(upload_to='documents/', blank=True, null=True)
+    father_death_doc = CloudinaryField('Father Death Doc', blank=True, null=True)  # 👈 Updated
     mother_death_no = models.CharField(max_length=50, blank=True, null=True)
-    mother_death_doc = models.FileField(upload_to='documents/', blank=True, null=True)
+    mother_death_doc = CloudinaryField('Mother Death Doc', blank=True, null=True)  # 👈 Updated
     guardian_name = models.CharField(max_length=200, blank=True, null=True)
     guardian_phone = models.CharField(max_length=20, blank=True, null=True)
     guardian_occupation = models.CharField(max_length=200, blank=True, null=True)
