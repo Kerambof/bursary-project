@@ -14,8 +14,16 @@ from .views import (
 # ------------------------
 def root_redirect(request):
     if request.user.is_authenticated:
+
+        # If admin → go to admin panel
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect('/admin/')
+
+        # If student → go to student dashboard
         return redirect('student_dashboard')
+
     return redirect('student_login')
+
 
 # ------------------------
 # URL patterns

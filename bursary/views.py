@@ -31,23 +31,31 @@ def student_signup(request):
 
 
 def student_login(request):
-    """
-    Student login using username (admission number) and password.
-    """
+
+    # 🚫 If admin already logged in → deny access
+    if request.user.is_authenticated and (
+        request.user.is_staff or request.user.is_superuser
+    ):
+        return redirect('/admin/')
+
     if request.method == "POST":
         form = StudentLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
+
+            # 🚫 Prevent admin login through student page
+            if user.is_staff or user.is_superuser:
+                messages.error(request, "Admins are not allowed to login here.")
+                return redirect('student_login')
+
             login(request, user)
-            messages.success(request, f"Welcome back, {user.username}!")
             return redirect('student_dashboard')
         else:
             messages.error(request, "Invalid credentials. Please try again.")
     else:
         form = StudentLoginForm()
+
     return render(request, 'bursary/student_login.html', {'form': form})
-
-
 @login_required
 def student_logout(request):
     """
@@ -65,20 +73,15 @@ def student_logout(request):
 def student_dashboard(request):
     """
     Dashboard shows all applications submitted by the logged-in student.
-    Also extracts student's full name from latest application.
+    Student name is sourced from the authenticated user record.
     """
 
     applications = Application.objects.filter(
         student_user=request.user
     ).order_by('-created_at')
 
-    latest_application = applications.first()
-
-    # Get full name from application if exists
-    if latest_application:
-        student_full_name = latest_application.full_name
-    else:
-        student_full_name = request.user.username  # fallback
+    full_name = f"{request.user.first_name} {request.user.last_name}".strip()
+    student_full_name = full_name or request.user.get_username()
 
     context = {
         'applications': applications,
