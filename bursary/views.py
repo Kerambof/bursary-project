@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponseForbidden
 
 from .forms import ApplicationForm, StudentSignUpForm, StudentLoginForm
 from .models import Application, Constituency
@@ -32,21 +33,20 @@ def student_signup(request):
 
 def student_login(request):
 
-    # 🚫 If admin already logged in → deny access
+    # 🚫 If admin already logged in, deny access
     if request.user.is_authenticated and (
         request.user.is_staff or request.user.is_superuser
     ):
-        return redirect('/admin/')
+        return HttpResponseForbidden("Use correct admin URL to login.")
 
     if request.method == "POST":
         form = StudentLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
 
-            # 🚫 Prevent admin login through student page
+            # 🚫 Prevent admin login via student login
             if user.is_staff or user.is_superuser:
-                messages.error(request, "Admins are not allowed to login here.")
-                return redirect('student_login')
+                return HttpResponseForbidden("Use correct admin URL to Login")
 
             login(request, user)
             return redirect('student_dashboard')
@@ -56,6 +56,7 @@ def student_login(request):
         form = StudentLoginForm()
 
     return render(request, 'bursary/student_login.html', {'form': form})
+
 @login_required
 def student_logout(request):
     """
@@ -71,10 +72,10 @@ def student_logout(request):
 # ------------------------
 @login_required
 def student_dashboard(request):
-    """
-    Dashboard shows all applications submitted by the logged-in student.
-    Student name is sourced from the authenticated user record.
-    """
+
+    # 🚫 Admin completely denied
+    if request.user.is_staff or request.user.is_superuser:
+        return HttpResponseForbidden("Access denied.")
 
     applications = Application.objects.filter(
         student_user=request.user
