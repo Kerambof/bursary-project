@@ -5,7 +5,9 @@ Django settings for config project.
 import os
 from pathlib import Path
 import dj_database_url
-import cloudinary  # 👈 Added for Cloudinary
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # -----------------------------
 # BASE DIRECTORY
@@ -16,24 +18,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # -----------------------------
 SECRET_KEY = 'django-insecure-^dfm4_ym&j!dql3*4u42jf+zw2fcb3i+c44z2s@5%6a@9w#_ut'
-DEBUG = True  # Set False in production!
+DEBUG = True
 ALLOWED_HOSTS = ['bursary-project.onrender.com']
 
 # -----------------------------
 # APPLICATIONS
 # -----------------------------
 INSTALLED_APPS = [
-    'django.contrib.admin',         # <-- admin MUST come first
-    'grappelli',                    # Grappelli after admin
+    'django.contrib.admin',
+    'grappelli',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-   
-    'bursary',                      # your app
-    'cloudinary',                   # 👈 Added Cloudinary
-    'cloudinary_storage',           # 👈 Added Cloudinary storage
+
+    'bursary',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +53,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # Add template folders here if needed
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,7 +69,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # -----------------------------
 # DATABASE
-# Works locally (SQLite) and on Render (Postgres)
 # -----------------------------
 DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_32rh_user:zsbe4EYzyi2NwXpL3gd0CoNFQXp7DxJH@dpg-d6bfn7ali9vc73dge3eg-a.virginia-postgres.render.com/bursary_db_32rh"
 
@@ -102,18 +103,24 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-
 # -----------------------------
-# CLOUDINARY CONFIGURATION
+# CLOUDINARY CONFIGURATION (FIXED)
 # -----------------------------
-cloudinary.config(
-    cloud_name="dmc4zspa0",   # 👈 replace with your Cloudinary Cloud Name
-    api_key="543182367999143",         # 👈 replace with your Cloudinary API Key
-    api_secret="9WJeoMU4fXyJgo0QPVXvclfGdh0",   # 👈 replace with your Cloudinary API Secret
-    secure=True
-)
 
-# Use Cloudinary for all uploaded media files
+# Use CLOUDINARY_URL from environment (Render safe)
+CLOUDINARY_STORAGE = {
+    'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')
+}
+
+# Fallback (for local development only)
+if not os.environ.get('CLOUDINARY_URL'):
+    cloudinary.config(
+        cloud_name="dmc4zspa0",
+        api_key="543182367999143",
+        api_secret="9WJeoMU4fXyJgo0QPVXvclfGdh0",
+        secure=True
+    )
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # -----------------------------
@@ -124,11 +131,6 @@ LOGIN_URL = 'student_login'
 LOGIN_REDIRECT_URL = 'student_dashboard'
 LOGOUT_REDIRECT_URL = 'student_login'
 
-# Session expires after 3 hours (in seconds)
-SESSION_COOKIE_AGE = 60 * 60 * 3  # 3 hours
-
-# Expire session if browser closes
+SESSION_COOKIE_AGE = 60 * 60 * 3
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
-# Expire if inactive
 SESSION_SAVE_EVERY_REQUEST = True

@@ -1,6 +1,20 @@
 {% extends "bursary/base.html" %}
 {% load static %}
+  <style>
+    .Dashboard-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
 
+    .Dashboard-button:hover {
+      background-color: #45a049;
+    }
+  </style>
 {% block content %}
 <h2>Submit Bursary Application</h2>
 
@@ -542,5 +556,5 @@ addBtn.addEventListener('click', () => {
   updateSiblingCount();
 });
 </script>
- <a href="{% url 'student_dashboard' %}" class="Dashboard-button">Back to Dashboard/a>
+ <a href="{% url 'student_dashboard' %}" class="Dashboard-button"> Back to Dashboard </a>
 {% endblock %}
