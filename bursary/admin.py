@@ -88,47 +88,49 @@ class ApplicationAdmin(admin.ModelAdmin):
     # =========================
     def identity_document_link(self, obj):
         if obj.identity_document:
-            url, options = cloudinary_url(obj.identity_document.name, secure=True, signed=True)
+            url, _ = cloudinary_url(obj.identity_document.name, secure=True, signed=True)
             return format_html('<a href="{}" target="_blank">View Identity Document</a>', url)
         return "-"
     identity_document_link.short_description = 'Identity Document'
 
     def disability_document_link(self, obj):
         if obj.disability_document:
-            url, options = cloudinary_url(obj.disability_document.name, secure=True, signed=True)
+            url, _ = cloudinary_url(obj.disability_document.name, secure=True, signed=True)
             return format_html('<a href="{}" target="_blank">View Disability Document</a>', url)
         return "-"
     disability_document_link.short_description = 'Disability Document'
 
     def document_link(self, obj):
         if obj.document:
-            url, options = cloudinary_url(obj.document.name, secure=True, signed=True)
+            url, _ = cloudinary_url(obj.document.name, secure=True, signed=True)
             return format_html('<a href="{}" target="_blank">View Document</a>', url)
         return "-"
     document_link.short_description = 'Document'
 
     def transcript_link(self, obj):
         if obj.transcript:
-            url, options = cloudinary_url(obj.transcript.name, secure=True, signed=True)
+            url, _ = cloudinary_url(obj.transcript.name, secure=True, signed=True)
             return format_html('<a href="{}" target="_blank">View Transcript</a>', url)
         return "-"
     transcript_link.short_description = 'Transcript'
 
     def father_death_doc_link(self, obj):
         if obj.father_death_doc:
-            url, options = cloudinary_url(obj.father_death_doc.name, secure=True, signed=True)
+            url, _ = cloudinary_url(obj.father_death_doc.name, secure=True, signed=True)
             return format_html('<a href="{}" target="_blank">View Father Death Doc</a>', url)
         return "-"
     father_death_doc_link.short_description = 'Father Death Doc'
 
     def mother_death_doc_link(self, obj):
         if obj.mother_death_doc:
-            url, options = cloudinary_url(obj.mother_death_doc.name, secure=True, signed=True)
+            url, _ = cloudinary_url(obj.mother_death_doc.name, secure=True, signed=True)
             return format_html('<a href="{}" target="_blank">View Mother Death Doc</a>', url)
         return "-"
     mother_death_doc_link.short_description = 'Mother Death Doc'
 
-
+    # ------------------------
+    # Remaining methods are unchanged
+    # ------------------------
     def get_fieldsets(self, request, obj=None):
         base_fieldsets = [
             ('Student & Status', {
