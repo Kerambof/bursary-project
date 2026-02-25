@@ -90,6 +90,8 @@ def student_dashboard(request):
     }
 
     return render(request, 'bursary/student_dashboard.html', context)
+
+
 @login_required
 def apply(request):
     errors = {}
@@ -112,6 +114,33 @@ def apply(request):
             app.siblings_names = ", ".join(names)
             app.siblings_amounts = ", ".join(amounts)
 
+            # -------------------------
+            # Handle local file uploads
+            # -------------------------
+            uploaded_identity = request.FILES.get('identity_document')
+            if uploaded_identity:
+                app.identity_document = uploaded_identity
+
+            uploaded_disability = request.FILES.get('disability_document')
+            if uploaded_disability:
+                app.disability_document = uploaded_disability
+
+            uploaded_document = request.FILES.get('document')
+            if uploaded_document:
+                app.document = uploaded_document
+
+            uploaded_transcript = request.FILES.get('transcript')
+            if uploaded_transcript:
+                app.transcript = uploaded_transcript
+
+            uploaded_father_doc = request.FILES.get('father_death_doc')
+            if uploaded_father_doc:
+                app.father_death_doc = uploaded_father_doc
+
+            uploaded_mother_doc = request.FILES.get('mother_death_doc')
+            if uploaded_mother_doc:
+                app.mother_death_doc = uploaded_mother_doc
+
             app.save()
             messages.success(request, "Application submitted successfully!")
             return redirect('student_dashboard')
@@ -132,8 +161,7 @@ def apply(request):
         }
     )
 
- 
- 
+
 # ------------------------
 # AJAX: Load Constituencies
 # ------------------------

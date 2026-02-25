@@ -51,7 +51,7 @@ class StudentLoginForm(AuthenticationForm):
         label='Password',
         widget=forms.PasswordInput(attrs={
             'placeholder': 'Password',
-            'autocomplete': 'new-password'  # ✅ fixed template error
+            'autocomplete': 'new-password'
         })
     )
 
@@ -59,6 +59,14 @@ class StudentLoginForm(AuthenticationForm):
 # APPLICATION FORM
 # ------------------------
 class ApplicationForm(forms.ModelForm):
+    # Override file fields to use local uploads
+    identity_document = forms.FileField(required=True)
+    disability_document = forms.FileField(required=False)
+    document = forms.FileField(required=True)
+    transcript = forms.FileField(required=True)
+    father_death_doc = forms.FileField(required=False)
+    mother_death_doc = forms.FileField(required=False)
+
     class Meta:
         model = Application
         # Save all fields except system-managed fields

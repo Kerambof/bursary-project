@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.utils.html import format_html
 from django.urls import path
-from cloudinary.utils import cloudinary_url
 from django.shortcuts import redirect, get_object_or_404
 
 from .models import (
@@ -84,47 +83,41 @@ class ApplicationAdmin(admin.ModelAdmin):
     )
 
     # =========================
-    # Cloudinary file links (all signed)
+    # Local file links
     # =========================
     def identity_document_link(self, obj):
         if obj.identity_document:
-            url, _ = cloudinary_url(obj.identity_document.name, secure=True, signed=True)
-            return format_html('<a href="{}" target="_blank">View Identity Document</a>', url)
+            return format_html('<a href="{}" target="_blank">View Identity Document</a>', obj.identity_document.url)
         return "-"
     identity_document_link.short_description = 'Identity Document'
 
     def disability_document_link(self, obj):
         if obj.disability_document:
-            url, _ = cloudinary_url(obj.disability_document.name, secure=True, signed=True)
-            return format_html('<a href="{}" target="_blank">View Disability Document</a>', url)
+            return format_html('<a href="{}" target="_blank">View Disability Document</a>', obj.disability_document.url)
         return "-"
     disability_document_link.short_description = 'Disability Document'
 
     def document_link(self, obj):
         if obj.document:
-            url, _ = cloudinary_url(obj.document.name, secure=True, signed=True)
-            return format_html('<a href="{}" target="_blank">View Document</a>', url)
+            return format_html('<a href="{}" target="_blank">View Document</a>', obj.document.url)
         return "-"
     document_link.short_description = 'Document'
 
     def transcript_link(self, obj):
         if obj.transcript:
-            url, _ = cloudinary_url(obj.transcript.name, secure=True, signed=True)
-            return format_html('<a href="{}" target="_blank">View Transcript</a>', url)
+            return format_html('<a href="{}" target="_blank">View Transcript</a>', obj.transcript.url)
         return "-"
     transcript_link.short_description = 'Transcript'
 
     def father_death_doc_link(self, obj):
         if obj.father_death_doc:
-            url, _ = cloudinary_url(obj.father_death_doc.name, secure=True, signed=True)
-            return format_html('<a href="{}" target="_blank">View Father Death Doc</a>', url)
+            return format_html('<a href="{}" target="_blank">View Father Death Doc</a>', obj.father_death_doc.url)
         return "-"
     father_death_doc_link.short_description = 'Father Death Doc'
 
     def mother_death_doc_link(self, obj):
         if obj.mother_death_doc:
-            url, _ = cloudinary_url(obj.mother_death_doc.name, secure=True, signed=True)
-            return format_html('<a href="{}" target="_blank">View Mother Death Doc</a>', url)
+            return format_html('<a href="{}" target="_blank">View Mother Death Doc</a>', obj.mother_death_doc.url)
         return "-"
     mother_death_doc_link.short_description = 'Mother Death Doc'
 
@@ -253,7 +246,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             })
         )
 
-        # Inject Cloudinary file links into appropriate sections
+        # Inject local file links into appropriate sections
         if obj:
             # Personal Information
             personal = dict(base_fieldsets[1][1])

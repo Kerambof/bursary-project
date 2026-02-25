@@ -1,13 +1,6 @@
-"""
-Django settings for config project.
-"""
-
 import os
 from pathlib import Path
 import dj_database_url
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 # -----------------------------
 # BASE DIRECTORY
@@ -34,8 +27,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'bursary',
-    'cloudinary',
-    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -104,24 +95,11 @@ STATICFILES_DIRS = [
 ]
 
 # -----------------------------
-# CLOUDINARY CONFIGURATION (FIXED)
+# MEDIA FILES (LOCAL STORAGE)
 # -----------------------------
-
-# Use CLOUDINARY_URL from environment (Render safe)
-CLOUDINARY_STORAGE = {
-    'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')
-}
-
-# Fallback (for local development only)
-if not os.environ.get('CLOUDINARY_URL'):
-    cloudinary.config(
-        cloud_name="dmc4zspa0",
-        api_key="543182367999143",
-        api_secret="9WJeoMU4fXyJgo0QPVXvclfGdh0",
-        secure=True
-    )
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # -----------------------------
 # DEFAULT PRIMARY KEY
