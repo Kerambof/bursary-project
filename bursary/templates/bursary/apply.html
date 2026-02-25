@@ -1,28 +1,32 @@
 {% extends "bursary/base.html" %}
 {% load static %}
   <style>
+    /* Dashboard link/button */
     .Dashboard-button {
       display: inline-block;
       padding: 10px 20px;
       background-color: #4CAF50;
-      color: white;
+      color: #ffffff;
       text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
+      border-radius: 6px;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: background-color .18s ease, transform .08s ease;
     }
 
     .Dashboard-button:hover {
       background-color: #45a049;
+      transform: translateY(-1px);
     }
+
+    .Dashboard-button:active { transform: translateY(0); }
   </style>
 {% block content %}
 <h2>Submit Bursary Application</h2>
 
 {% if messages %}
   {% for message in messages %}
-    <div style="padding:10px;margin-bottom:10px;
-      background:{% if message.tags == 'success' %}#2ecc71{% else %}#e74c3c{% endif %};
-      color:white;">
+    <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
       {{ message }}
     </div>
   {% endfor %}
@@ -33,11 +37,98 @@
 {{ form.non_field_errors }}
 
 <style>
-.errorlist { color:red; list-style:none; padding:0; }
-fieldset { margin-top:20px; padding:15px; border:1px solid #ccc; }
-legend { font-weight:bold; }
-label { display:block; margin-top:10px; font-weight:600; }
-.hidden { display:none; }
+  /* Form and layout styles */
+  .errorlist {
+    color: #c0392b;
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 0;
+    font-size: 0.95rem;
+  }
+
+  fieldset {
+    margin-top: 20px;
+    padding: 18px;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    background: #fafafa;
+  }
+
+  legend { font-weight: 700; padding: 0 6px; }
+
+  label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .hidden { display: none !important; }
+
+  /* Inputs and selects */
+  input[type="text"], input[type="number"], select, textarea, input[type="file"] {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    padding: 8px 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.98rem;
+  }
+
+  input[type="radio"] { display: inline-block; width: auto; margin-right: 8px; }
+
+  input[type="text"]:focus, select:focus, textarea:focus { outline: 2px solid rgba(76,175,80,0.12); border-color: #4CAF50; }
+
+  /* Buttons */
+  #add_sibling_btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #4CAF50;
+    background: #ffffff;
+    color: #4CAF50;
+  }
+
+  #add_sibling_btn:hover { background: #4CAF50; color: #fff; }
+
+  button.remove_btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button.remove_btn:hover { opacity: 0.95; }
+
+  /* Table */
+  table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+  table th, table td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; }
+
+  /* Message alerts */
+  .message {
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #ffffff;
+    border-radius: 4px;
+  }
+
+  .message.success { background: #2ecc71; }
+  .message:not(.success) { background: #e74c3c; }
+
+  /* Siblings table specific */
+  .siblings-table { margin-top: 15px; width: 100%; border-collapse: collapse; }
+  .siblings-table th, .siblings-table td { border: 1px solid #e0e0e0; padding: 8px; }
+
+  /* Make form narrower on small screens */
+  @media (max-width: 700px) {
+    fieldset { padding: 12px; }
+    input[type="text"], select, textarea { max-width: 100%; }
+  }
 </style>
 
 <!-- LOCATION -->
@@ -458,7 +549,7 @@ window.addEventListener('DOMContentLoaded', () => {
 {% endif %}
 <input type="number" id="siblings_count" name="siblings_count" min="0" value="{{ request.POST.siblings_count }}">
 
-<table border="1" cellpadding="8" cellspacing="0" style="margin-top:15px;width:100%;">
+<table class="siblings-table">
   <thead>
     <tr>
       <th>Sibling Name</th>
@@ -471,7 +562,7 @@ window.addEventListener('DOMContentLoaded', () => {
   </tbody>
 </table>
 
-<button type="button" id="add_sibling_btn" style="margin-top:10px;">
+<button type="button" id="add_sibling_btn">
   Add Sibling
 </button>
 </fieldset>
