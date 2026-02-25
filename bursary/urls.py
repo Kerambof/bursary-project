@@ -1,5 +1,7 @@
 from django.urls import path
 from django.shortcuts import redirect
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import (
     student_signup,
     student_login,
@@ -27,3 +29,8 @@ urlpatterns = [
     path('apply/', apply, name='apply'),
     path('ajax/load-constituencies/', load_constituencies, name='ajax_load_constituencies'),
 ]
+
+# ------------------------
+# Serve media files in development (DEBUG=True)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

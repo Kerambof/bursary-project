@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------
 SECRET_KEY = 'django-insecure-^dfm4_ym&j!dql3*4u42jf+zw2fcb3i+c44z2s@5%6a@9w#_ut'
 DEBUG = True
-ALLOWED_HOSTS = ['bursary-project.onrender.com']
+ALLOWED_HOSTS = ['bursary-project.onrender.com', '127.0.0.1', 'localhost']
 
 # -----------------------------
 # APPLICATIONS
