@@ -11,7 +11,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # -----------------------------
 SECRET_KEY = 'django-insecure-^dfm4_ym&j!dql3*4u42jf+zw2fcb3i+c44z2s@5%6a@9w#_ut'
-DEBUG = True
 ALLOWED_HOSTS = ['bursary-project.onrender.com', '127.0.0.1', 'localhost']
 
 # -----------------------------
@@ -31,6 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,9 +88,16 @@ USE_TZ = True
 # -----------------------------
 # STATIC FILES
 # -----------------------------
-DEBUG = True
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DEBUG = False  # production mode
+
 STATIC_URL = '/static/'
+
+# Where collectstatic will put files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Optional: your own static files source folder
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
