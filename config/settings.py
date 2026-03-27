@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # -----------------------------
 # DATABASE
 # -----------------------------
-DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_54y1_user:jYiB8dmvtBSZrr0iPuaqW8f2O7ieg2kX@dpg-d6fea3s50q8c73e5l6l0-a.virginia-postgres.render.com/bursary_db_54y1"
+DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_lifh_user:P98bYS5oFThq8MeiZQBhh9NeCBVVEoC8@dpg-d738ebkg9agc73bvvtm0-a.virginia-postgres.render.com/bursary_db_lifh"
 
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
