@@ -63,26 +63,24 @@ class ApplicationForm(forms.ModelForm):
     identity_document = forms.FileField(required=True)
     disability_document = forms.FileField(required=False)
     document = forms.FileField(required=True)
-    transcript = forms.FileField(required=True)
+    transcript = forms.FileField(required=False)
     father_death_doc = forms.FileField(required=False)
     mother_death_doc = forms.FileField(required=False)
 
     class Meta:
         model = Application
-        # Save all fields except system-managed fields
         fields = '__all__'
         exclude = ['student_user', 'status', 'created_at']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.fields['county'].queryset = County.objects.all()
         self.fields['county'].empty_label = "Select County"
 
-        # Constituency: initially empty if no county selected
         self.fields['constituency'].queryset = Constituency.objects.none()
         self.fields['constituency'].empty_label = "Select Constituency"
 
-        # Load constituencies if POST or editing
         if 'county' in self.data:
             try:
                 county_id = int(self.data.get('county'))
@@ -91,3 +89,16 @@ class ApplicationForm(forms.ModelForm):
                 pass
         elif self.instance.pk and self.instance.county:
             self.fields['constituency'].queryset = self.instance.county.constituencies.all()
+
+    # ✅ ADD THIS PART (IMPORTANT FIX)
+    def clean(self):
+        cleaned_data = super().clean()
+        id_no = cleaned_data.get('id_no')
+        birth_cert_no = cleaned_data.get('birth_cert_no')
+
+        if not id_no and not birth_cert_no:
+            raise forms.ValidationError(
+                "Provide either ID Number or Birth Certificate Number."
+            )
+
+        return cleaned_data

@@ -48,14 +48,20 @@
 </div>
 
 <style>
-/* Center the login container */
+/* Background */
+body {
+    background: #e0e5ec;
+}
+
+/* Neumorphic container */
 .login-container {
     max-width: 400px;
-    margin: 50px auto;
-    padding: 30px 25px;
-    background-color: #f5e3e3;
-    border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    margin: 60px auto;
+    padding: 35px 25px;
+    border-radius: 20px;
+    background: #e0e5ec;
+    box-shadow: 10px 10px 20px #a3b1c6,
+                -10px -10px 20px #ffffff;
     font-family: Arial, sans-serif;
 }
 
@@ -71,19 +77,23 @@
     margin-bottom: 20px;
 }
 
+/* Neumorphic inputs */
 .form-field input {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 10px;
+    background: #e0e5ec;
+    box-shadow: inset 5px 5px 10px #a3b1c6,
+                inset -5px -5px 10px #ffffff;
     font-size: 14px;
-    transition: 0.3s;
+    outline: none;
+    transition: 0.2s;
 }
 
 .form-field input:focus {
-    border-color: #4CAF50;
-    outline: none;
+    box-shadow: inset 3px 3px 6px #a3b1c6,
+                inset -3px -3px 6px #ffffff;
 }
 
 /* Error messages */
@@ -98,21 +108,23 @@
     margin-bottom: 15px;
 }
 
-/* Login button */
+/* Neumorphic button */
 .btn-login {
     width: 100%;
     padding: 12px;
-    background-color: #4CAF50;
     border: none;
-    border-radius: 6px;
-    color: white;
+    border-radius: 10px;
+    background: #e0e5ec;
+    box-shadow: 5px 5px 10px #a3b1c6,
+                -5px -5px 10px #ffffff;
     font-size: 16px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .btn-login:hover {
-    background-color: #45a049;
+    box-shadow: inset 5px 5px 10px #a3b1c6,
+                inset -5px -5px 10px #bbf4a0;
 }
 
 /* Signup link */
@@ -122,29 +134,31 @@
 }
 
 .signup-text a {
-    color: #4CAF50;
+    color: #333;
     text-decoration: none;
+    font-weight: bold;
 }
 
 .signup-text a:hover {
     text-decoration: underline;
 }
 
-/* Messages */
+/* Messages (soft neumorphic alert style) */
 .message {
     padding: 10px;
     margin-bottom: 15px;
-    border-radius: 6px;
+    border-radius: 10px;
     text-align: center;
+    background: #e0e5ec;
+    box-shadow: inset 3px 3px 6px #a3b1c6,
+                inset -3px -3px 6px #ffffff;
 }
 
 .message.error {
-    background-color: #fdecea;
     color: #d93025;
 }
 
 .message.success {
-    background-color: #e6f4ea;
     color: #188038;
 }
 </style>
