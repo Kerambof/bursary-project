@@ -1,13 +1,11 @@
 {% extends "admin/change_list.html" %}
 
-{% block object-tools %}
+{% block object-tools-items %}
     {{ block.super }}
-    <ul class="object-tools">
-        {{ block.super }}
-        <li>
-            <a href="{{ export_pdf_url }}" class="button">
-                Download PDF
-            </a>
-        </li>
-    </ul>
+    <h1 style="color:red;">TEMPLATE LOADED</h1>
+    <li>
+        <a href="{{ export_pdf_url }}" class="button">
+            Download PDF
+        </a>
+    </li>
 {% endblock %}
