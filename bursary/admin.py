@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.utils.html import format_html
 from django.urls import path
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
+import pdfkit
 
 from .models import (
     Application,
@@ -33,6 +34,35 @@ class ApplicationAdmin(admin.ModelAdmin):
         'action_buttons',
         'date_applied',
     )
+
+    def changelist_view(self, request, extra_context=None):
+        if extra_context is None:
+            extra_context = {}
+        extra_context['export_pdf_url'] = 'export_pdf/'
+        return super().changelist_view(request, extra_context=extra_context)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('approve/<int:application_id>/', self.admin_site.admin_view(self.approve_app), name='approve_app'),
+            path('reject/<int:application_id>/', self.admin_site.admin_view(self.reject_app), name='reject_app'),
+            path('export_pdf/', self.admin_site.admin_view(self.export_pdf), name='export_pdf'),
+        ]
+        return custom_urls + urls
+
+    def export_pdf(self, request):
+        # Fetch all applications sorted by created_at, ward, school
+        applications = Application.objects.all().order_by('created_at', 'ward', 'school')
+        # Render the template
+        html = render(request, 'admin/applications_pdf.html', {'applications': applications}).content.decode('utf-8')
+        # Generate PDF
+        pdf = pdfkit.from_string(html, False)
+        # Return response
+        response = redirect('/')
+        from django.http import HttpResponse
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="applications.pdf"'
+        return response
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
@@ -153,7 +183,7 @@ class ApplicationAdmin(admin.ModelAdmin):
                     'admission_number',
                     'year_of_study',
                     'performance',
-                    'amount_requested',  # ← remains same field
+                    'amount_requested',
                     'document',
                     'transcript',
                 ),
@@ -248,7 +278,6 @@ class ApplicationAdmin(admin.ModelAdmin):
 
         # Inject local file links into appropriate sections
         if obj:
-            # Personal Information
             personal = dict(base_fieldsets[1][1])
             personal_fields = list(personal['fields'])
             if 'identity_document' in personal_fields:
@@ -258,7 +287,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             personal['fields'] = tuple(personal_fields)
             base_fieldsets[1] = (base_fieldsets[1][0], personal)
 
-            # Education Details
             education = dict(base_fieldsets[2][1])
             education_fields = list(education['fields'])
             if 'document' in education_fields:
@@ -268,7 +296,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             education['fields'] = tuple(education_fields)
             base_fieldsets[2] = (base_fieldsets[2][0], education)
 
-            # Family Background
             family = dict(base_fieldsets[3][1])
             family_fields = list(family['fields'])
             if 'father_death_doc' in family_fields:
@@ -296,14 +323,6 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     action_buttons.short_description = 'Actions'
     action_buttons.allow_tags = True
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('approve/<int:application_id>/', self.admin_site.admin_view(self.approve_app), name='approve_app'),
-            path('reject/<int:application_id>/', self.admin_site.admin_view(self.reject_app), name='reject_app'),
-        ]
-        return custom_urls + urls
 
     def approve_app(self, request, application_id):
         app = get_object_or_404(Application, id=application_id)

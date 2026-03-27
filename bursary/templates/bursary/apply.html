@@ -106,15 +106,10 @@
   .message.success { background: #2ecc71; }
   .message:not(.success) { background: #e74c3c; }
 
-  .form-group {
+.form-row {
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
-}
-
-.form-group label {
-  margin-bottom: 5px;
-  font-weight: 600;
 }
 </style>
 
@@ -136,11 +131,13 @@
 <label>Full Name</label>
 {{ form.full_name }}
 
-<label>ID Number</label>
+<label>ID Number  or Birth Certificate Number</label>
 <input type="text" name="id_no" value="{{ request.POST.id_no }}">
 
+<!--
 <label>Birth Certificate Number</label>
 <input type="text" name="birth_cert_no" value="{{ request.POST.birth_cert_no }}">
+-->
 
 <label>Upload ID / Birth Certificate</label>
 <input type="file" name="identity_document" required>
@@ -208,23 +205,23 @@
 <legend>Geographical Details</legend>
 
 <div class="form-row">
-  <input type="text" name="polling_station" value="{{ request.POST.polling_station }}" required>
   <label>Polling Station</label>
+  <input type="text" name="polling_station" value="{{ request.POST.polling_station }}" required>
 </div>
 
 <div class="form-row">
-  <input type="text" name="sub_location" value="{{ request.POST.sub_location }}" required>
   <label>Sub-location</label>
+  <input type="text" name="sub_location" value="{{ request.POST.sub_location }}" required>
 </div>
 
 <div class="form-row">
-  <input type="text" name="location" value="{{ request.POST.location }}" required>
   <label>Location</label>
+  <input type="text" name="location" value="{{ request.POST.location }}" required>
 </div>
 
 <div class="form-row">
-  <input type="text" name="ward" value="{{ request.POST.ward }}" required>
   <label>Ward</label>
+  <input type="text" name="ward" value="{{ request.POST.ward }}" required>
 </div>
 
 </fieldset>
@@ -572,19 +569,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // ✅ Special rule: ID OR Birth Cert (ONLY STEP 1)
-  if(step === 0){
-    const idInput = current.querySelector('input[name="id_no"]');
-    const birthInput = current.querySelector('input[name="birth_cert_no"]');
+  // ✅ Special rule: ID OR Birth Cert
+const idInput = current.querySelector('input[name="id_no"]');
+const birthInput = current.querySelector('input[name="birth_cert_no"]');
 
-    if(idInput && birthInput){
-      if(idInput.value.trim() === '' && birthInput.value.trim() === ''){
+if (idInput && birthInput) {
+    const idVal = idInput.value.trim();
+    const birthVal = birthInput.value.trim();
+
+    if (idVal === '' && birthVal === '') {
         valid = false;
         idInput.classList.add('error');
         birthInput.classList.add('error');
-      }
+    } else {
+        // Remove error if one is filled
+        idInput.classList.remove('error');
+        birthInput.classList.remove('error');
     }
-  }
+}
 
   return valid;
 }
