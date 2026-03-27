@@ -6,9 +6,7 @@ from django.urls import path
 from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
+from weasyprint import HTML
 
 from .models import (
     Application,
@@ -39,12 +37,25 @@ class ApplicationAdmin(admin.ModelAdmin):
         'date_applied',
     )
 
+    # -------------------------
+    # Changelist with Export Button
+    # -------------------------
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['export_pdf_url'] = 'export_pdf/'
+        extra_context['export_pdf_link'] = self.export_pdf_link()
         return super().changelist_view(request, extra_context=extra_context)
 
+    def export_pdf_link(self, obj=None):
+        return format_html(
+            '<a class="button" style="background-color:#3498db;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="export_pdf/">Export PDF</a>'
+        )
+    export_pdf_link.short_description = ''
+    export_pdf_link.allow_tags = True
+
+    # -------------------------
+    # URLs
+    # -------------------------
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
@@ -54,62 +65,20 @@ class ApplicationAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
 
+    # =========================
+    # EXPORT PDF
+    # =========================
     def export_pdf(self, request):
-        # Fetch all applications sorted by created_at, ward, school
         applications = Application.objects.all().order_by('created_at', 'ward', 'school')
-
-        # Create PDF response
+        html_string = render_to_string('bursary/application_pdf.html', {'applications': applications})
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="applications.pdf"'
-
-        c = canvas.Canvas(response, pagesize=A4)
-        width, height = A4
-        y = height - 50
-
-        c.setFont("Helvetica-Bold", 14)
-        c.drawString(50, y, "Applications List")
-        y -= 30
-
-        # Table header
-        c.setFont("Helvetica-Bold", 10)
-        headers = ["Full Name", "Level", "School", "Admission No", "Annual Fee", "Constituency", "Ward", "Family Status", "Disability", "Status", "Date Applied"]
-        x_positions = [50, 150, 220, 350, 420, 470, 530, 580, 640, 700, 750]
-
-        for i, header in enumerate(headers):
-            c.drawString(x_positions[i], y, header)
-        y -= 20
-        c.setFont("Helvetica", 10)
-
-        for app in applications:
-            if y < 50:
-                c.showPage()
-                y = height - 50
-                c.setFont("Helvetica-Bold", 10)
-                for i, header in enumerate(headers):
-                    c.drawString(x_positions[i], y, header)
-                y -= 20
-                c.setFont("Helvetica", 10)
-
-            values = [
-                app.full_name,
-                str(app.level_of_study) if app.level_of_study else "",
-                app.school or "",
-                app.admission_number or "",
-                str(app.amount_requested) if app.amount_requested else "",
-                str(app.constituency) if app.constituency else "",
-                str(app.ward) if app.ward else "",
-                app.family_status.replace('_', ' ').title() if app.family_status else "-",
-                app.disability.capitalize() if app.disability else "-",
-                app.status,
-                app.created_at.strftime("%d %b %Y") if app.created_at else "",
-            ]
-            for i, value in enumerate(values):
-                c.drawString(x_positions[i], y, value)
-            y -= 20
-
-        c.save()
+        HTML(string=html_string).write_pdf(response)
         return response
 
+    # -------------------------
+    # Fields and Display
+    # -------------------------
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
         if db_field.name == "amount_requested":
