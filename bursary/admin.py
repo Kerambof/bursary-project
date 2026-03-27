@@ -3,8 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.utils.html import format_html
 from django.urls import path
-from django.shortcuts import redirect, get_object_or_404, render
-import pdfkit
+from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 
 from .models import (
     Application,
@@ -53,15 +57,57 @@ class ApplicationAdmin(admin.ModelAdmin):
     def export_pdf(self, request):
         # Fetch all applications sorted by created_at, ward, school
         applications = Application.objects.all().order_by('created_at', 'ward', 'school')
-        # Render the template
-        html = render(request, 'admin/applications_pdf.html', {'applications': applications}).content.decode('utf-8')
-        # Generate PDF
-        pdf = pdfkit.from_string(html, False)
-        # Return response
-        response = redirect('/')
-        from django.http import HttpResponse
-        response = HttpResponse(pdf, content_type='application/pdf')
+
+        # Create PDF response
+        response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="applications.pdf"'
+
+        c = canvas.Canvas(response, pagesize=A4)
+        width, height = A4
+        y = height - 50
+
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(50, y, "Applications List")
+        y -= 30
+
+        # Table header
+        c.setFont("Helvetica-Bold", 10)
+        headers = ["Full Name", "Level", "School", "Admission No", "Annual Fee", "Constituency", "Ward", "Family Status", "Disability", "Status", "Date Applied"]
+        x_positions = [50, 150, 220, 350, 420, 470, 530, 580, 640, 700, 750]
+
+        for i, header in enumerate(headers):
+            c.drawString(x_positions[i], y, header)
+        y -= 20
+        c.setFont("Helvetica", 10)
+
+        for app in applications:
+            if y < 50:
+                c.showPage()
+                y = height - 50
+                c.setFont("Helvetica-Bold", 10)
+                for i, header in enumerate(headers):
+                    c.drawString(x_positions[i], y, header)
+                y -= 20
+                c.setFont("Helvetica", 10)
+
+            values = [
+                app.full_name,
+                str(app.level_of_study) if app.level_of_study else "",
+                app.school or "",
+                app.admission_number or "",
+                str(app.amount_requested) if app.amount_requested else "",
+                str(app.constituency) if app.constituency else "",
+                str(app.ward) if app.ward else "",
+                app.family_status.replace('_', ' ').title() if app.family_status else "-",
+                app.disability.capitalize() if app.disability else "-",
+                app.status,
+                app.created_at.strftime("%d %b %Y") if app.created_at else "",
+            ]
+            for i, value in enumerate(values):
+                c.drawString(x_positions[i], y, value)
+            y -= 20
+
+        c.save()
         return response
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
