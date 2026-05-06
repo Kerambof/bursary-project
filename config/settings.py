@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # -----------------------------
 # DATABASE
 # -----------------------------
-DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_lifh_user:P98bYS5oFThq8MeiZQBhh9NeCBVVEoC8@dpg-d738ebkg9agc73bvvtm0-a.virginia-postgres.render.com/bursary_db_lifh"
+DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_3ji2_user:1N03uiC6mv4wUGtP3n4P1n26eTsMtBJp@dpg-d7tdf4beo5us73b96ctg-a.virginia-postgres.render.com/bursary_db_3ji2"
 
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
@@ -120,3 +120,12 @@ LOGOUT_REDIRECT_URL = 'student_login'
 SESSION_COOKIE_AGE = 60 * 60 * 3
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
+
+#for email verification and password reset
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'kerambofrancis@gmail.com'
+EMAIL_HOST_PASSWORD = 'your-app-password'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

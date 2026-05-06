@@ -53,7 +53,7 @@ class Application(models.Model):
 
     # Personal
     full_name = models.CharField(max_length=200)
-    id_no = models.CharField(max_length=20)
+    id_no = models.CharField(max_length=20, null=True, blank=True)  # ✅ updated
     birth_cert_no = models.CharField(max_length=50, blank=True, null=True)
     identity_document = models.FileField(upload_to='identity_docs/')  # ✅ updated
     gender = models.CharField(max_length=10)
@@ -128,3 +128,18 @@ class ConstituencyOfficer(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ({self.constituency.name})"
+    
+import random
+from datetime import timedelta
+from django.utils import timezone
+class PasswordResetOTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_reset_otps')
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timedelta(minutes=5)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.otp}"

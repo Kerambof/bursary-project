@@ -9,6 +9,9 @@ from .views import (
     student_dashboard,
     apply,
     load_constituencies,
+    request_password_reset,
+    verify_reset_otp,
+    set_new_password,
 )
 
 # ------------------------
@@ -28,6 +31,9 @@ urlpatterns = [
     path('dashboard/', student_dashboard, name='student_dashboard'),
     path('apply/', apply, name='apply'),
     path('ajax/load-constituencies/', load_constituencies, name='ajax_load_constituencies'),
+    path('reset-password/', request_password_reset, name='request_password_reset'),
+    path('verify-reset-otp/', verify_reset_otp, name='verify_reset_otp'),
+    path('set-new-password/', set_new_password, name='set_new_password'),
 ]
 
 # ------------------------

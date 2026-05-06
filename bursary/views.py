@@ -6,6 +6,13 @@ from django.contrib import messages
 from django.http import HttpResponseForbidden
 import traceback  # <-- added for debug
 
+#password reset imports
+import random
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from .models import PasswordResetOTP
+
 from .forms import ApplicationForm, StudentSignUpForm, StudentLoginForm
 from .models import Application, Constituency
 
@@ -191,3 +198,95 @@ def load_constituencies(request):
     county_id = request.GET.get('county')
     constituencies = Constituency.objects.filter(county_id=county_id)
     return JsonResponse(list(constituencies.values('id', 'name')), safe=False)
+
+#password reset views would go here (not implemented in this snippet)
+def request_password_reset(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+
+        try:
+            user = User.objects.get(email=email)
+
+            # generate OTP
+            otp = str(random.randint(100000, 999999))
+
+            # save OTP
+            PasswordResetOTP.objects.create(user=user, otp=otp)
+
+            # send email
+            send_mail(
+                subject="Password Reset Code",
+                message=f"Your password reset verification code is: {otp}",
+                from_email=None,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            request.session['reset_user_id'] = user.id
+            messages.success(request, "Verification code sent to your email.")
+            return redirect('verify_reset_otp')
+
+        except User.DoesNotExist:
+            messages.error(request, "No account found with that email.")
+
+    return render(request, 'bursary/request_password_reset.html')
+
+# Additional views for OTP verification and password reset would go here (not implemented in this snippet)
+def verify_reset_otp(request):
+    user_id = request.session.get('reset_user_id')
+
+    if not user_id:
+        return redirect('request_password_reset')
+
+    if request.method == "POST":
+        entered_otp = request.POST.get("otp")
+
+        try:
+            otp_obj = PasswordResetOTP.objects.filter(
+                user_id=user_id,
+                otp=entered_otp,
+                is_verified=False
+            ).latest('created_at')
+
+            if otp_obj.is_expired():
+                messages.error(request, "Code expired. Request a new one.")
+                return redirect('request_password_reset')
+
+            otp_obj.is_verified = True
+            otp_obj.save()
+
+            request.session['otp_verified'] = True
+            return redirect('set_new_password')
+
+        except PasswordResetOTP.DoesNotExist:
+            messages.error(request, "Invalid verification code.")
+
+    return render(request, 'bursary/verify_reset_otp.html')
+#set new password view would go here (not implemented in this snippet)
+def set_new_password(request):
+    user_id = request.session.get('reset_user_id')
+    otp_verified = request.session.get('otp_verified')
+
+    if not user_id or not otp_verified:
+        return redirect('request_password_reset')
+
+    if request.method == "POST":
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        if password1 != password2:
+            messages.error(request, "Passwords do not match.")
+            return redirect('set_new_password')
+
+        user = User.objects.get(id=user_id)
+        user.set_password(password1)
+        user.save()
+
+        # clear session
+        request.session.pop('reset_user_id', None)
+        request.session.pop('otp_verified', None)
+
+        messages.success(request, "Password reset successful. Please login.")
+        return redirect('student_login')
+
+    return render(request, 'bursary/set_new_password.html')
