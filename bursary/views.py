@@ -9,10 +9,13 @@ import traceback  # <-- added for debug
 #password reset imports
 import random
 from django.utils import timezone
+from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import PasswordResetOTP
 import traceback
+import socket
+socket.setdefaulttimeout(15)
 
 from .forms import ApplicationForm, StudentSignUpForm, StudentLoginForm
 from .models import Application, Constituency
@@ -231,7 +234,7 @@ def request_password_reset(request):
             send_mail(
                 subject="Password Reset Code",
                 message=f"Your password reset verification code is: {otp}",
-                from_email='me.bursary@gmail.com',
+                from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[email],
                 fail_silently=False,
             )
