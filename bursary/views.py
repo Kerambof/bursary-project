@@ -201,33 +201,62 @@ def load_constituencies(request):
 
 #password reset views would go here (not implemented in this snippet)
 def request_password_reset(request):
+
     if request.method == "POST":
-        email = request.POST.get("email")
 
         try:
+
+            print("===== PASSWORD RESET STARTED =====")
+
+            email = request.POST.get("email")
+            print("EMAIL ENTERED:", email)
+
             user = User.objects.get(email=email)
+            print("USER FOUND:", user.username)
 
             # generate OTP
             otp = str(random.randint(100000, 999999))
+            print("OTP GENERATED:", otp)
 
             # save OTP
-            PasswordResetOTP.objects.create(user=user, otp=otp)
+            otp_obj = PasswordResetOTP.objects.create(
+                user=user,
+                otp=otp
+            )
+
+            print("OTP SAVED:", otp_obj.id)
 
             # send email
             send_mail(
                 subject="Password Reset Code",
                 message=f"Your password reset verification code is: {otp}",
-                from_email=None,
+                from_email='me.bursary@gmail.com',
                 recipient_list=[email],
                 fail_silently=False,
             )
 
+            print("EMAIL SENT SUCCESSFULLY")
+
             request.session['reset_user_id'] = user.id
+
             messages.success(request, "Verification code sent to your email.")
+
             return redirect('verify_reset_otp')
 
-        except User.DoesNotExist:
-            messages.error(request, "No account found with that email.")
+        except Exception as e:
+
+            print("===== PASSWORD RESET ERROR =====")
+            traceback.print_exc()
+
+            messages.error(request, f"DEBUG ERROR: {str(e)}")
+
+            return render(
+                request,
+                'bursary/request_password_reset.html',
+                {
+                    'debug_error': str(e)
+                }
+            )
 
     return render(request, 'bursary/request_password_reset.html')
 
