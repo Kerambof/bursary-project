@@ -129,3 +129,4 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'me.bursary@gmail.com'
 EMAIL_HOST_PASSWORD = 'wxej ahxo ywgs fgwi'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_TIMEOUT = 30

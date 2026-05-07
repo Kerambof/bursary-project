@@ -226,7 +226,7 @@ def request_password_reset(request):
             )
 
             print("OTP SAVED:", otp_obj.id)
-
+            print("CONNECTING TO GMAIL SMTP...")
             # send email
             send_mail(
                 subject="Password Reset Code",
