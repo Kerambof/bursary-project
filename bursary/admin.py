@@ -6,6 +6,7 @@ from django.urls import path
 from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponse
 from openpyxl import Workbook
+from reportlab.pdfgen import canvas
 
 from .models import (
     Application,
@@ -22,7 +23,7 @@ from .models import (
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
 
-    actions = ['export_to_excel']
+    actions = ['export_to_excel', 'export_to_pdf']
 
     list_display = (
         'full_name',
@@ -389,6 +390,63 @@ class ApplicationAdmin(admin.ModelAdmin):
         return response
 
     export_to_excel.short_description = "Export Selected Applications to Excel"
+
+    def export_to_pdf(self, request, queryset):
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="applications.pdf"'
+
+        p = canvas.Canvas(response)
+
+        y = 800
+
+        p.setFont("Helvetica-Bold", 14)
+        p.drawString(200, y, "Applications Report")
+
+        y -= 40
+
+        p.setFont("Helvetica", 10)
+
+        for obj in queryset:
+            p.drawString(40, y, f"Full Name: {obj.full_name}")
+            y -= 15
+
+            p.drawString(40, y, f"ID Number: {obj.id_no}")
+            y -= 15
+
+            p.drawString(40, y, f"Admission Number: {obj.admission_number}")
+            y -= 15
+
+            p.drawString(40, y, f"School: {obj.school}")
+            y -= 15
+
+            p.drawString(40, y, f"Level of Study: {obj.level_of_study}")
+            y -= 15
+
+            p.drawString(40, y, f"County: {obj.county}")
+            y -= 15
+
+            p.drawString(40, y, f"Constituency: {obj.constituency}")
+            y -= 15
+
+            p.drawString(40, y, f"Status: {obj.status}")
+            y -= 15
+
+            p.drawString(40, y, f"Annual Fee: {obj.amount_requested}")
+            y -= 15
+
+            p.drawString(40, y, f"Date Applied: {obj.created_at.strftime('%Y-%m-%d')}")
+            y -= 30
+
+            if y < 100:
+                p.showPage()
+                y = 800
+                p.setFont("Helvetica", 10)
+
+        p.save()
+
+        return response
+
+    export_to_pdf.short_description = "Export Selected Applications to PDF"
 
 
 # =========================
