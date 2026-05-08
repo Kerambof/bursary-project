@@ -4,6 +4,8 @@ from django.contrib.auth.hashers import make_password
 from django.utils.html import format_html
 from django.urls import path
 from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpResponse
+from openpyxl import Workbook
 
 from .models import (
     Application,
@@ -19,6 +21,8 @@ from .models import (
 # =========================
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
+
+    actions = ['export_to_excel']
 
     list_display = (
         'full_name',
@@ -153,7 +157,7 @@ class ApplicationAdmin(admin.ModelAdmin):
                     'admission_number',
                     'year_of_study',
                     'performance',
-                    'amount_requested',  # ← remains same field
+                    'amount_requested',
                     'document',
                     'transcript',
                 ),
@@ -221,11 +225,11 @@ class ApplicationAdmin(admin.ModelAdmin):
             ]
 
         base_fieldsets.append(
-        ('Family Background', {
-            'fields': tuple(family_fields),
-            'classes': ('wide',),
-        })
-    )
+            ('Family Background', {
+                'fields': tuple(family_fields),
+                'classes': ('wide',),
+            })
+        )
 
         base_fieldsets.append(
             ('Siblings', {
@@ -339,6 +343,52 @@ class ApplicationAdmin(admin.ModelAdmin):
             )
             obj.student_user = user
         super().save_model(request, obj, form, change)
+
+    def export_to_excel(self, request, queryset):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Applications"
+
+        headers = [
+            'Full Name',
+            'ID Number',
+            'Admission Number',
+            'School',
+            'Level of Study',
+            'County',
+            'Constituency',
+            'Status',
+            'Annual Fee',
+            'Date Applied'
+        ]
+
+        ws.append(headers)
+
+        for obj in queryset:
+            ws.append([
+                obj.full_name,
+                obj.id_no,
+                obj.admission_number,
+                obj.school,
+                str(obj.level_of_study),
+                str(obj.county),
+                str(obj.constituency),
+                obj.status,
+                obj.amount_requested,
+                obj.created_at.strftime("%Y-%m-%d"),
+            ])
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+
+        response['Content-Disposition'] = 'attachment; filename=applications.xlsx'
+
+        wb.save(response)
+
+        return response
+
+    export_to_excel.short_description = "Export Selected Applications to Excel"
 
 
 # =========================
