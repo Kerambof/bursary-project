@@ -110,7 +110,7 @@ class Application(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
+        ('unsuccessful', 'Unsuccessful'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 

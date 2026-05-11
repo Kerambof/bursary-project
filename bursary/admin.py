@@ -319,7 +319,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def reject_app(self, request, application_id):
         app = get_object_or_404(Application, id=application_id)
-        app.status = 'Unsuccessful'
+        app.status = 'rejected'
         app.save()
         self.message_user(request, f"Application '{app.full_name}' rejected!")
         return redirect(request.META.get('HTTP_REFERER'))
