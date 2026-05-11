@@ -4,6 +4,9 @@
 {% block content %}
 
 <style>
+  .hidden {
+  display: none !important;
+}
 /* =========================
    MAIN FLEX LAYOUT
 ========================= */
@@ -697,7 +700,13 @@ updateSiblingCount();
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-  const steps = document.querySelectorAll('.form-step');
+  const steps = [
+  document.getElementById('step1'),
+  document.getElementById('step2'),
+  document.getElementById('step3'),
+  document.getElementById('step4'),
+  document.getElementById('step5')
+];
   const sidebarButtons = document.querySelectorAll('.step-link');
 
   let currentStep = parseInt(
