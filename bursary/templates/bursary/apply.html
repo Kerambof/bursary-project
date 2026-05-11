@@ -2,71 +2,225 @@
 {% load static %}
   <style>
 /* =========================
-   FLEXBOX FORM LAYOUT
+   MAIN FLEX LAYOUT
 ========================= */
-
-.form-container {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  margin-top: 20px;
+.form-container{
+  display:flex;
+  gap:28px;
+  align-items:flex-start;
+  margin-top:25px;
 }
 
-/* LEFT SIDEBAR */
-.form-sidebar {
-  width: 260px;
-  min-width: 220px;
-  background: #f5f5f5;
-  border-radius: 10px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  position: sticky;
-  top: 20px;
+/* =========================
+   LEFT SIDEBAR
+========================= */
+.form-sidebar{
+  width:280px;
+  min-width:250px;
+  background:linear-gradient(180deg,#1e3c72,#2a5298);
+  padding:22px 18px;
+  border-radius:18px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+  position:sticky;
+  top:20px;
 }
 
-.form-sidebar button {
-  width: 100%;
-  text-align: left;
-  padding: 12px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 6px;
-  background: #e9e9e9;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
+/* SIDEBAR TITLE BUTTONS */
+.form-sidebar button{
+  width:100%;
+  border:none;
+  background:rgba(255,255,255,0.08);
+  color:#ffffff;
+  text-align:left;
+  padding:15px 18px;
+  margin-bottom:14px;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .25s ease;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-left:4px solid transparent;
 }
 
-.form-sidebar button:hover {
-  background: #dcdcdc;
+/* HOVER EFFECT */
+.form-sidebar button:hover{
+  background:rgba(255,255,255,0.18);
+  transform:translateX(4px);
+  border-left:4px solid #ffffff;
 }
 
-.form-sidebar button.active {
-  background: #4CAF50;
-  color: #fff;
+/* ACTIVE STEP */
+.form-sidebar button.active{
+  background:#ffffff;
+  color:#1e3c72;
+  border-left:4px solid #4CAF50;
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
 }
 
-/* RIGHT CONTENT */
-.form-content {
-  flex: 1;
+/* =========================
+   RIGHT CONTENT AREA
+========================= */
+.form-content{
+  flex:1;
+  background:#ffffff;
+  padding:28px;
+  border-radius:18px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
+  border:1px solid #ececec;
 }
 
-/* ERROR STYLE */
-.error {
-  border: 2px solid red !important;
+/* FIELDSET */
+fieldset{
+  border:none;
+  background:#f9fbff;
+  padding:22px;
+  border-radius:14px;
+  margin-bottom:20px;
 }
 
-/* MOBILE */
-@media(max-width: 768px){
+/* LEGEND */
+legend{
+  font-size:20px;
+  font-weight:700;
+  color:#1e3c72;
+  padding:0 8px;
+}
+
+/* LABELS */
+label{
+  color:#1f2937;
+  font-weight:600;
+}
+
+/* INPUTS */
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select,
+textarea{
+  width:100%;
+  max-width:100%;
+  padding:12px 14px;
+  border:1px solid #d6dce5;
+  border-radius:10px;
+  background:#ffffff;
+  transition:all .2s ease;
+  font-size:15px;
+}
+
+/* INPUT FOCUS */
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#2a5298;
+  box-shadow:0 0 0 4px rgba(42,82,152,0.12);
+  outline:none;
+}
+
+/* BUTTONS */
+.next-btn,
+.prev-btn,
+button[type="submit"],
+#add_sibling_btn{
+  padding:12px 22px;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s ease;
+  margin-top:15px;
+}
+
+/* NEXT */
+.next-btn,
+button[type="submit"]{
+  background:#2a5298;
+  color:#ffffff;
+}
+
+.next-btn:hover,
+button[type="submit"]:hover{
+  background:#1e3c72;
+  transform:translateY(-1px);
+}
+
+/* PREVIOUS */
+.prev-btn{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+.prev-btn:hover{
+  background:#d1d5db;
+}
+
+/* ADD BUTTON */
+#add_sibling_btn{
+  background:#4CAF50;
+  color:#ffffff;
+}
+
+#add_sibling_btn:hover{
+  background:#43a047;
+}
+
+/* ERROR */
+.error{
+  border:2px solid #ef4444 !important;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+  overflow:hidden;
+  border-radius:10px;
+}
+
+table th{
+  background:#1e3c72;
+  color:#ffffff;
+  padding:12px;
+}
+
+table td{
+  background:#ffffff;
+  padding:10px;
+  border:1px solid #e5e7eb;
+}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:900px){
+
   .form-container{
-    flex-direction: column;
+    flex-direction:column;
   }
 
   .form-sidebar{
-    width: 100%;
-    position: relative;
+    width:100%;
+    position:relative;
+    display:flex;
+    overflow-x:auto;
+    gap:10px;
+  }
+
+  .form-sidebar button{
+    min-width:220px;
+    margin-bottom:0;
+  }
+
+  .form-content{
+    width:100%;
   }
 }
+/* =========================
+   FLEXBOX FORM LAYOUT
+========================= */
+
     .Dashboard-button {
       display: inline-block;
       padding: 10px 20px;
