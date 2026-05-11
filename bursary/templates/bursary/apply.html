@@ -1,6 +1,9 @@
 {% extends "bursary/base.html" %}
 {% load static %}
-  <style>
+
+{% block content %}
+
+<style>
 /* =========================
    MAIN FLEX LAYOUT
 ========================= */
@@ -240,7 +243,7 @@ table td{
 
     .Dashboard-button:active { transform: translateY(0); }
   </style>
-{% block content %}
+
 <h2>Fill Bursary form Application</h2>
 
 {% if messages %}
@@ -284,84 +287,7 @@ table td{
   <div class="form-content">
 {% csrf_token %}
 <input type="hidden" id="current_step_input" name="current_step" value="{{ request.POST.current_step|default:0 }}">
-<style>
-  fieldset {
-    margin-top: 20px;
-    padding: 18px;
-    border: 1px solid #e6e6e6;
-    border-radius: 8px;
-    background: #fafafa;
-  }
 
-  legend { font-weight: 700; padding: 0 6px; }
-
-  label {
-    display: block;
-    margin-top: 12px;
-    font-weight: 600;
-    color: #333;
-  }
-
-  .hidden { display: none !important; }
-
-  input[type="text"], input[type="number"], select, textarea, input[type="file"] {
-    display: block;
-    width: 100%;
-    max-width: 520px;
-    padding: 8px 10px;
-    margin-top: 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 0.98rem;
-  }
-
-  input[type="radio"] { display: inline-block; width: auto; margin-right: 8px; }
-
-  input[type="text"]:focus, select:focus, textarea:focus {
-    outline: 2px solid rgba(76,175,80,0.12);
-    border-color: #4CAF50;
-  }
-
-  #add_sibling_btn {
-    margin-top: 10px;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid #4CAF50;
-    background: #ffffff;
-    color: #4CAF50;
-  }
-
-  #add_sibling_btn:hover { background: #4CAF50; color: #fff; }
-
-  button.remove_btn {
-    background: #e74c3c;
-    color: #fff;
-    border: none;
-    padding: 6px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  table { border-collapse: collapse; width: 100%; margin-top: 15px; }
-  table th, table td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; }
-
-  .message {
-    padding: 10px;
-    margin-bottom: 10px;
-    color: #ffffff;
-    border-radius: 4px;
-  }
-
-  .message.success { background: #2ecc71; }
-  .message:not(.success) { background: #e74c3c; }
-
-.form-row {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-}
-</style>
 
 <!-- STEP 1 -->
 <div class="form-step" id="step1">
