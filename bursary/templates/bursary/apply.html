@@ -554,31 +554,6 @@ table td{
     <button type="button" class="next-btn">Next</button>
   </div>
 
-<!-- Family Section JS -->
-<script>
-const familySections = ['both_alive','mother_dead','father_dead','single_mother','single_father','orphan'];
-const familyRadios = document.querySelectorAll('input[name="family_status"]');
-
-function showFamilySection(value) {
-  familySections.forEach(id => document.getElementById(id).classList.add('hidden'));
-  const section = document.getElementById(value);
-  if(section) section.classList.remove('hidden');
-}
-
-// Listen for changes
-familyRadios.forEach(radio => {
-  radio.addEventListener('change', () => showFamilySection(radio.value));
-});
-
-// Show section on page load if a value was previously selected
-window.addEventListener('DOMContentLoaded', () => {
-  const checkedRadio = document.querySelector('input[name="family_status"]:checked');
-  if(checkedRadio) {
-    showFamilySection(checkedRadio.value);
-  }
-});
-</script>
-
 <!-- STEP 5 -->
 <!-- SIBLINGS -->
   <div class="form-step hidden" id="step5">
@@ -642,14 +617,36 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  /* Family logic */
-  const sections=['both_alive','mother_dead','father_dead','single_mother','single_father','orphan'];
-  document.querySelectorAll('input[name="family_status"]').forEach(r=>{
-    r.addEventListener('change',()=>{
-      sections.forEach(id=>document.getElementById(id).classList.add('hidden'));
-      document.getElementById(r.value).classList.remove('hidden');
-    });
+  /* Family logic (CLEAN VERSION - KEEP ONLY THIS) */
+const familySections = [
+  'both_alive',
+  'mother_dead',
+  'father_dead',
+  'single_mother',
+  'single_father',
+  'orphan'
+];
+
+function showFamilySection(value) {
+  familySections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
   });
+
+  const section = document.getElementById(value);
+  if (section) section.classList.remove('hidden');
+}
+
+document.querySelectorAll('input[name="family_status"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    showFamilySection(radio.value);
+  });
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const checked = document.querySelector('input[name="family_status"]:checked');
+  if (checked) showFamilySection(checked.value);
+});
 
   /* County → Constituency */
   const countyField = document.getElementById('id_county');
