@@ -399,74 +399,51 @@ class ApplicationAdmin(admin.ModelAdmin):
 
         y = 800
 
-        # =========================
-        # HEADING (UPDATED)
-        # =========================
-        constituency_name = queryset.first().constituency if queryset.exists() else ""
         p.setFont("Helvetica-Bold", 14)
-        p.drawString(150, y, f"Bursary Applications in {constituency_name}")
+        p.drawString(200, y, "Applications Report")
+
         y -= 40
 
-        # =========================
-        # TABLE HEADER
-        # =========================
-        p.setFont("Helvetica-Bold", 10)
-
-        headers = [
-            "Full Name",
-            "ID No",
-            "Admission No",
-            "School",
-            "Level",
-            "County",
-            "Constituency",
-            "Status",
-            "Annual Fee",
-            "Date Applied",
-        ]
-
-        x_positions = [30, 120, 190, 280, 360, 430, 500, 590, 650, 720]
-
-        for i, header in enumerate(headers):
-            p.drawString(x_positions[i], y, header)
-
-        y -= 20
-
-        # =========================
-        # TABLE ROWS
-        # =========================
-        p.setFont("Helvetica", 9)
+        p.setFont("Helvetica", 10)
 
         for obj in queryset:
-            row = [
-                obj.full_name,
-                obj.id_no,
-                obj.admission_number,
-                obj.school,
-                str(obj.level_of_study),
-                str(obj.county),
-                str(obj.constituency),
-                obj.status,
-                obj.amount_requested,
-                obj.created_at.strftime("%Y-%m-%d"),
-            ]
+            p.drawString(40, y, f"Full Name: {obj.full_name}")
+            y -= 15
 
-            for i, item in enumerate(row):
-                p.drawString(x_positions[i], y, str(item))
+            p.drawString(40, y, f"ID Number: {obj.id_no}")
+            y -= 15
 
-            y -= 18
+            p.drawString(40, y, f"Admission Number: {obj.admission_number}")
+            y -= 15
+
+            p.drawString(40, y, f"School: {obj.school}")
+            y -= 15
+
+            p.drawString(40, y, f"Level of Study: {obj.level_of_study}")
+            y -= 15
+
+            p.drawString(40, y, f"County: {obj.county}")
+            y -= 15
+
+            p.drawString(40, y, f"Constituency: {obj.constituency}")
+            y -= 15
+
+            p.drawString(40, y, f"Status: {obj.status}")
+            y -= 15
+
+            p.drawString(40, y, f"Annual Fee: {obj.amount_requested}")
+            y -= 15
+
+            p.drawString(40, y, f"Date Applied: {obj.created_at.strftime('%Y-%m-%d')}")
+            y -= 30
 
             if y < 100:
                 p.showPage()
                 y = 800
-
-                p.setFont("Helvetica-Bold", 10)
-                for i, header in enumerate(headers):
-                    p.drawString(x_positions[i], y, header)
-                y -= 20
-                p.setFont("Helvetica", 9)
+                p.setFont("Helvetica", 10)
 
         p.save()
+
         return response
 
     export_to_pdf.short_description = "Export Selected Applications to PDF"
