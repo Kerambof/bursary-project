@@ -72,8 +72,8 @@
                         <span class="badge pending">Pending</span>
                     {% elif app.status == "approved" %}
                         <span class="badge approved">Approved</span>
-                    {% elif app.status == "rejected" %}
-                        <span class="badge rejected">Rejected</span>
+                    {% elif app.status == "unsuccessful" %}
+                        <span class="badge rejected">Unsuccessful</span>
                     {% endif %}
                 </td>
                 <td>{{ app.created_at|date:"M d, Y" }}</td>
