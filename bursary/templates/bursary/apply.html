@@ -598,174 +598,16 @@ table td{
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-  /* Disability toggle */
-  document.querySelectorAll('input[name="disability"]').forEach(r=>{
-    r.addEventListener('change',()=>{
-      document.getElementById('disability_fields')
-        .classList.toggle('hidden', r.value === 'no');
-    });
-  });
-
-  /* Family logic (CLEAN VERSION - KEEP ONLY THIS) */
-const familySections = [
-  'both_alive',
-  'mother_dead',
-  'father_dead',
-  'single_mother',
-  'single_father',
-  'orphan'
-];
-
-function showFamilySection(value) {
-  familySections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add('hidden');
-  });
-
-  const section = document.getElementById(value);
-  if (section) section.classList.remove('hidden');
-}
-
-document.querySelectorAll('input[name="family_status"]').forEach(radio => {
-  radio.addEventListener('change', () => {
-    showFamilySection(radio.value);
-  });
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-  const checked = document.querySelector('input[name="family_status"]:checked');
-  if (checked) showFamilySection(checked.value);
-});
-
-
-/* =========================
-   GEO DETAILS (FIXED)
-========================= */
-
-/* County -> Constituency */
-const countyField = document.getElementById('id_county');
-const constituencyField = document.getElementById('id_constituency');
-
-if (countyField && constituencyField) {
-  countyField.addEventListener('change', function () {
-
-    fetch(`/ajax/load-constituencies/?county=${this.value}`)
-      .then(response => response.json())
-      .then(data => {
-
-        constituencyField.innerHTML =
-          '<option value="">Select Constituency</option>';
-
-        data.forEach(item => {
-          constituencyField.innerHTML +=
-            `<option value="${item.id}">${item.name}</option>`;
-        });
-
-      })
-      .catch(err => console.log("County load error:", err));
-
-  });
-}
-
-
-/* Constituency -> Ward (FIXED URL HERE) */
-const wardField = document.getElementById('id_ward');
-
-if (constituencyField && wardField) {
-
-  constituencyField.addEventListener('change', function () {
-
-    fetch(`/ajax/load-wards/?constituency=${this.value}`)
-      .then(response => response.json())
-      .then(data => {
-
-        wardField.innerHTML =
-          '<option value="">Select Ward</option>';
-
-        data.forEach(item => {
-          wardField.innerHTML +=
-            `<option value="${item.id}">${item.name}</option>`;
-        });
-
-      })
-      .catch(err => console.log("Ward load error:", err));
-
-  });
-
-}
-
-
-/* Ward -> Polling Station */
-const pollingField = document.getElementById('id_polling_station');
-
-if (wardField && pollingField) {
-
-  wardField.addEventListener('change', function () {
-
-    fetch(`/ajax/load-polling-stations/?ward=${this.value}`)
-      .then(response => response.json())
-      .then(data => {
-
-        pollingField.innerHTML =
-          '<option value="">Select Polling Station</option>';
-
-        data.forEach(item => {
-          pollingField.innerHTML +=
-            `<option value="${item.id}">${item.name}</option>`;
-        });
-
-      })
-      .catch(err => console.log("Polling load error:", err));
-
-  });
-
-}
-
-
-/* =========================
-   SIBLINGS TABLE
-========================= */
-const tableBody = document.getElementById('siblings_table_body');
-const addBtn = document.getElementById('add_sibling_btn');
-
-function updateSiblingCount(){ 
-  document.getElementById('siblings_count').value = tableBody.children.length; 
-}
-
-addBtn.addEventListener('click', ()=>{
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td><input type="text" name="sibling_name[]" required></td>
-    <td><input type="text" name="sibling_institution[]" required></td>
-    <td><input type="number" name="sibling_amount[]" required></td>
-    <td><button type="button" class="remove_btn">Remove</button></td>`;
-  
-  row.querySelector('.remove_btn').addEventListener('click', ()=>{
-    row.remove(); 
-    updateSiblingCount();
-  });
-  
-  tableBody.appendChild(row);
-  updateSiblingCount();
-});
-
-// Initialize sibling count on page load
-updateSiblingCount();
-
-
-
-/* =========================
-   STEP NAVIGATION WITH VALIDATION
-========================= */
-document.addEventListener('DOMContentLoaded', function () {
-
+  /* =========================
+     STEP SYSTEM
+  ========================= */
   const steps = [
-  document.getElementById('step1'),
-  document.getElementById('step2'),
-  document.getElementById('step3'),
-  document.getElementById('step4'),
-  document.getElementById('step5')
-];
+    document.getElementById('step1'),
+    document.getElementById('step2'),
+    document.getElementById('step3'),
+    document.getElementById('step4'),
+    document.getElementById('step5')
+  ];
 
   const sidebarButtons = document.querySelectorAll('.step-link');
 
@@ -773,149 +615,213 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('current_step_input').value
   ) || 0;
 
-  function showStep(n){
-
-    steps.forEach(step => step.classList.add('hidden'));
-
+  function showStep(n) {
+    steps.forEach(s => s.classList.add('hidden'));
     steps[n].classList.remove('hidden');
 
-    sidebarButtons.forEach(btn => btn.classList.remove('active'));
-
-    const activeBtn = document.querySelector(`.step-link[data-step="${n}"]`);
-
-    if(activeBtn){
-      activeBtn.classList.add('active');
-    }
+    sidebarButtons.forEach(b => b.classList.remove('active'));
+    const active = document.querySelector(`.step-link[data-step="${n}"]`);
+    if (active) active.classList.add('active');
 
     document.getElementById('current_step_input').value = n;
-
     currentStep = n;
   }
 
-  function validateStep(step){
-
+  /* =========================
+     VALIDATION
+  ========================= */
+  function validateStep(step) {
     const current = steps[step];
-
     let valid = true;
 
-    const inputs = current.querySelectorAll(
-      'input[required], select[required], textarea[required]'
-    );
+    const inputs = current.querySelectorAll('input, select, textarea');
 
     inputs.forEach(input => {
-
       input.classList.remove('error');
 
-      if(input.offsetParent === null) return;
+      if (input.offsetParent === null) return;
 
-      if(input.type === 'radio'){
+      /* RADIO GROUP FIX */
+      if (input.type === 'radio') {
+        const group = current.querySelectorAll(`input[name="${input.name}"]`);
+        const checked = Array.from(group).some(r => r.checked);
 
-        const group = current.querySelectorAll(
-          `input[name="${input.name}"]`
-        );
-
-        if(!Array.from(group).some(r => r.checked)){
-
+        if (!checked) {
           valid = false;
-
-          group.forEach(r => r.classList.add('error'));
         }
-
         return;
       }
 
-      if(input.type === 'file'){
+      /* FILE INPUT */
+      if (input.type === 'file') {
+        if (input.name === 'transcript') return;
 
-        if(input.name === 'transcript') return;
-
-        if(!input.files || input.files.length === 0){
-
+        if (!input.files || input.files.length === 0) {
           valid = false;
-
           input.classList.add('error');
         }
-
         return;
       }
 
-      if(input.value.trim() === ''){
-
+      /* NORMAL INPUT */
+      if (input.hasAttribute('required') && input.value.trim() === '') {
         valid = false;
-
         input.classList.add('error');
       }
-
     });
 
     return valid;
   }
 
+  /* =========================
+     NAVIGATION BUTTONS
+  ========================= */
   document.querySelectorAll('.next-btn').forEach(btn => {
-
-    btn.addEventListener('click', function () {
-
-      if(validateStep(currentStep)){
-
-        if(currentStep < steps.length - 1){
-
-          currentStep++;
-
-          showStep(currentStep);
+    btn.addEventListener('click', () => {
+      if (validateStep(currentStep)) {
+        if (currentStep < steps.length - 1) {
+          showStep(++currentStep);
         }
-
       } else {
-
         alert("Please fill all required fields before proceeding");
       }
-
     });
-
   });
 
   document.querySelectorAll('.prev-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (currentStep > 0) showStep(--currentStep);
+    });
+  });
 
-    btn.addEventListener('click', function () {
+  sidebarButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showStep(parseInt(btn.dataset.step));
+    });
+  });
 
-      if(currentStep > 0){
+  /* =========================
+     DISABILITY TOGGLE FIX
+  ========================= */
+  document.querySelectorAll('input[name="disability"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('disability_fields')
+        .classList.toggle('hidden', r.value === 'no');
+    });
+  });
 
-        currentStep--;
+  /* =========================
+     FAMILY SECTIONS
+  ========================= */
+  const familySections = [
+    'both_alive',
+    'mother_dead',
+    'father_dead',
+    'single_mother',
+    'single_father',
+    'orphan'
+  ];
 
-        showStep(currentStep);
-      }
-
+  function showFamilySection(value) {
+    familySections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
     });
 
+    const target = document.getElementById(value);
+    if (target) target.classList.remove('hidden');
+  }
+
+  document.querySelectorAll('input[name="family_status"]').forEach(r => {
+    r.addEventListener('change', () => showFamilySection(r.value));
   });
 
-  sidebarButtons.forEach(button => {
+  const checked = document.querySelector('input[name="family_status"]:checked');
+  if (checked) showFamilySection(checked.value);
 
-    button.addEventListener('click', function(){
+  /* =========================
+     AJAX FIXED (IMPORTANT)
+  ========================= */
 
-      const targetStep = parseInt(this.dataset.step);
+  const countyField = document.getElementById('id_county');
+  const constituencyField = document.getElementById('id_constituency');
+  const wardField = document.getElementById('id_ward');
+  const pollingField = document.getElementById('id_polling_station');
 
-      showStep(targetStep);
-
+  if (countyField) {
+    countyField.addEventListener('change', function () {
+      fetch(`/ajax/load-constituencies/?county=${this.value}`)
+        .then(r => r.json())
+        .then(data => {
+          constituencyField.innerHTML = '<option value="">Select Constituency</option>';
+          data.forEach(i => {
+            constituencyField.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+          });
+        });
     });
+  }
 
-  });
+  if (constituencyField) {
+    constituencyField.addEventListener('change', function () {
+      fetch(`/ajax/load-wards/?constituency=${this.value}`)
+        .then(r => r.json())
+        .then(data => {
+          wardField.innerHTML = '<option value="">Select Ward</option>';
+          data.forEach(i => {
+            wardField.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+          });
+        });
+    });
+  }
 
-  document.getElementById('bursaryForm')
-    .addEventListener('submit', function(e){
+  if (wardField) {
+    wardField.addEventListener('change', function () {
+      fetch(`/ajax/load-polling-stations/?ward=${this.value}`)
+        .then(r => r.json())
+        .then(data => {
+          pollingField.innerHTML = '<option value="">Select Polling Station</option>';
+          data.forEach(i => {
+            pollingField.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+          });
+        });
+    });
+  }
 
-      if(!validateStep(currentStep)){
+  /* =========================
+     SIBLINGS TABLE
+  ========================= */
+  const tableBody = document.getElementById('siblings_table_body');
+  const addBtn = document.getElementById('add_sibling_btn');
 
-        e.preventDefault();
+  function updateSiblingCount() {
+    document.getElementById('siblings_count').value = tableBody.children.length;
+  }
 
-        alert("Please fill all required fields before proceeding");
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      const row = document.createElement('tr');
 
-      }
+      row.innerHTML = `
+        <td><input type="text" name="sibling_name[]" required></td>
+        <td><input type="text" name="sibling_institution[]" required></td>
+        <td><input type="number" name="sibling_amount[]" required></td>
+        <td><button type="button" class="remove_btn">Remove</button></td>
+      `;
 
-  });
+      row.querySelector('.remove_btn').addEventListener('click', () => {
+        row.remove();
+        updateSiblingCount();
+      });
 
+      tableBody.appendChild(row);
+      updateSiblingCount();
+    });
+  }
+
+  updateSiblingCount();
+
+  /* INIT */
   showStep(currentStep);
-
-});
-
 
 });
 </script>
