@@ -77,7 +77,7 @@ class ApplicationForm(forms.ModelForm):
         self.fields['county'].queryset = County.objects.all()
         self.fields['county'].empty_label = "Select County"
 
-        self.fields['constituency'].queryset = Constituency.objects.none()
+        self.fields['constituency'].queryset = Constituency.objects.all()
         self.fields['constituency'].empty_label = "Select Constituency"
 
         if 'county' in self.data:

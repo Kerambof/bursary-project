@@ -38,18 +38,12 @@ urlpatterns = [
     path('apply/', apply, name='apply'),
 
     # AJAX endpoints
-    path('ajax/load-constituencies/', load_constituencies, name='ajax_load_constituencies'),
-    path('ajax/load-wards/', load_wards, name='ajax_load_wards'),
-    path('ajax/load-polling-stations/', load_polling_stations, name='ajax_load_polling_stations'),
+    path('ajax/load-constituencies/', load_constituencies, name='load_constituencies'),
+    path('ajax/load-wards/', load_wards, name='load_wards'),
+    path('ajax/load-polling-stations/', load_polling_stations, name='load_polling_stations'),
 
     # Password reset flow
     path('reset-password/', request_password_reset, name='request_password_reset'),
     path('verify-reset-otp/', verify_reset_otp, name='verify_reset_otp'),
     path('set-new-password/', set_new_password, name='set_new_password'),
 ]
-
-# ------------------------
-# Serve media files in development (DEBUG=True)
-# ------------------------
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

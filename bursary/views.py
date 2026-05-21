@@ -197,30 +197,36 @@ def apply(request):
 # ------------------------
 
 def load_constituencies(request):
-    """
-    AJAX call: returns list of constituencies for a given county.
-    """
     county_id = request.GET.get('county')
-    constituencies = Constituency.objects.filter(county_id=county_id)
-    return JsonResponse(list(constituencies.values('id', 'name')), safe=False)
+
+    data = list(
+        Constituency.objects.filter(county_id=county_id)
+        .values('id', 'name')
+    )
+
+    return JsonResponse(data, safe=False)
+
+
 def load_wards(request):
     constituency_id = request.GET.get('constituency')
 
-    wards = Ward.objects.filter(
-        constituency_id=constituency_id
-    ).values('id', 'name')
+    data = list(
+        Ward.objects.filter(constituency_id=constituency_id)
+        .values('id', 'name')
+    )
 
-    return JsonResponse(list(wards), safe=False)
+    return JsonResponse(data, safe=False)
 
 
 def load_polling_stations(request):
     ward_id = request.GET.get('ward')
 
-    polling = PollingStation.objects.filter(
-        ward_id=ward_id
-    ).values('id', 'name')
+    data = list(
+        PollingStation.objects.filter(ward_id=ward_id)
+        .values('id', 'name')
+    )
 
-    return JsonResponse(list(polling), safe=False)
+    return JsonResponse(data, safe=False)
 
 #password reset views would go here (not implemented in this snippet)
 def request_password_reset(request):

@@ -295,12 +295,6 @@ table td{
 <!-- STEP 1 -->
 <div class="form-step" id="step1">
 
-<label>County</label>
-{{ form.county }}
-
-<label>Constituency</label>
-{{ form.constituency }}
-
 <label>Level of Study</label>
 {{ form.level_of_study }}
 
@@ -643,85 +637,94 @@ window.addEventListener('DOMContentLoaded', () => {
   if (checked) showFamilySection(checked.value);
 });
 
-  /* County -> Constituency */
+
+/* =========================
+   GEO DETAILS (FIXED)
+========================= */
+
+/* County -> Constituency */
 const countyField = document.getElementById('id_county');
+const constituencyField = document.getElementById('id_constituency');
 
-countyField.addEventListener('change', function () {
+if (countyField && constituencyField) {
+  countyField.addEventListener('change', function () {
 
-  fetch(`/ajax/load-constituencies/?county=${this.value}`)
-    .then(response => response.json())
-    .then(data => {
+    fetch(`/ajax/load-constituencies/?county=${this.value}`)
+      .then(response => response.json())
+      .then(data => {
 
-      const constituencyField =
-        document.getElementById('id_constituency');
+        constituencyField.innerHTML =
+          '<option value="">Select Constituency</option>';
 
-      constituencyField.innerHTML =
-        '<option value="">Select Constituency</option>';
+        data.forEach(item => {
+          constituencyField.innerHTML +=
+            `<option value="${item.id}">${item.name}</option>`;
+        });
 
-      data.forEach(item => {
+      })
+      .catch(err => console.log("County load error:", err));
 
-        constituencyField.innerHTML +=
-          `<option value="${item.id}">${item.name}</option>`;
-
-      });
-
-    });
-
-});
+  });
+}
 
 
-/* Constituency -> Ward */
-const constituencyField =
-  document.getElementById('id_constituency');
+/* Constituency -> Ward (FIXED URL HERE) */
+const wardField = document.getElementById('id_ward');
 
-const wardField =
-  document.getElementById('id_ward');
+if (constituencyField && wardField) {
 
-const pollingField =
-  document.getElementById('id_polling_station');
+  constituencyField.addEventListener('change', function () {
 
-constituencyField.addEventListener('change', function () {
+    fetch(`/ajax/load-wards/?constituency=${this.value}`)
+      .then(response => response.json())
+      .then(data => {
 
-  fetch(`/ajax/load-wards/?constituency=${this.value}`)
-    .then(response => response.json())
-    .then(data => {
+        wardField.innerHTML =
+          '<option value="">Select Ward</option>';
 
-      wardField.innerHTML =
-        '<option value="">Select Ward</option>';
+        data.forEach(item => {
+          wardField.innerHTML +=
+            `<option value="${item.id}">${item.name}</option>`;
+        });
 
-      data.forEach(item => {
+      })
+      .catch(err => console.log("Ward load error:", err));
 
-        wardField.innerHTML +=
-          `<option value="${item.id}">${item.name}</option>`;
+  });
 
-      });
-
-    });
-
-});
+}
 
 
 /* Ward -> Polling Station */
-wardField.addEventListener('change', function () {
+const pollingField = document.getElementById('id_polling_station');
 
-  fetch(`/ajax/load-polling-stations/?ward=${this.value}`)
-    .then(response => response.json())
-    .then(data => {
+if (wardField && pollingField) {
 
-      pollingField.innerHTML =
-        '<option value="">Select Polling Station</option>';
+  wardField.addEventListener('change', function () {
 
-      data.forEach(item => {
+    fetch(`/ajax/load-polling-stations/?ward=${this.value}`)
+      .then(response => response.json())
+      .then(data => {
 
-        pollingField.innerHTML +=
-          `<option value="${item.id}">${item.name}</option>`;
+        pollingField.innerHTML =
+          '<option value="">Select Polling Station</option>';
 
-      });
+        data.forEach(item => {
+          pollingField.innerHTML +=
+            `<option value="${item.id}">${item.name}</option>`;
+        });
 
-    });
+      })
+      .catch(err => console.log("Polling load error:", err));
 
-});
+  });
 
+}
+
+
+/* =========================
+   SIBLINGS TABLE
+========================= */
 const tableBody = document.getElementById('siblings_table_body');
 const addBtn = document.getElementById('add_sibling_btn');
 
@@ -748,10 +751,12 @@ addBtn.addEventListener('click', ()=>{
 
 // Initialize sibling count on page load
 updateSiblingCount();
-</script>
- 
-<!-- JS for Step Navigation with Validation -->
-<script>
+
+
+
+/* =========================
+   STEP NAVIGATION WITH VALIDATION
+========================= */
 document.addEventListener('DOMContentLoaded', function () {
 
   const steps = [
@@ -761,15 +766,13 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('step4'),
   document.getElementById('step5')
 ];
+
   const sidebarButtons = document.querySelectorAll('.step-link');
 
   let currentStep = parseInt(
     document.getElementById('current_step_input').value
   ) || 0;
 
-  /* =========================
-     SHOW STEP
-  ========================= */
   function showStep(n){
 
     steps.forEach(step => step.classList.add('hidden'));
@@ -789,9 +792,6 @@ document.addEventListener('DOMContentLoaded', function () {
     currentStep = n;
   }
 
-  /* =========================
-     VALIDATE STEP
-  ========================= */
   function validateStep(step){
 
     const current = steps[step];
@@ -806,10 +806,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       input.classList.remove('error');
 
-      /* Skip hidden fields */
       if(input.offsetParent === null) return;
 
-      /* RADIO */
       if(input.type === 'radio'){
 
         const group = current.querySelectorAll(
@@ -826,10 +824,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      /* FILE */
       if(input.type === 'file'){
 
-        /* transcript optional */
         if(input.name === 'transcript') return;
 
         if(!input.files || input.files.length === 0){
@@ -842,7 +838,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      /* NORMAL INPUTS */
       if(input.value.trim() === ''){
 
         valid = false;
@@ -855,9 +850,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return valid;
   }
 
-  /* =========================
-     NEXT BUTTON
-  ========================= */
   document.querySelectorAll('.next-btn').forEach(btn => {
 
     btn.addEventListener('click', function () {
@@ -873,18 +865,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
       } else {
 
-        alert(
-          "Please fill all required fields before proceeding"
-        );
+        alert("Please fill all required fields before proceeding");
       }
 
     });
 
   });
 
-  /* =========================
-     PREVIOUS BUTTON
-  ========================= */
   document.querySelectorAll('.prev-btn').forEach(btn => {
 
     btn.addEventListener('click', function () {
@@ -900,25 +887,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   });
 
-/* =========================
-   SIDEBAR NAVIGATION
-========================= */
-sidebarButtons.forEach(button => {
+  sidebarButtons.forEach(button => {
 
-  button.addEventListener('click', function(){
+    button.addEventListener('click', function(){
 
-    const targetStep = parseInt(this.dataset.step);
+      const targetStep = parseInt(this.dataset.step);
 
-    /* Allow opening any heading directly */
-    showStep(targetStep);
+      showStep(targetStep);
+
+    });
 
   });
 
-});
-
-  /* =========================
-     SUBMIT VALIDATION
-  ========================= */
   document.getElementById('bursaryForm')
     .addEventListener('submit', function(e){
 
@@ -926,16 +906,16 @@ sidebarButtons.forEach(button => {
 
         e.preventDefault();
 
-        alert(
-          "Please fill all required fields before proceeding"
-        );
+        alert("Please fill all required fields before proceeding");
 
       }
 
   });
 
-  /* INIT */
   showStep(currentStep);
+
+});
+
 
 });
 </script>
