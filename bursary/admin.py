@@ -12,6 +12,8 @@ from .models import (
     Application,
     County,
     Constituency,
+    Ward,
+    PollingStation,
     LevelOfStudy,
     ConstituencyOfficer
 )
@@ -170,8 +172,6 @@ class ApplicationAdmin(admin.ModelAdmin):
                     'county',
                     'constituency',
                     'ward',
-                    'location',
-                    'sub_location',
                     'polling_station',
                 ),
                 'classes': ('wide',),
@@ -477,4 +477,6 @@ class ConstituencyOfficerAdmin(admin.ModelAdmin):
 
 admin.site.register(County)
 admin.site.register(Constituency)
+admin.site.register(Ward)
+admin.site.register(PollingStation)
 admin.site.register(LevelOfStudy)

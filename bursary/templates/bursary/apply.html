@@ -383,25 +383,17 @@ table td{
 <fieldset>
 <legend>Geographical Details</legend>
 
-<div class="form-row">
-  <label>Polling Station</label>
-  <input type="text" name="polling_station" value="{{ request.POST.polling_station }}" required>
-</div>
+<label>County</label>
+{{ form.county }}
 
-<div class="form-row">
-  <label>Sub-location</label>
-  <input type="text" name="sub_location" value="{{ request.POST.sub_location }}" required>
-</div>
+<label>Constituency</label>
+{{ form.constituency }}
 
-<div class="form-row">
-  <label>Location</label>
-  <input type="text" name="location" value="{{ request.POST.location }}" required>
-</div>
+<label>Ward</label>
+{{ form.ward }}
 
-<div class="form-row">
-  <label>Ward</label>
-  <input type="text" name="ward" value="{{ request.POST.ward }}" required>
-</div>
+<label>Polling Station</label>
+{{ form.polling_station }}
 
 </fieldset>
 
@@ -651,20 +643,82 @@ window.addEventListener('DOMContentLoaded', () => {
   if (checked) showFamilySection(checked.value);
 });
 
-  /* County → Constituency */
-  const countyField = document.getElementById('id_county');
-  if(countyField){
-    countyField.addEventListener('change',function(){
-      fetch(`/ajax/load-constituencies/?county=${this.value}`)
-      .then(r=>r.json())
-      .then(data=>{
-        const c=document.getElementById('id_constituency');
-        c.innerHTML='<option value="">Select constituency</option>';
-        data.forEach(i=>c.innerHTML+=`<option value="${i.id}">${i.name}</option>`);
-        c.disabled=false;
+  /* County -> Constituency */
+const countyField = document.getElementById('id_county');
+
+countyField.addEventListener('change', function () {
+
+  fetch(`/ajax/load-constituencies/?county=${this.value}`)
+    .then(response => response.json())
+    .then(data => {
+
+      const constituencyField =
+        document.getElementById('id_constituency');
+
+      constituencyField.innerHTML =
+        '<option value="">Select Constituency</option>';
+
+      data.forEach(item => {
+
+        constituencyField.innerHTML +=
+          `<option value="${item.id}">${item.name}</option>`;
+
       });
+
     });
-  }
+
+});
+
+
+/* Constituency -> Ward */
+const constituencyField =
+  document.getElementById('id_constituency');
+
+const wardField =
+  document.getElementById('id_ward');
+
+const pollingField =
+  document.getElementById('id_polling_station');
+
+constituencyField.addEventListener('change', function () {
+
+  fetch(`/ajax/load-wards/?constituency=${this.value}`)
+    .then(response => response.json())
+    .then(data => {
+
+      wardField.innerHTML =
+        '<option value="">Select Ward</option>';
+
+      data.forEach(item => {
+
+        wardField.innerHTML +=
+          `<option value="${item.id}">${item.name}</option>`;
+
+      });
+
+    });
+
+});
+
+
+/* Ward -> Polling Station */
+wardField.addEventListener('change', function () {
+
+  fetch(`/ajax/load-polling-stations/?ward=${this.value}`)
+    .then(response => response.json())
+    .then(data => {
+
+      pollingField.innerHTML =
+        '<option value="">Select Polling Station</option>';
+
+      data.forEach(item => {
+
+        pollingField.innerHTML +=
+          `<option value="${item.id}">${item.name}</option>`;
+
+      });
+
+    });
 
 });
 

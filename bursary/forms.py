@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Application, County, Constituency
+from .models import Application, County, Constituency, Ward, PollingStation
 
 # ------------------------
 # STUDENT SIGNUP
@@ -23,21 +23,20 @@ class StudentSignUpForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        # Use ID No / Birth Certificate No as username
+
         user.username = self.cleaned_data['id_no']
 
-        # Store full name in first_name and last_name
         full_name = self.cleaned_data['full_name'].strip()
         parts = full_name.split(" ", 1)
         user.first_name = parts[0]
         user.last_name = parts[1] if len(parts) > 1 else ""
 
-        # Store email if provided
         user.email = self.cleaned_data.get('email', '')
 
         if commit:
             user.save()
         return user
+
 
 # ------------------------
 # STUDENT LOGIN
@@ -55,11 +54,11 @@ class StudentLoginForm(AuthenticationForm):
         })
     )
 
+
 # ------------------------
 # APPLICATION FORM
 # ------------------------
 class ApplicationForm(forms.ModelForm):
-    # Override file fields to use local uploads
     identity_document = forms.FileField(required=True)
     disability_document = forms.FileField(required=False)
     document = forms.FileField(required=True)
@@ -90,7 +89,32 @@ class ApplicationForm(forms.ModelForm):
         elif self.instance.pk and self.instance.county:
             self.fields['constituency'].queryset = self.instance.county.constituencies.all()
 
-    # ✅ ADD THIS PART (IMPORTANT FIX)
+        # WARD DEPENDENCY (ADDED)
+        self.fields['ward'].queryset = Ward.objects.none()
+        self.fields['ward'].empty_label = "Select Ward"
+
+        if 'constituency' in self.data:
+            try:
+                constituency_id = int(self.data.get('constituency'))
+                self.fields['ward'].queryset = Ward.objects.filter(
+                    constituency_id=constituency_id
+                )
+            except (ValueError, TypeError):
+                pass
+
+        # POLLING STATION DEPENDENCY (ADDED)
+        self.fields['polling_station'].queryset = PollingStation.objects.none()
+        self.fields['polling_station'].empty_label = "Select Polling Station"
+
+        if 'ward' in self.data:
+            try:
+                ward_id = int(self.data.get('ward'))
+                self.fields['polling_station'].queryset = PollingStation.objects.filter(
+                    ward_id=ward_id
+                )
+            except (ValueError, TypeError):
+                pass
+
     def clean(self):
         cleaned_data = super().clean()
         id_no = cleaned_data.get('id_no')

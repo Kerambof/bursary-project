@@ -19,6 +19,7 @@ socket.setdefaulttimeout(15)
 
 from .forms import ApplicationForm, StudentSignUpForm, StudentLoginForm
 from .models import Application, Constituency
+from .models import Ward, PollingStation
 
 # ------------------------
 # STUDENT AUTH
@@ -202,6 +203,24 @@ def load_constituencies(request):
     county_id = request.GET.get('county')
     constituencies = Constituency.objects.filter(county_id=county_id)
     return JsonResponse(list(constituencies.values('id', 'name')), safe=False)
+def load_wards(request):
+    constituency_id = request.GET.get('constituency')
+
+    wards = Ward.objects.filter(
+        constituency_id=constituency_id
+    ).values('id', 'name')
+
+    return JsonResponse(list(wards), safe=False)
+
+
+def load_polling_stations(request):
+    ward_id = request.GET.get('ward')
+
+    polling = PollingStation.objects.filter(
+        ward_id=ward_id
+    ).values('id', 'name')
+
+    return JsonResponse(list(polling), safe=False)
 
 #password reset views would go here (not implemented in this snippet)
 def request_password_reset(request):

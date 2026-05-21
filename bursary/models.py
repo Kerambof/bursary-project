@@ -24,6 +24,30 @@ class Constituency(models.Model):
         return f"{self.name} ({self.county.name})"
 
 
+class Ward(models.Model):
+    constituency = models.ForeignKey(
+        Constituency,
+        on_delete=models.CASCADE,
+        related_name='wards'
+    )
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.name} ({self.constituency.name})"
+
+
+class PollingStation(models.Model):
+    ward = models.ForeignKey(
+        Ward,
+        on_delete=models.CASCADE,
+        related_name='polling_stations'
+    )
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f"{self.name} ({self.ward.name})"
+
+
 class LevelOfStudy(models.Model):
     name = models.CharField(max_length=50)
 
@@ -53,13 +77,13 @@ class Application(models.Model):
 
     # Personal
     full_name = models.CharField(max_length=200)
-    id_no = models.CharField(max_length=20, null=True, blank=True)  # ✅ updated
+    id_no = models.CharField(max_length=20, null=True, blank=True)
     birth_cert_no = models.CharField(max_length=50, blank=True, null=True)
-    identity_document = models.FileField(upload_to='identity_docs/')  # ✅ updated
+    identity_document = models.FileField(upload_to='identity_docs/')
     gender = models.CharField(max_length=10)
     disability = models.CharField(max_length=5)
     disability_type = models.CharField(max_length=100, blank=True, null=True)
-    disability_document = models.FileField(upload_to='disability_docs/', blank=True, null=True)  # ✅ updated
+    disability_document = models.FileField(upload_to='disability_docs/', blank=True, null=True)
 
     # Education
     admission_number = models.CharField(max_length=50)
@@ -67,15 +91,24 @@ class Application(models.Model):
     course = models.CharField(max_length=200)
     year_of_study = models.CharField(max_length=20)
     amount_requested = models.DecimalField(max_digits=10, decimal_places=2)
-    document = models.FileField(upload_to='documents/')  # ✅ updated
+    document = models.FileField(upload_to='documents/')
     performance = models.CharField(max_length=20)
-    transcript = models.FileField(upload_to='transcripts/')  # ✅ updated
+    transcript = models.FileField(upload_to='transcripts/')
 
     # Geo
-    polling_station = models.CharField(max_length=200)
-    sub_location = models.CharField(max_length=200)
-    location = models.CharField(max_length=200)
-    ward = models.CharField(max_length=200)
+    ward = models.ForeignKey(
+        Ward,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    polling_station = models.ForeignKey(
+        PollingStation,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
     # Family
     family_status = models.CharField(max_length=50)
@@ -88,9 +121,9 @@ class Application(models.Model):
     mother_occupation = models.CharField(max_length=200, blank=True, null=True)
     mother_id = models.CharField(max_length=20, blank=True, null=True)
     father_death_no = models.CharField(max_length=50, blank=True, null=True)
-    father_death_doc = models.FileField(upload_to='family_docs/', blank=True, null=True)  # ✅ updated
+    father_death_doc = models.FileField(upload_to='family_docs/', blank=True, null=True)
     mother_death_no = models.CharField(max_length=50, blank=True, null=True)
-    mother_death_doc = models.FileField(upload_to='family_docs/', blank=True, null=True)  # ✅ updated
+    mother_death_doc = models.FileField(upload_to='family_docs/', blank=True, null=True)
     guardian_name = models.CharField(max_length=200, blank=True, null=True)
     guardian_phone = models.CharField(max_length=20, blank=True, null=True)
     guardian_occupation = models.CharField(max_length=200, blank=True, null=True)
@@ -128,10 +161,13 @@ class ConstituencyOfficer(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ({self.constituency.name})"
-    
+
+
 import random
 from datetime import timedelta
 from django.utils import timezone
+
+
 class PasswordResetOTP(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_reset_otps')
     otp = models.CharField(max_length=6)
