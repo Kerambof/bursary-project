@@ -33,7 +33,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         'school',
         'admission_number',
         'annual_fee_display',
-        'constituency',
+        'polling_station',
         'family_status_display',
         'disability_display',
         'status',
@@ -68,6 +68,10 @@ class ApplicationAdmin(admin.ModelAdmin):
         'status',
         'county',
         'constituency',
+        'ward',
+        'polling_station',
+        'family_status_display',
+        'disability_display',
         'level_of_study',
         'created_at',
     )
@@ -251,9 +255,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             })
         )
 
-        # Inject local file links into appropriate sections
         if obj:
-            # Personal Information
             personal = dict(base_fieldsets[1][1])
             personal_fields = list(personal['fields'])
             if 'identity_document' in personal_fields:
@@ -263,7 +265,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             personal['fields'] = tuple(personal_fields)
             base_fieldsets[1] = (base_fieldsets[1][0], personal)
 
-            # Education Details
             education = dict(base_fieldsets[2][1])
             education_fields = list(education['fields'])
             if 'document' in education_fields:
@@ -273,7 +274,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             education['fields'] = tuple(education_fields)
             base_fieldsets[2] = (base_fieldsets[2][0], education)
 
-            # Family Background
             family = dict(base_fieldsets[3][1])
             family_fields = list(family['fields'])
             if 'father_death_doc' in family_fields:
@@ -392,61 +392,77 @@ class ApplicationAdmin(admin.ModelAdmin):
     export_to_excel.short_description = "Export Selected Applications to Excel"
 
     def export_to_pdf(self, request, queryset):
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+        from reportlab.lib import colors
+        from reportlab.lib.styles import getSampleStyleSheet
+
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="applications.pdf"'
 
-        p = canvas.Canvas(response)
+        doc = SimpleDocTemplate(response)
 
-        y = 800
+        styles = getSampleStyleSheet()
+        elements = []
 
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(200, y, "Applications Report")
+        if queryset.exists():
+            consts = queryset.values_list('constituency__name', flat=True).distinct()
+            if len(consts) == 1:
+                heading_text = f"Bursary Applications for {consts[0]}"
+            else:
+                heading_text = "Bursary Applications"
+        else:
+            heading_text = "Bursary Applications"
 
-        y -= 40
+        elements.append(Paragraph(heading_text, styles['Title']))
+        elements.append(Spacer(1, 12))
 
-        p.setFont("Helvetica", 10)
+        data = [[
+            "Full Name",
+            "ID Number",
+            "Admission No",
+            "School",
+            "Level",
+            "Family Status",
+            "Disability",
+            "Annual Fee",
+            "Date Applied"
+        ]]
 
         for obj in queryset:
-            p.drawString(40, y, f"Full Name: {obj.full_name}")
-            y -= 15
+            family_status = obj.family_status.replace('_', ' ').title() if obj.family_status else "-"
+            disability = obj.disability.capitalize() if obj.disability else "-"
 
-            p.drawString(40, y, f"ID Number: {obj.id_no}")
-            y -= 15
+            data.append([
+                obj.full_name,
+                obj.id_no,
+                obj.admission_number,
+                obj.school,
+                str(obj.level_of_study),
+                family_status,
+                disability,
+                obj.amount_requested,
+                obj.created_at.strftime("%Y-%m-%d"),
+            ])
 
-            p.drawString(40, y, f"Admission Number: {obj.admission_number}")
-            y -= 15
+        table = Table(data, repeatRows=1)
 
-            p.drawString(40, y, f"School: {obj.school}")
-            y -= 15
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.lightgrey]),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ]))
 
-            p.drawString(40, y, f"Level of Study: {obj.level_of_study}")
-            y -= 15
+        elements.append(table)
 
-            p.drawString(40, y, f"County: {obj.county}")
-            y -= 15
-
-            p.drawString(40, y, f"Constituency: {obj.constituency}")
-            y -= 15
-
-            p.drawString(40, y, f"Status: {obj.status}")
-            y -= 15
-
-            p.drawString(40, y, f"Annual Fee: {obj.amount_requested}")
-            y -= 15
-
-            p.drawString(40, y, f"Date Applied: {obj.created_at.strftime('%Y-%m-%d')}")
-            y -= 30
-
-            if y < 100:
-                p.showPage()
-                y = 800
-                p.setFont("Helvetica", 10)
-
-        p.save()
+        doc.build(elements)
 
         return response
-
-    export_to_pdf.short_description = "Export Selected Applications to PDF"
 
 
 # =========================

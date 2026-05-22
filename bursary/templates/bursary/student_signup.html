@@ -46,6 +46,26 @@
       <!-- Other Fields (Password etc.) -->
       {% for field in form %}
           {% if field.name != 'full_name' and field.name != 'id_no' and field.name != 'email' %}
+
+          {% if field.name == 'password1' or field.name == 'password2' %}
+          <p class="form-field">
+              {{ field.label_tag }}<br>
+
+              <div class="password-wrapper">
+                  {{ field }}
+
+                  <span class="toggle-password"
+                        onclick="togglePassword('{{ field.id_for_label }}', this)">
+                      👁️
+                  </span>
+              </div>
+
+              {% if field.errors %}
+                  <span class="error-text">{{ field.errors|striptags }}</span>
+              {% endif %}
+          </p>
+
+          {% else %}
           <p class="form-field">
               {{ field.label_tag }}<br>
               {{ field }}
@@ -53,6 +73,8 @@
                   <span class="error-text">{{ field.errors|striptags }}</span>
               {% endif %}
           </p>
+          {% endif %}
+
           {% endif %}
       {% endfor %}
 
@@ -101,6 +123,27 @@
 .form-field input:focus {
     border-color: #4CAF50;
     outline: none;
+}
+
+/* Password eye icon */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    user-select: none;
 }
 
 /* Error text */
@@ -164,4 +207,17 @@
     text-decoration: underline;
 }
 </style>
+
+<script>
+function togglePassword(fieldId, icon) {
+    const passwordField = document.getElementById(fieldId);
+
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+    } else {
+        passwordField.type = "password";
+    }
+}
+</script>
+
 {% endblock %}
