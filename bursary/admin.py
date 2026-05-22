@@ -70,12 +70,11 @@ class ApplicationAdmin(admin.ModelAdmin):
         'constituency',
         'ward',
         'polling_station',
-        'family_status_display',
-        'disability_display',
+        'family_status',
+        'disability',   
         'level_of_study',
         'created_at',
     )
-
     search_fields = (
         'full_name',
         'id_no',
