@@ -71,7 +71,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         'ward',
         'polling_station',
         'family_status',
-        'disability',   
+        'disability',
         'level_of_study',
         'created_at',
     )
@@ -93,9 +93,6 @@ class ApplicationAdmin(admin.ModelAdmin):
         'mother_death_doc_link',
     )
 
-    # =========================
-    # Local file links
-    # =========================
     def identity_document_link(self, obj):
         if obj.identity_document:
             return format_html('<a href="{}" target="_blank">View Identity Document</a>', obj.identity_document.url)
@@ -132,9 +129,6 @@ class ApplicationAdmin(admin.ModelAdmin):
         return "-"
     mother_death_doc_link.short_description = 'Mother Death Doc'
 
-    # ------------------------
-    # Remaining methods are unchanged
-    # ------------------------
     def get_fieldsets(self, request, obj=None):
         base_fieldsets = [
             ('Student & Status', {
@@ -271,9 +265,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             )
         return '-'
 
-    action_buttons.short_description = 'Actions'
-    action_buttons.allow_tags = True
-
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
@@ -317,9 +308,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             obj.student_user = user
         super().save_model(request, obj, form, change)
 
-    # =========================
-    # EXPORT EXCEL (FIXED INDENTATION)
-    # =========================
     def export_to_excel(self, request, queryset):
         wb = Workbook()
         ws = wb.active
@@ -360,9 +348,6 @@ class ApplicationAdmin(admin.ModelAdmin):
         wb.save(response)
         return response
 
-    # =========================
-    # EXPORT PDF (FIXED INDENTATION)
-    # =========================
     def export_to_pdf(self, request, queryset):
         from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
         from reportlab.lib import colors
@@ -372,11 +357,19 @@ class ApplicationAdmin(admin.ModelAdmin):
         response['Content-Disposition'] = 'attachment; filename="applications.pdf"'
 
         doc = SimpleDocTemplate(response)
+
         styles = getSampleStyleSheet()
         elements = []
 
-        if queryset.exists():
-            consts = queryset.values_list('constituency__name', flat=True).distinct()
+        selected_ids = request.POST.getlist('_selected_action')
+
+        if selected_ids:
+            qs = queryset
+        else:
+            qs = self.get_queryset(request)
+
+        if qs.exists():
+            consts = qs.values_list('constituency__name', flat=True).distinct()
             if len(consts) == 1:
                 heading_text = f"Bursary Applications for {consts[0]}"
             else:
@@ -398,7 +391,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             "Date Applied"
         ]]
 
-        for obj in queryset:
+        for obj in qs:
             family_status = obj.family_status.replace('_', ' ').title() if obj.family_status else "-"
             disability = obj.disability.capitalize() if obj.disability else "-"
 
@@ -421,10 +414,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, -1), 9),
-            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.lightgrey]),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
         ]))
 
         elements.append(table)
