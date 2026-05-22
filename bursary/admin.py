@@ -71,10 +71,11 @@ class ApplicationAdmin(admin.ModelAdmin):
         'ward',
         'polling_station',
         'family_status',
-        'disability',   
+        'disability',
         'level_of_study',
         'created_at',
     )
+
     search_fields = (
         'full_name',
         'id_no',
@@ -130,159 +131,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             return format_html('<a href="{}" target="_blank">View Mother Death Doc</a>', obj.mother_death_doc.url)
         return "-"
     mother_death_doc_link.short_description = 'Mother Death Doc'
-
-    # ------------------------
-    # Remaining methods are unchanged
-    # ------------------------
-    def get_fieldsets(self, request, obj=None):
-        base_fieldsets = [
-            ('Student & Status', {
-                'fields': ('student_user', 'status', 'created_at'),
-                'classes': ('wide',)
-            }),
-
-            ('Personal Information', {
-                'fields': (
-                    'full_name',
-                    'id_no',
-                    'birth_cert_no',
-                    'gender',
-                    'identity_document',
-                    'disability',
-                    'disability_type',
-                    'disability_document',
-                ),
-                'classes': ('collapse', 'wide'),
-            }),
-
-            ('Education Details', {
-                'fields': (
-                    'level_of_study',
-                    'school',
-                    'course',
-                    'admission_number',
-                    'year_of_study',
-                    'performance',
-                    'amount_requested',
-                    'document',
-                    'transcript',
-                ),
-                'classes': ('wide',),
-            }),
-
-            ('Location', {
-                'fields': (
-                    'county',
-                    'constituency',
-                    'ward',
-                    'polling_station',
-                ),
-                'classes': ('wide',),
-            }),
-        ]
-
-        if not obj:
-            base_fieldsets.append(
-                ('Family Background', {
-                    'fields': ('family_status',),
-                    'classes': ('wide',),
-                })
-            )
-            return base_fieldsets
-
-        family_fields = []
-        status = obj.family_status
-
-        if status == 'both_alive':
-            family_fields = [
-                'father_name', 'father_phone', 'father_occupation', 'father_id',
-                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
-            ]
-
-        elif status == 'mother_dead':
-            family_fields = [
-                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
-                'father_death_no', 'father_death_doc',
-            ]
-
-        elif status == 'father_dead':
-            family_fields = [
-                'father_name', 'father_phone', 'father_occupation', 'father_id',
-                'mother_death_no', 'mother_death_doc',
-            ]
-
-        elif status == 'single_mother':
-            family_fields = [
-                'mother_name', 'mother_phone', 'mother_occupation', 'mother_id',
-            ]
-
-        elif status == 'single_father':
-            family_fields = [
-                'father_name', 'father_phone', 'father_occupation', 'father_id',
-            ]
-
-        elif status == 'orphan':
-            family_fields = [
-                'father_death_no', 'father_death_doc',
-                'mother_death_no', 'mother_death_doc',
-                'guardian_name', 'guardian_phone', 'guardian_occupation',
-            ]
-
-        base_fieldsets.append(
-            ('Family Background', {
-                'fields': tuple(family_fields),
-                'classes': ('wide',),
-            })
-        )
-
-        base_fieldsets.append(
-            ('Siblings', {
-                'fields': ('siblings_names', 'siblings_amounts'),
-                'classes': ('wide',),
-            })
-        )
-
-        base_fieldsets.append(
-            ('Referees', {
-                'fields': (
-                    'referee1_name',
-                    'referee1_phone',
-                    'referee2_name',
-                    'referee2_phone',
-                ),
-                'classes': ('wide',),
-            })
-        )
-
-        if obj:
-            personal = dict(base_fieldsets[1][1])
-            personal_fields = list(personal['fields'])
-            if 'identity_document' in personal_fields:
-                personal_fields.append('identity_document_link')
-            if 'disability_document' in personal_fields:
-                personal_fields.append('disability_document_link')
-            personal['fields'] = tuple(personal_fields)
-            base_fieldsets[1] = (base_fieldsets[1][0], personal)
-
-            education = dict(base_fieldsets[2][1])
-            education_fields = list(education['fields'])
-            if 'document' in education_fields:
-                education_fields.append('document_link')
-            if 'transcript' in education_fields:
-                education_fields.append('transcript_link')
-            education['fields'] = tuple(education_fields)
-            base_fieldsets[2] = (base_fieldsets[2][0], education)
-
-            family = dict(base_fieldsets[3][1])
-            family_fields = list(family['fields'])
-            if 'father_death_doc' in family_fields:
-                family_fields.append('father_death_doc_link')
-            if 'mother_death_doc' in family_fields:
-                family_fields.append('mother_death_doc_link')
-            family['fields'] = tuple(family_fields)
-            base_fieldsets[3] = (base_fieldsets[3][0], family)
-
-        return base_fieldsets
 
     def date_applied(self, obj):
         return obj.created_at.strftime("%d %b %Y")
@@ -391,6 +239,9 @@ class ApplicationAdmin(admin.ModelAdmin):
     export_to_excel.short_description = "Export Selected Applications to Excel"
 
     def export_to_pdf(self, request, queryset):
+        if not queryset:
+            queryset = self.get_queryset(request)
+
         from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
         from reportlab.lib import colors
         from reportlab.lib.styles import getSampleStyleSheet
