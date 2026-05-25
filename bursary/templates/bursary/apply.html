@@ -662,12 +662,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return;
       }
-
       /* NORMAL INPUT */
-      if (input.hasAttribute('required') && input.value.trim() === '') {
-        valid = false;
-        input.classList.add('error');
-      }
+if (
+  (input.hasAttribute('required') && input.value.trim() === '') ||
+  (input.id === 'id_ward' && input.value.trim() === '') ||
+  (input.id === 'id_polling_station' && input.value.trim() === '')
+) {
+  valid = false;
+  input.classList.add('error');
+}    
     });
 
     return valid;

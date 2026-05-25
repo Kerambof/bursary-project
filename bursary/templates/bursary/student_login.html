@@ -25,14 +25,14 @@
     </p>
 
     <p class="form-field password-field">
-      {{ form.password.label_tag }}<br>
+      {{ form.password.label_tag }}
 
       <div class="password-wrapper">
         {{ form.password }}
 
-        <span class="toggle-password" onclick="togglePassword()">
-          👁️
-        </span>
+        <button type="button" class="toggle-password" onclick="togglePassword()">
+          👁
+        </button>
       </div>
 
       {% if form.password.errors %}
@@ -104,25 +104,62 @@ body {
                 inset -3px -3px 6px #ffffff;
 }
 
-/* Password eye icon */
-.password-wrapper {
+/* Improved Password Field */
+.password-wrapper{
     position: relative;
     display: flex;
     align-items: center;
+    margin-top: 8px;
 }
 
-.password-wrapper input {
+.password-wrapper input{
     width: 100%;
-    padding-right: 45px;
+    padding: 14px 50px 14px 16px;
+    border: none;
+    border-radius: 14px;
+    background: #e0e5ec;
+    box-shadow:
+        inset 4px 4px 8px #b8bec7,
+        inset -4px -4px 8px #ffffff;
+    font-size: 15px;
+    color: #333;
+    transition: all 0.3s ease;
 }
 
-.toggle-password {
+.password-wrapper input:focus{
+    box-shadow:
+        inset 2px 2px 5px #b8bec7,
+        inset -2px -2px 5px #ffffff,
+        0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+/* Eye Button */
+.toggle-password{
     position: absolute;
-    right: 15px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #e0e5ec;
+    box-shadow:
+        3px 3px 6px #b8bec7,
+        -3px -3px 6px #ffffff;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     color: #555;
-    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.toggle-password:hover{
+    transform: scale(1.05);
+    color: #2e7d32;
+}
+
+.toggle-password:active{
+    box-shadow:
+        inset 2px 2px 5px #b8bec7,
+        inset -2px -2px 5px #ffffff;
 }
 
 /* Error messages */

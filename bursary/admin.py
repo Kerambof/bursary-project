@@ -260,7 +260,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         if obj.status == 'pending':
             return format_html(
                 '<a class="button" style="background-color:#4CAF50;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="{}">Approve</a>&nbsp;'
-                '<a class="button" style="background-color:#e74c3c;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="{}">Reject</a>',
+                '<a class="button" style="background-color:#e74c3c;color:white;padding:3px 8px;border-radius:4px;text-decoration:none;" href="{}">Unsuccessful</a>',
                 f'approve/{obj.id}/', f'reject/{obj.id}/'
             )
         return '-'
@@ -282,9 +282,9 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def reject_app(self, request, application_id):
         app = get_object_or_404(Application, id=application_id)
-        app.status = 'rejected'
+        app.status = 'unsuccessful'
         app.save()
-        self.message_user(request, f"Application '{app.full_name}' rejected!")
+        self.message_user(request, f"Application '{app.full_name}' marked as unsuccessful!")
         return redirect(request.META.get('HTTP_REFERER'))
 
     def has_view_permission(self, request, obj=None):
