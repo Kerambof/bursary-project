@@ -94,6 +94,7 @@ def student_dashboard(request):
         student_user=request.user
     ).order_by('-created_at')
 
+
     full_name = f"{request.user.first_name} {request.user.last_name}".strip()
     student_full_name = full_name or request.user.get_username()
 
@@ -121,7 +122,26 @@ def apply(request):
             if form.is_valid():
                 app = form.save(commit=False)
                 app.student_user = request.user
+                # FAMILY STATUS (IMPORTANT FIX)
+# -------------------------
+                app.family_status = request.POST.get('family_status')
 
+                app.father_name = request.POST.get('father_name')
+                app.father_phone = request.POST.get('father_phone')
+                app.father_occupation = request.POST.get('father_occupation')
+                app.father_id = request.POST.get('father_id')
+
+                app.mother_name = request.POST.get('mother_name')
+                app.mother_phone = request.POST.get('mother_phone')
+                app.mother_occupation = request.POST.get('mother_occupation')
+                app.mother_id = request.POST.get('mother_id')
+
+                app.guardian_name = request.POST.get('guardian_name')
+                app.guardian_phone = request.POST.get('guardian_phone')
+                app.guardian_occupation = request.POST.get('guardian_occupation')
+
+                app.father_death_no = request.POST.get('father_death_no')
+                app.mother_death_no = request.POST.get('mother_death_no')
                 # Save siblings as comma-separated strings
                 names = request.POST.getlist('sibling_name[]')
                 amounts = request.POST.getlist('sibling_amount[]')

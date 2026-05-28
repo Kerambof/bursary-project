@@ -402,8 +402,8 @@ table td{
 
 <label>Family Status</label>
 <input type="radio" name="family_status" value="both_alive" {% if request.POST.family_status == 'both_alive' %}checked{% endif %} required> Both Parents Alive  
-<input type="radio" name="family_status" value="mother_dead" {% if request.POST.family_status == 'mother_dead' %}checked{% endif %} required> Mother Alive, Father Deceased  
-<input type="radio" name="family_status" value="father_dead" {% if request.POST.family_status == 'father_dead' %}checked{% endif %} required> Father Alive, Mother Deceased  
+<input type="radio" name="family_status" value="father_dead" {% if request.POST.family_status == 'father_dead' %}checked{% endif %} required> Mother Alive, Father Deceased  
+<input type="radio" name="family_status" value="mother_dead" {% if request.POST.family_status == 'mother_dead' %}checked{% endif %} required> Father Alive, Mother Deceased 
 <input type="radio" name="family_status" value="single_mother" {% if request.POST.family_status == 'single_mother' %}checked{% endif %} required> Single Mother  
 <input type="radio" name="family_status" value="single_father" {% if request.POST.family_status == 'single_father' %}checked{% endif %} required> Single Father  
 <input type="radio" name="family_status" value="orphan" {% if request.POST.family_status == 'orphan' %}checked{% endif %} required> Total Orphan
