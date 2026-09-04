@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # -----------------------------
 # DATABASE
 # -----------------------------
-DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://bursary_db_4vxx_user:VIUDaEjac8Fnvpu1wqpwydTsuMIywydF@dpg-d87cfqtckfvc73a4f6s0-a.virginia-postgres.render.com/bursary_db_4vxx"
+DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://postgres.ojnudkjgcuxzarkelags:F42268024k!@aws-0-eu-west-2.pooler.supabase.com:5432/postgres"
 
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
