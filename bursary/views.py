@@ -295,6 +295,8 @@ def request_password_reset(request):
         except Exception as e:
 
             print("===== PASSWORD RESET ERROR =====")
+            print("ERROR TYPE:", type(e).__name__)
+            print("ERROR MESSAGE:", str(e))
             traceback.print_exc()
 
             messages.error(request, f"DEBUG ERROR: {str(e)}")
