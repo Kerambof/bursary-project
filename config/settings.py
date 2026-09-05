@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # -----------------------------
 # BASE DIRECTORY
@@ -32,8 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
 
     'bursary',
+    
 ]
 
 MIDDLEWARE = [
@@ -94,6 +99,7 @@ USE_I18N = True
 USE_TZ = True
 
 # -----------------------------
+# -----------------------------
 # STATIC FILES
 # -----------------------------
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -111,11 +117,32 @@ STATICFILES_DIRS = [
 ]
 
 # -----------------------------
-# MEDIA FILES (LOCAL STORAGE)
+# SUPABASE STORAGE (public bucket)
 # -----------------------------
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+# -----------------------------
+# SUPABASE STORAGE (public bucket)
+# -----------------------------
+AWS_ACCESS_KEY_ID = os.environ.get('SUPABASE_S3_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.environ.get('SUPABASE_S3_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('SUPABASE_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.environ.get('SUPABASE_S3_ENDPOINT')
+AWS_S3_REGION_NAME = os.environ.get('SUPABASE_S3_REGION', 'us-east-1')
+AWS_S3_ADDRESSING_STYLE = 'path'
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False  # public bucket → plain public URLs
+AWS_DEFAULT_ACL = 'public-read'
+
+SUPABASE_PROJECT_REF = os.environ.get('SUPABASE_PROJECT_REF')
+AWS_S3_CUSTOM_DOMAIN = f"{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # -----------------------------
 # DEFAULT PRIMARY KEY
