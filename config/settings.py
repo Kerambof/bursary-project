@@ -11,12 +11,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # -----------------------------
 SECRET_KEY = 'django-insecure-^dfm4_ym&j!dql3*4u42jf+zw2fcb3i+c44z2s@5%6a@9w#_ut'
-ALLOWED_HOSTS = ['bursalite.onrender.com', '127.0.0.1', 'localhost']
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://bursalite.onrender.com',
+ALLOWED_HOSTS = [
+    'bursalite.onrender.com',
+    '.vercel.app',
+    '127.0.0.1',
+    'localhost',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.vercel.app',
+]
 # -----------------------------
 # APPLICATIONS
 # -----------------------------
