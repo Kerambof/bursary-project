@@ -126,8 +126,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
 
 #for email verification and password reset
-import os
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -137,4 +135,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'me.bursary@gmail.com'
 EMAIL_HOST_PASSWORD = 'wxej ahxo ywgs fgwi'
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = 'me.bursary@gmail.com'
